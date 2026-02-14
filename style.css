@@ -1,0 +1,515 @@
+@font-face {
+  font-family: "OnePiece";
+  src: url("./onepiece.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+body {
+  font-family: system-ui, Arial, sans-serif;
+  background: #0f1115;
+  color: #e7e7e7;
+  margin: 0;
+}
+
+.logo-title {
+  font-family: "Cinzel", "Times New Roman", serif;
+  font-size: 3.2rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #f5e6b8;
+  margin-bottom: 6px;
+
+  text-shadow:
+    2px 2px 0 #000,
+    4px 4px 0 rgba(0,0,0,0.6),
+    0 0 18px rgba(255, 210, 120, 0.35);
+}
+
+.subtitle {
+  font-family: "OnePiece", serif;
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  opacity: 0.9;
+  margin-top: 0;
+}
+
+.subtitle::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 2px;
+  margin: 10px auto 0;
+  background: linear-gradient(to right, transparent, #f5e6b8, transparent);
+}
+
+.bg{
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(8,10,14,0.78),
+     rgba(8,10,14,0.88)
+    ),
+    url("bg.jpg") center/cover no-repeat;
+  z-index: -1;
+}
+
+
+
+.container{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 30px 16px 40px;
+  text-align: center;
+}
+
+.container > *{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+h1 {
+  margin: 0;
+}
+
+.sub {
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+.controls{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(1100px, 92vw);
+  margin: 18px auto 10px;
+  flex-wrap: wrap;        
+  justify-content: center;
+}
+
+.searchWrap{
+  position: relative;
+  flex: 1 1 420px;        
+  max-width: 620px;       
+  min-width: 280px;       
+}
+
+
+.searchIcon{
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: .75;
+  pointer-events: none;
+}
+
+#guessInput{
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(12, 14, 20, .70);
+  color: rgba(255,255,255,.92);
+  outline: none;
+  transition: 160ms ease;
+  box-shadow: 0 12px 32px rgba(0,0,0,.45);
+}
+
+#guessInput:focus{
+  border-color: rgba(245, 230, 184, .55);
+  box-shadow: 0 0 0 4px rgba(245, 230, 184, .14), 0 14px 40px rgba(0,0,0,.55);
+  transform: translateY(-1px);
+}
+
+.suggestions{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+
+  background: #ffffff;
+  color: #111;
+
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.12);
+  box-shadow: 0 18px 45px rgba(0,0,0,.25);
+
+  overflow: hidden;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+.suggestions.hidden{
+  display: none;
+}
+
+.suggestionItem{
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 120ms ease;
+  font-size: 0.95rem;
+}
+
+.suggestionItem:hover{
+  background: rgba(245, 230, 184, .35);
+}
+
+.suggestionMeta{
+  font-size: 0.8rem;
+  opacity: .6;
+}
+
+
+
+input {
+  padding: 10px 12px;
+  min-width: 260px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #141826;
+  color: #fff;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(245, 230, 184, .35);
+  background: linear-gradient(
+    to bottom,
+    #f5e6b8,
+    #e0c97a
+  );
+  color: #1a1a1a;
+  font-weight: 800;
+  font-family: "OnePiece", serif;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  letter-spacing: .8px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 32px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.5);
+  filter: brightness(1.05);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 16px rgba(0,0,0,.5),
+    inset 0 2px 4px rgba(0,0,0,.25);
+}
+
+
+button.secondary {
+  background: rgba(12, 14, 20, .75);
+  color: rgba(245, 230, 184, .95);
+  border: 1px solid rgba(245, 230, 184, .25);
+  box-shadow: 0 10px 24px rgba(0,0,0,.45);
+}
+
+button.secondary:hover {
+  background: rgba(245, 230, 184, .12);
+}
+
+
+button:focus,
+button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+
+.msg {
+  margin: 10px 0 16px;
+  min-height: 22px;
+}
+
+#stats {
+  font-weight: 600;
+  opacity: 0.9;
+  letter-spacing: 0.3px;
+}
+
+:root{
+  --tileSize: 110px;
+  --tileRadius: 16px;
+}
+
+/* =========================
+   HEADER ROW (labels bar)
+   ========================= */
+/* ===== HEADER BAR FIX (works for .headerRow OR .headers) ===== */
+.headerRow,
+.headers{
+  display: grid;
+  grid-template-columns: repeat(9, var(--tileSize));
+  gap: 10px;
+  justify-content: center;
+  margin: 12px auto;
+}
+
+/* style whatever the header items are (div/span/etc.) */
+.headerRow > *,
+.headers > *{
+  width: var(--tileSize);
+  height: 44px;                 /* header pill height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--tileRadius);
+  background: rgba(10, 12, 16, .55);
+  border: 1px solid rgba(255,255,255,.08);
+
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-size: .80rem;
+  color: rgba(245, 230, 184, .92);
+}
+
+/* Hide the empty image header slot */
+.headerRow > *:first-child,
+.headers > *:first-child{
+  background: transparent;
+  border: none;
+}
+
+
+.row{
+  display: grid;
+  grid-template-columns: repeat(9, var(--tileSize));
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+
+
+/* =========================
+   ALL TILES (image + hints)
+   ========================= */
+.tile{
+  width: var(--tileSize);
+  height: var(--tileSize);
+
+  border-radius: var(--tileRadius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  padding: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+
+.tile .cellText{
+  overflow: hidden;
+  line-height: 1.15;
+  font-size: 13px;
+  white-space: normal;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+
+/* =========================
+   IMAGE TILE
+   ========================= */
+.tile.imageCell{
+  padding: 0;
+}
+
+.tile.imageCell .gridAvatar{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top; /* shifts crop upward */
+  border-radius: inherit;
+}
+
+
+
+/* =========================
+   COLORS
+   ========================= */
+.green { background: #1f7a3b; }
+.yellow { background: #b2871a; }
+.red { background: #b83a3a; }
+.grey { background: #3a3f4a; }
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 1000px){
+  :root{ --tileSize: 85px; }
+
+  .headers,
+  .row{
+    grid-template-columns: repeat(4, var(--tileSize));
+  }
+}
+
+
+
+
+
+
+.pop {
+  animation: popIn 140ms ease-out;
+  animation-fill-mode: both;
+}
+
+
+@keyframes popIn {
+  0% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* optional: tiny glow on correct */
+.tile.green {
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.18);
+}
+
+
+.arcCell,
+.bountyCell {
+  white-space: nowrap;
+}
+
+.arcCell .hint,
+.bountyCell .hint {
+  opacity: 0.75;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+
+/* Suggestions dropdown container */
+#suggestions {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+/* --- BIGGER dropdown images --- */
+.suggestionItem{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.suggestionImg{
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex: 0 0 auto;
+}
+
+
+/* Text styling */
+.suggestionText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.suggestionName {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.suggestionMeta {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Hover */
+.suggestionItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* Custom tooltip */
+.tile[data-tip]{
+  position: relative;
+}
+
+/* IMPORTANT: let tooltip escape the tile */
+.tile[data-tip]:hover{
+  overflow: visible;
+  z-index: 999;
+}
+
+.tile[data-tip]:hover::after{
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+
+  background: rgba(255,255,255,.95);
+  color: #111;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+
+  white-space: nowrap;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  border: 1px solid rgba(0,0,0,.12);
+
+  pointer-events: none;
+}
+
+.green {
+  background: #1f7a3b;
+}
+
+.yellow {
+  background: #b2871a;
+}
+
+.grey {
+  background: #3a3f4a;
+}
+
+.red {
+  background: #b83a3a;
+}
+
+
+#confetti {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.nameCell {
+  text-align: left;
+}

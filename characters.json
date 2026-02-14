@@ -1,0 +1,368 @@
+[
+  {
+    "name": "Monkey D. Luffy",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "Paramecia",
+    "haki": ["Observation", "Armament", "Conqueror"],
+    "origin": "East Blue",
+    "bounty" : 3000000000,
+    "firstArc": "Romance Dawn",
+    "gender": "Male",
+    "image": "img/strawhats/luffy.jpg"
+
+  },
+  {
+    "name": "Roronoa Zoro",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": ["Observation", "Armament", "Conqueror"],
+    "origin": "East Blue",
+    "bounty": 1111000000,
+    "firstArc": "Romance Dawn",
+    "gender": "Male",
+    "image": "img/strawhats/zoro.jpg"
+  },
+  {
+    "name": "Nami",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": [],
+    "origin": "East Blue",
+    "bounty": 366000000,
+    "firstArc": "Orange Town",
+    "gender": "Female",
+    "image": "img/strawhats/nami.jpg"
+  },
+  {
+    "name": "Usopp",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": ["Observation"],
+    "origin": "East Blue",
+    "bounty": 500000000,
+    "firstArc": "Syrup Village",
+    "gender": "Male",
+    "image": "img/strawhats/usopp.jpg"
+  },
+  {
+    "name": "Sanji",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": ["Observation", "Armament"],
+    "origin": "North Blue",
+    "bounty": 1032000000,
+    "firstArc": "Baratie",
+    "gender": "Male",
+    "image": "img/strawhats/sanji.jpg"
+  },
+  {
+    "name": "Tony Tony Chopper",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "Zoan",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 1000,
+    "firstArc": "Drum Island",
+    "gender": "Male",
+    "image": "img/strawhats/chopper.jpg"
+  },
+  {
+    "name": "Nico Robin",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "West Blue",
+    "bounty": 930000000,
+    "firstArc": "Arabasta",
+    "gender": "Female",
+    "image": "img/strawhats/robin.jpg"
+  },
+  {
+    "name": "Franky",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": [],
+    "origin": "South Blue",
+    "bounty": 394000000,
+    "firstArc": "Water 7",
+    "gender": "Male",
+    "image": "img/strawhats/franky.jpg"
+  },
+  {
+    "name": "Brook",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "West Blue",
+    "bounty": 383000000,
+    "firstArc": "Thriller Bark",
+    "gender": "Male",
+    "image": "img/strawhats/brook.jpg"
+  },
+  {
+    "name": "Jinbe",
+    "affiliation": "Straw Hat Pirates",
+    "devilFruit": "None",
+    "haki": ["Observation", "Armament"],
+    "origin": "Grand Line",
+    "bounty": 1100000000,
+    "firstArc": "Impel Down",
+    "gender": "Male",
+    "image": "img/strawhats/jinbe.jpg" 
+  },
+  {
+  "name": "Shanks",
+  "affiliation": "Red Hair Pirates",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "West Blue",
+  "bounty": 4048900000,
+  "firstArc": "Romance Dawn",
+  "gender": "Male",
+  "image": "img/yonkos/shanks.jpg"
+},
+{
+  "name": "Marshall D. Teach",
+  "affiliation": "Blackbeard Pirates",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 3996000000,
+  "firstArc": "Jaya",
+  "gender": "Male",
+  "image": "img/yonkos/teach.jpg"
+},
+{
+  "name": "Buggy",
+  "affiliation": "Cross Guild",
+  "devilFruit": "Paramecia",
+  "haki": [],
+  "origin": "Grand Line",
+  "bounty": 3189000000,
+  "firstArc": "Orange Town",
+  "gender": "Male",
+  "image": "img/yonkos/buggy.jpg"
+},
+{
+  "name": "Edward Newgate",
+  "affiliation": "Whitebeard Pirates",
+  "devilFruit": "Paramecia",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "Grand Line",
+  "bounty": 5046000000,
+  "firstArc": "Jaya",
+  "gender": "Male",
+  "image": "img/yonkos/edward.jpg"
+},
+{
+  "name": "Kaido",
+  "affiliation": "Beasts Pirates",
+  "devilFruit": "Zoan",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "Grand Line",
+  "bounty": 4611100000,
+  "firstArc": "Dressrosa",
+  "gender": "Male",
+  "image": "img/yonkos/kaido.jpg"
+},
+{
+  "name": "Charlotte Linlin",
+  "affiliation": "Big Mom Pirates",
+  "devilFruit": "Paramecia",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "Grand Line",
+  "bounty": 4388000000,
+  "firstArc": "Fish-Man Island",
+  "gender": "Female",
+  "image": "img/yonkos/bigmom.jpg"
+},
+{
+  "name": "Dracule Mihawk",
+  "affiliation": "Former Warlord",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 3590000000,
+  "firstArc": "Baratie",
+  "gender": "Male",
+  "image": "img/warlords/mihawk.jpg"
+},
+{
+  "name": "Crocodile",
+  "affiliation": "Baroque Works",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 1965000000,
+  "firstArc": "Arabasta",
+  "gender": "Male",
+  "image": "img/warlords/crocodile.jpg"
+},
+{
+  "name": "Donquixote Doflamingo",
+  "affiliation": "Donquixote Pirates",
+  "devilFruit": "Paramecia",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "North Blue",
+  "bounty": 340000000,
+  "firstArc": "Jaya",
+  "gender": "Male",
+  "image": "img/warlords/doflamingo.jpg"
+},
+{
+  "name": "Boa Hancock",
+  "affiliation": "Kuja Pirates",
+  "devilFruit": "Paramecia",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "Amazon Lily",
+  "bounty": 1659000000,
+  "firstArc": "Amazon Lily",
+  "gender": "Female",
+  "image": "img/warlords/hancock.jpg"
+},
+{
+  "name": "Bartholomew Kuma",
+  "affiliation": "Revolutionary Army",
+  "devilFruit": "Paramecia",
+  "haki": ["Armament"],
+  "origin": "South Blue",
+  "bounty": 296000000,
+  "firstArc": "Thriller Bark",
+  "gender": "Male",
+  "image": "img/warlords/kuma.jpg"
+},
+{
+  "name": "Gecko Moria",
+  "affiliation": "Thriller Bark Pirates",
+  "devilFruit": "Paramecia",
+  "haki": [],
+  "origin": "West Blue",
+  "bounty": 320000000,
+  "firstArc": "Thriller Bark",
+  "gender": "Male",
+  "image": "img/warlords/moria.jpg"
+},
+{
+  "name": "Monkey D. Garp",
+  "affiliation": "Marines",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament", "Conqueror"],
+  "origin": "East Blue",
+  "bounty": 3000000000,
+  "firstArc": "Water 7",
+  "gender": "Male",
+  "image": "img/marines/garp.jpg"
+},
+{
+  "name": "Sengoku",
+  "affiliation": "Marines",
+  "devilFruit": "Mythical Zoan",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 0,
+  "firstArc": "Jaya",
+  "gender": "Male",
+  "image": "img/marines/sengoku.jpg"
+},
+{
+  "name": "Sakazuki (Akainu)",
+  "affiliation": "Marines",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "North Blue",
+  "bounty": 5000000000,
+  "firstArc": "Marineford",
+  "gender": "Male",
+  "image": "img/marines/akainu.jpg"
+},
+{
+  "name": "Kuzan (Aokiji)",
+  "affiliation": "Marines",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "South Blue",
+  "bounty": 0,
+  "firstArc": "Long Ring Long Land",
+  "gender": "Male",
+  "image": "img/marines/aokiji.jpg"
+},
+{
+  "name": "Borsalino (Kizaru)",
+  "affiliation": "Marines",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "North Blue",
+  "bounty": 3000000000,
+  "firstArc": "Sabaody Archipelago",
+  "gender": "Male",
+  "image": "img/marines/kizaru.jpg"
+},
+{
+  "name": "Smoker",
+  "affiliation": "Marines",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "East Blue",
+  "bounty": 0,
+  "firstArc": "Loguetown",
+  "gender": "Male",
+  "image": "img/marines/smoker.jpg"
+},
+{
+  "name": "Tashigi",
+  "affiliation": "Marines",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament"],
+  "origin": "East Blue",
+  "bounty": 0,
+  "firstArc": "Loguetown",
+  "gender": "Female",
+  "image": "img/marines/tashigi.jpg"
+},
+{
+  "name": "Koby",
+  "affiliation": "Marines",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament"],
+  "origin": "East Blue",
+  "bounty": 500000000,
+  "firstArc": "Romance Dawn",
+  "gender": "Male",
+  "image": "img/marines/koby.jpg"
+},
+{
+  "name": "Issho (Fujitora)",
+  "affiliation": "Marines",
+  "devilFruit": "Paramecia",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 3000000000,
+  "firstArc": "Dressrosa",
+  "gender": "Male",
+  "image": "img/marines/fujitora.jpg"
+},
+{
+  "name": "Aramaki (Ryokugyu)",
+  "affiliation": "Marines",
+  "devilFruit": "Logia",
+  "haki": ["Observation", "Armament"],
+  "origin": "Grand Line",
+  "bounty": 3000000000,
+  "firstArc": "Reverie",
+  "gender": "Male",
+  "image": "img/marines/ryokugyu.jpg"
+},
+{
+  "name": "Helmeppo",
+  "affiliation": "Marines",
+  "devilFruit": "None",
+  "haki": ["Observation", "Armament"],
+  "origin": "East Blue",
+  "bounty": 0,
+  "firstArc": "Romance Dawn",
+  "gender": "Male",
+  "image": "img/marines/helmeppo.jpg"
+}
+
+
+]
