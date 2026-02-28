@@ -30,6 +30,7 @@
   --surface-soft: rgba(10, 22, 40, 0.72);
   --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.28);
   --shadow-panel: 0 14px 34px rgba(0, 0, 0, 0.38);
+  --app-vh: 100vh;
 
   --ease-smooth: cubic-bezier(.2, .8, .2, 1);
 }
@@ -63,6 +64,7 @@ textarea {
 body {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: calc(var(--app-vh));
   min-height: -webkit-fill-available;
   font-family: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
   color: var(--ink);
@@ -98,6 +100,7 @@ body {
   max-width: 1240px;
   margin: 0 auto;
   padding: calc(var(--space-5) + env(safe-area-inset-top)) var(--space-3) calc(56px + env(safe-area-inset-bottom));
+  min-height: calc(var(--app-vh) - env(safe-area-inset-top));
   text-align: center;
   animation: pageIn 320ms var(--ease-smooth);
 }
@@ -222,6 +225,10 @@ h1 {
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-panel);
   transition: box-shadow 180ms var(--ease-smooth), border-color 180ms var(--ease-smooth);
+}
+
+body.keyboardOpen .controls {
+  position: static !important;
 }
 
 .controls.dailyOnly {
@@ -699,6 +706,10 @@ button:focus-visible,
   border: 1px solid rgba(255, 142, 142, 0.45);
   border-radius: 999px;
   padding: 4px 8px;
+}
+
+.boardWrap.extremeMode::after {
+  content: "EXTREME MODE";
 }
 
 .boardWrap::-webkit-scrollbar {
@@ -1388,6 +1399,21 @@ body.compactMode .tile .cellArrow {
   }
 }
 
+@media (min-width: 768px) and (max-width: 1180px) and (orientation: landscape) {
+  .controls,
+  .boardWrap,
+  .recentGuesses,
+  .statsDashboard,
+  .recapCard {
+    width: min(1060px, 94vw);
+  }
+
+  .sideMenu {
+    top: calc(10px + env(safe-area-inset-top));
+    right: calc(8px + env(safe-area-inset-right));
+  }
+}
+
 @media (max-width: 760px) {
   :root {
     --tileSize: 84px;
@@ -1517,6 +1543,21 @@ body.compactMode .tile .cellArrow {
   }
 }
 
+@media (max-width: 760px) and (orientation: landscape) {
+  .controls {
+    position: static;
+  }
+
+  .progressPill {
+    position: static;
+    margin-top: 2px;
+  }
+
+  .container {
+    padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+  }
+}
+
 @media (max-width: 430px) {
   .container {
     padding-left: 10px;
@@ -1575,6 +1616,18 @@ body.compactMode .tile .cellArrow {
   .progressPill {
     top: calc(58px + env(safe-area-inset-top));
     font-size: 10px;
+  }
+}
+
+@media (max-width: 430px) and (orientation: landscape) {
+  .controls {
+    grid-template-columns: minmax(0, 78%) minmax(0, 22%);
+  }
+
+  #guessInput,
+  #newBtn {
+    height: 42px;
+    min-height: 42px;
   }
 }
 

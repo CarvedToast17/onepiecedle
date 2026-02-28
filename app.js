@@ -33,6 +33,7 @@ let recentGuessNames = [];
 let isHardMode = false;
 let isDailyMode = false;
 let isMysteryTilesMode = false;
+let isExtremeMode = false;
 let isDuelMode = false;
 let activeModePreset = "casual";
 let playerStats = null;
@@ -61,6 +62,7 @@ function normalize(str) {
 function getModeLabel(modeKey = activeModePreset) {
   switch (modeKey) {
     case "hard": return "Hard";
+    case "extreme": return "Extreme";
     case "daily": return "Daily";
     case "mystery_tiles": return "Mystery Tiles";
     case "duel_1v1": return "1v1 Duel";
@@ -258,11 +260,12 @@ function hideRecap() {
 }
 
 function applyModePreset(modeKey, restart = true) {
-  const safeMode = ["casual", "hard", "daily", "mystery_tiles", "duel_1v1"].includes(modeKey) ? modeKey : "casual";
+  const safeMode = ["casual", "hard", "extreme", "daily", "mystery_tiles", "duel_1v1"].includes(modeKey) ? modeKey : "casual";
   activeModePreset = safeMode;
-  isHardMode = safeMode === "hard";
+  isExtremeMode = safeMode === "extreme";
+  isHardMode = safeMode === "hard" || isExtremeMode;
   isDailyMode = safeMode === "daily";
-  isMysteryTilesMode = safeMode === "mystery_tiles";
+  isMysteryTilesMode = safeMode === "mystery_tiles" || isExtremeMode;
   isDuelMode = safeMode === "duel_1v1";
   if (isDuelMode) {
     duelAttempts = [0, 0];
@@ -312,6 +315,7 @@ function updateStats() {
   }
   if (boardWrap) {
     boardWrap.classList.toggle("hardMode", isHardMode);
+    boardWrap.classList.toggle("extremeMode", isExtremeMode);
   }
   if (progressPillEl) {
     if (isDuelMode) {
@@ -1025,6 +1029,14 @@ document.addEventListener("click", (e) => {
   if (imageModal && e.target === imageModal) {
     closeImageModal();
   }
+});
+
+guessInput.addEventListener("focus", () => {
+  document.body.classList.add("keyboardOpen");
+});
+
+guessInput.addEventListener("blur", () => {
+  document.body.classList.remove("keyboardOpen");
 });
 
 
