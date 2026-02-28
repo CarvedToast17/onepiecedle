@@ -8,55 +8,51 @@
 </head>
 <body>
   <div class="bg"></div>
+
   <main class="container">
     <h1 class="logo-title">OnePiecedle</h1>
-   <p class="subtitle">Infinite</p>
- 
+    <p class="subtitle">Infinite</p>
 
-  <div class="controls">
-  <div class="searchWrap">
-    <span class="searchIcon">🔍</span>
+    <div class="controls">
+      <div class="searchWrap">
+        <span class="searchIcon">&#x1F50D;</span>
 
-    <input
-      id="guessInput"
-      type="text"
-      placeholder="Search a character..."
-      autocomplete="off"
-    />
+        <input
+          id="guessInput"
+          type="text"
+          placeholder="Search a character..."
+          autocomplete="off"
+        />
 
-    <div id="suggestions" class="suggestions hidden"></div>
-  </div>
+        <div id="suggestions" class="suggestions hidden"></div>
+      </div>
 
-  <button id="submitBtn">Guess</button>
-  <button id="newBtn" class="secondary">New Game</button>
-</div>
-
+      <button id="submitBtn">Guess</button>
+      <button id="newBtn" class="secondary">New Game</button>
+    </div>
 
     <div id="stats" class="msg"></div>
-<div id="msg" class="msg"></div>
+    <div id="msg" class="msg"></div>
 
-
-   <div class="headerRow">
-  <div></div> <!-- empty image column -->
-  <div>Name</div>
-  <div>Affiliation</div>
-  <div>Devil Fruit</div>
-  <div>Haki</div>
-  <div>Origin</div>
-  <div>Bounty</div>
-  <div>First Arc</div>
-  <div>Gender</div>
-</div>
-
-
-
+    <div class="boardWrap" role="region" aria-label="Guess board">
+      <div class="headerRow">
+        <div></div>
+        <div>Name</div>
+        <div>Affiliation</div>
+        <div>Devil Fruit</div>
+        <div>Haki</div>
+        <div>Origin</div>
+        <div>Bounty</div>
+        <div>First Arc</div>
+        <div>Gender</div>
+      </div>
 
       <div id="rows"></div>
-    </section>
+    </div>
+    <div class="boardHint" aria-hidden="true">Swipe the board to view all columns</div>
   </main>
 
- <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="app.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

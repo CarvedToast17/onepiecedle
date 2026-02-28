@@ -5,14 +5,18 @@ let attempts = 0;
 let isSolved = false;
 
 const stats = document.getElementById("stats");
-const namesList = document.getElementById("names");
 const submitBtn = document.getElementById("submitBtn");
 const rows = document.getElementById("rows");
 const msg = document.getElementById("msg");
 const guessInput = document.getElementById("guessInput");
 const newBtn = document.getElementById("newBtn");
 const suggestionsEl = document.getElementById("suggestions");
-console.log("suggestionsEl:", suggestionsEl);
+const boardWrap = document.querySelector(".boardWrap");
+
+let guessedNames = new Set();
+let suggestionItems = [];
+let activeSuggestionIndex = -1;
+let victoryFxTimer = null;
 
 
 
@@ -21,16 +25,124 @@ function normalize(str) {
   return (str || "").trim().toLowerCase();
 }
 
+function setStatus(text, tone = "info") {
+  msg.textContent = text || "";
+  msg.classList.remove("status-info", "status-error", "status-success");
+  if (!text) return;
+  msg.classList.add(`status-${tone}`);
+}
+
+function setSubmitState() {
+  const hasInput = guessInput.value.trim().length > 0;
+  submitBtn.disabled = isSolved || !hasInput;
+}
+
+function closeSuggestions() {
+  suggestionsEl.classList.add("hidden");
+  suggestionsEl.innerHTML = "";
+  suggestionItems = [];
+  activeSuggestionIndex = -1;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlightMatch(text, query) {
+  const safeText = escapeHtml(text ?? "");
+  const q = (query || "").trim();
+  if (!q) return safeText;
+
+  const escaped = escapeRegExp(q);
+  const pattern = new RegExp(`(${escaped})`, "ig");
+  return safeText.replace(pattern, "<mark>$1</mark>");
+}
+
+function getFactionTag(affiliation) {
+  const a = normalize(affiliation);
+  if (!a) return { label: "Unknown", className: "faction-unknown" };
+  if (a.includes("marine")) return { label: "Marines", className: "faction-marines" };
+  if (a.includes("straw hat")) return { label: "Straw Hat", className: "faction-strawhat" };
+  if (a.includes("cross guild") || a.includes("warlord")) return { label: "Warlord", className: "faction-warlord" };
+  if (a.includes("yonko") || a.includes("beasts pirates") || a.includes("big mom pirates") || a.includes("red hair pirates") || a.includes("blackbeard pirates") || a.includes("whitebeard pirates")) {
+    return { label: "Yonko", className: "faction-yonko" };
+  }
+  if (a.includes("revolutionary")) return { label: "Revolutionary", className: "faction-revo" };
+  if (a.includes("kozuki") || a.includes("akazaya") || a.includes("samurai")) return { label: "Wano", className: "faction-wano" };
+  return { label: "Pirate", className: "faction-pirate" };
+}
+
+function attachImageFallback(root = document) {
+  root.querySelectorAll("img[data-fallback]").forEach((img) => {
+    if (img.dataset.fallbackBound === "1") return;
+    img.dataset.fallbackBound = "1";
+
+    img.addEventListener("error", () => {
+      const fallback = img.dataset.fallback || "img/placeholder.png";
+      if (img.getAttribute("src") !== fallback) {
+        img.setAttribute("src", fallback);
+      } else {
+        img.classList.add("is-fallback");
+      }
+    });
+
+    img.addEventListener("load", () => {
+      const fallback = img.dataset.fallback || "img/placeholder.png";
+      if (img.getAttribute("src") === fallback) {
+        img.classList.add("is-fallback");
+      } else {
+        img.classList.remove("is-fallback");
+      }
+    });
+  });
+}
+
 function launchConfetti() {
-  const duration = 800;
+  const duration = 2200;
   const end = Date.now() + duration;
+
+  confetti({
+    particleCount: 160,
+    spread: 95,
+    startVelocity: 48,
+    ticks: 260,
+    origin: { x: 0.5, y: 0.58 }
+  });
 
   (function frame() {
     confetti({
-      particleCount: 5,
-      spread: 70,
-      origin: { y: 0.6 }
+      particleCount: 8,
+      spread: 80,
+      startVelocity: 42,
+      origin: { x: 0.1, y: 0.65 },
+      angle: 58
     });
+
+    confetti({
+      particleCount: 8,
+      spread: 80,
+      startVelocity: 42,
+      origin: { x: 0.9, y: 0.65 },
+      angle: 122
+    });
+
+    if (Date.now() % 3 === 0) {
+      confetti({
+        particleCount: 6,
+        spread: 120,
+        startVelocity: 34,
+        origin: { x: Math.random(), y: 0.35 + Math.random() * 0.3 }
+      });
+    }
 
     if (Date.now() < end) {
       requestAnimationFrame(frame);
@@ -42,18 +154,27 @@ function launchConfetti() {
 function pickRandomAnswer() {
   answer = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
   rows.innerHTML = "";
-  msg.textContent = "";
+  setStatus("");
   guessInput.value = "";
   guessInput.focus();
 
   attempts = 0;
   isSolved = false;
+  guessedNames = new Set();
+  if (victoryFxTimer) {
+    clearTimeout(victoryFxTimer);
+    victoryFxTimer = null;
+  }
+  if (boardWrap) {
+    boardWrap.classList.remove("victory-glow");
+  }
 
   guessInput.disabled = false;
-  submitBtn.disabled = false;
+  setSubmitState();
+  closeSuggestions();
 
   const best = localStorage.getItem("op_best");
-  stats.textContent = `Attempts: ${attempts} • Best: ${best ? best : "—"}`;
+  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
 }
 
 
@@ -104,14 +225,15 @@ function bountyHint(answerBounty, guessBounty) {
   const a = Number(answerBounty);
   const g = Number(guessBounty);
   if (!Number.isFinite(a) || !Number.isFinite(g)) return "";
-  if (g < a) return " ↑";
-  if (g > a) return " ↓";
+  if (g < a) return " \u2191";
+  if (g > a) return " \u2193";
   return "";
 }
 
 function formatBounty(n) {
-  if (!n) return "—";
-  return "฿ " + n.toLocaleString();
+  const value = Number(n);
+  if (!Number.isFinite(value)) return "\u2014";
+  return "\u20BF " + value.toLocaleString();
 }
 const ARC_ORDER = [
   "Romance Dawn","Orange Town","Syrup Village","Baratie","Arlong Park","Loguetown",
@@ -132,69 +254,6 @@ function arcIndex(arc) {
   return ARC_ORDER.findIndex(x => normArc(x) === a);
 }
 
-const ARC_SAGA = {
-  // East Blue Saga
-  "Romance Dawn": "East Blue",
-  "Orange Town": "East Blue",
-  "Syrup Village": "East Blue",
-  "Baratie": "East Blue",
-  "Arlong Park": "East Blue",
-  "Loguetown": "East Blue",
-
-  // Alabasta Saga
-  "Reverse Mountain": "Alabasta",
-  "Whisky Peak": "Alabasta",
-  "Little Garden": "Alabasta",
-  "Drum Island": "Alabasta",
-  "Arabasta": "Alabasta",
-
-  // Sky Island Saga
-  "Jaya": "Sky Island",
-  "Skypiea": "Sky Island",
-
-  // Water 7 Saga
-  "Long Ring Long Land": "Water 7",
-  "Water 7": "Water 7",
-  "Enies Lobby": "Water 7",
-  "Post-Enies Lobby": "Water 7",
-
-  // Thriller Bark Saga
-  "Thriller Bark": "Thriller Bark",
-
-  // Summit War Saga
-  "Sabaody Archipelago": "Summit War",
-  "Amazon Lily": "Summit War",
-  "Impel Down": "Summit War",
-  "Marineford": "Summit War",
-  "Post-War": "Summit War",
-
-  // Fish-Man Island Saga
-  "Return to Sabaody": "Fish-Man Island",
-  "Fish-Man Island": "Fish-Man Island",
-
-  // Dressrosa Saga
-  "Punk Hazard": "Dressrosa",
-  "Dressrosa": "Dressrosa",
-
-  // Whole Cake Island Saga
-  "Zou": "Whole Cake Island",
-  "Whole Cake Island": "Whole Cake Island",
-  "Reverie": "Whole Cake Island",
-
-  // Wano / Final
-  "Wano Country": "Wano",
-  "Egghead": "Final"
-};
-
-const ARC_SAGA_NORM = {};
-for (const [k, v] of Object.entries(ARC_SAGA)) {
-  ARC_SAGA_NORM[normArc(k)] = v;
-}
-
-function sagaOfArc(arc) {
-  return ARC_SAGA_NORM[normArc(arc)] || "";
-}
-
 function compareArc(answerArc, guessArc) {
   const a = (answerArc || "").trim().toLowerCase();
   const g = (guessArc || "").trim().toLowerCase();
@@ -213,8 +272,8 @@ function arcHint(answerArc, guessArc) {
 
   if (ai === -1 || gi === -1) return "";
 
-  if (gi < ai) return "↑";
-  if (gi > ai) return "↓";
+  if (gi < ai) return "\u2191";
+  if (gi > ai) return "\u2193";
   return "";
 }
 
@@ -252,10 +311,10 @@ function renderRow(guess) {
  const cells = [
   { kind: "image", src: guess.image, cls: "tile imageCell" },
   { text: guess.name, cls: `tile ${results.name} nameCell` },
-  { text: guess.affiliation, cls: `tile ${results.affiliation}` },
-  { text: guess.devilFruit, cls: `tile ${results.devilFruit}` },
-  { text: (guess.haki || []).join(", ") || "None", cls: `tile ${results.haki}` },
-  { text: guess.origin, cls: `tile ${results.origin}` },
+  { text: guess.affiliation, cls: `tile ${results.affiliation} affiliationCell` },
+  { text: guess.devilFruit, cls: `tile ${results.devilFruit} devilFruitCell` },
+  { text: (guess.haki || []).join(", ") || "None", cls: `tile ${results.haki} hakiCell` },
+  { text: guess.origin, cls: `tile ${results.origin} originCell` },
 
   {
   kind: "bounty",
@@ -266,7 +325,7 @@ function renderRow(guess) {
 
 {
   kind: "arc",
-  value: (guess.firstArc || "—"),
+  value: (guess.firstArc || "\u2014"),
   arrow: arcHint(answer.firstArc, guess.firstArc),
   cls: `tile ${results.firstArc} arcCell`
 },
@@ -287,7 +346,7 @@ function renderRow(guess) {
     d.className = c.cls;
 
     d.innerHTML = `
-      <img class="gridAvatar" src="${c.src || ""}" alt="">
+      <img class="gridAvatar" src="${c.src || ""}" data-fallback="img/placeholder.png" alt="">
     `;
   }
   else if (c.kind === "bounty" || c.kind === "arc") {
@@ -307,20 +366,25 @@ function renderRow(guess) {
   r.appendChild(d);
 });
 
-
-
-
-
+  attachImageFallback(r);
 
   rows.prepend(r);
 
   // update stats every guess
 const bestBefore = localStorage.getItem("op_best");
-stats.textContent = `Attempts: ${attempts} • Best: ${bestBefore ? bestBefore : "—"}`;
+stats.textContent = `Attempts: ${attempts} \u2022 Best: ${bestBefore ? bestBefore : "\u2014"}`;
 
 if (results.name === "green") {
   isSolved = true;
   launchConfetti();
+  if (boardWrap) {
+    boardWrap.classList.add("victory-glow");
+    if (victoryFxTimer) clearTimeout(victoryFxTimer);
+    victoryFxTimer = setTimeout(() => {
+      boardWrap.classList.remove("victory-glow");
+      victoryFxTimer = null;
+    }, 1500);
+  }
 
   const best = bestBefore ? parseInt(bestBefore, 10) : null;
   if (best === null || attempts < best) {
@@ -328,9 +392,9 @@ if (results.name === "green") {
   }
 
   const bestAfter = localStorage.getItem("op_best");
-  stats.textContent = `Attempts: ${attempts} • Best: ${bestAfter ? bestAfter : "—"}`;
+  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${bestAfter ? bestAfter : "\u2014"}`;
 
-  msg.textContent = `✅ You got it: ${answer.name} (in ${attempts} guesses)`;
+  setStatus(`\u2705 You got it: ${answer.name} (in ${attempts} guesses)`, "success");
 
   guessInput.value = "";
   guessInput.disabled = true;
@@ -340,7 +404,7 @@ if (results.name === "green") {
   newBtn.scrollIntoView({ behavior: "smooth", block: "center" });
 
 } else {
-  msg.textContent = "Keep going 👀";
+  setStatus("Keep going \u{1F440}", "info");
 }
 
 }
@@ -348,62 +412,119 @@ if (results.name === "green") {
 function onGuess() {
   if (isSolved) return;
 
-  const guessName = guessInput.value;
-  const guess = findCharacterByName(guessName);
-
-  if (!guess) {
-    msg.textContent = "Pick a name from the list.";
+  const guessName = guessInput.value.trim();
+  if (!guessName) {
+    setStatus("Type a character name first.", "error");
     return;
   }
 
-  attempts++;  
+  if (guessedNames.has(normalize(guessName))) {
+    setStatus("You already guessed that character.", "error");
+    return;
+  }
+
+  const guess = findCharacterByName(guessName);
+
+  if (!guess) {
+    setStatus("Pick a name from the list.", "error");
+    return;
+  }
+
+  guessedNames.add(normalize(guess.name));
+  attempts++;
   renderRow(guess);
   guessInput.value = "";
+  setSubmitState();
+  closeSuggestions();
   guessInput.focus();
 }
 
 async function init() {
-  const res = await fetch("characters.json");
-  CHARACTERS = await res.json();
+  try {
+    const res = await fetch("characters.json");
+    if (!res.ok) {
+      throw new Error(`Failed to load characters.json (${res.status})`);
+    }
 
-  pickRandomAnswer();
+    CHARACTERS = await res.json();
+    if (!Array.isArray(CHARACTERS) || CHARACTERS.length === 0) {
+      throw new Error("characters.json did not contain a character list");
+    }
+
+    pickRandomAnswer();
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    setStatus(`Failed to load game data. ${detail}`, "error");
+    guessInput.disabled = true;
+    submitBtn.disabled = true;
+  }
 }
 
 
-function showSuggestions(items) {
+function setActiveSuggestion(index) {
+  if (!suggestionItems.length) {
+    activeSuggestionIndex = -1;
+    return;
+  }
+
+  activeSuggestionIndex = index;
+  suggestionItems.forEach((el, i) => {
+    const isActive = i === activeSuggestionIndex;
+    el.classList.toggle("active", isActive);
+    el.setAttribute("aria-selected", isActive ? "true" : "false");
+    if (isActive) {
+      el.scrollIntoView({ block: "nearest" });
+    }
+  });
+}
+
+function selectSuggestionByIndex(index) {
+  if (index < 0 || index >= suggestionItems.length) return;
+  const selected = suggestionItems[index];
+  guessInput.value = selected.dataset.name || "";
+  setSubmitState();
+  closeSuggestions();
+  guessInput.focus();
+}
+
+function showSuggestions(items, query = "") {
   if (!items.length) {
-    suggestionsEl.classList.add("hidden");
-    suggestionsEl.innerHTML = "";
+    closeSuggestions();
     return;
   }
 
   suggestionsEl.classList.remove("hidden");
+  suggestionsEl.setAttribute("role", "listbox");
 
   suggestionsEl.innerHTML = items.map(c => {
-    const meta = `${c.affiliation || ""}${c.origin ? " • " + c.origin : ""}`;
+    const meta = `${c.affiliation || ""}${c.origin ? " \u2022 " + c.origin : ""}`;
+    const faction = getFactionTag(c.affiliation);
 
-    // If no image, use a placeholder (optional)
     const imgSrc = c.image && c.image.trim() ? c.image : "img/placeholder.png";
+    const highlightedName = highlightMatch(c.name, query);
 
     return `
-      <div class="suggestionItem" data-name="${c.name}">
-        <img class="suggestionImg" src="${imgSrc}" alt="${c.name}">
+      <div class="suggestionItem" role="option" aria-selected="false" data-name="${escapeHtml(c.name)}">
+        <img class="suggestionImg" src="${escapeHtml(imgSrc)}" data-fallback="img/placeholder.png" alt="${escapeHtml(c.name)}">
         <div class="suggestionText">
-          <div class="suggestionName">${c.name}</div>
-          <div class="suggestionMeta">${meta}</div>
+          <div class="suggestionName">${highlightedName}</div>
+          <span class="factionBadge ${faction.className}">${faction.label}</span>
+          <div class="suggestionMeta">${escapeHtml(meta)}</div>
         </div>
       </div>
     `;
   }).join("");
 
+  attachImageFallback(suggestionsEl);
+  suggestionItems = Array.from(suggestionsEl.querySelectorAll(".suggestionItem"));
+  setActiveSuggestion(-1);
 
-
-  suggestionsEl.querySelectorAll(".suggestionItem").forEach(el => {
+  suggestionItems.forEach((el, i) => {
+    el.addEventListener("mouseenter", () => {
+      setActiveSuggestion(i);
+    });
     el.addEventListener("click", () => {
-      guessInput.value = el.dataset.name;
-      suggestionsEl.classList.add("hidden");
-      suggestionsEl.innerHTML = "";
-      guessInput.focus();
+      selectSuggestionByIndex(i);
     });
   });
 }
@@ -416,13 +537,13 @@ function updateSuggestions(query) {
     .filter(c => (c.name || "").toLowerCase().includes(q))
     .slice(0, 8);
 
-  showSuggestions(matches);
+  showSuggestions(matches, q);
 }
 
-function startNewGame(){
+function startNewGame() {
   attempts = 0;
   isSolved = false;
-  msg.textContent = "";
+  setStatus("");
   rows.innerHTML = "";
   guessInput.value = "";
   pickRandomAnswer();
@@ -430,20 +551,47 @@ function startNewGame(){
 
 
 guessInput.addEventListener("input", (e) => {
+  setStatus("");
+  setSubmitState();
   updateSuggestions(e.target.value);
 });
 
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".searchWrap")) {
-    suggestionsEl.classList.add("hidden");
-    suggestionsEl.innerHTML = "";
+    closeSuggestions();
   }
 });
 
 
-// press Enter → submit guess
+// Press Enter to submit guess or choose active suggestion.
 guessInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") onGuess();
+  if (e.key === "ArrowDown" && suggestionItems.length) {
+    e.preventDefault();
+    const next = activeSuggestionIndex < suggestionItems.length - 1 ? activeSuggestionIndex + 1 : 0;
+    setActiveSuggestion(next);
+    return;
+  }
+
+  if (e.key === "ArrowUp" && suggestionItems.length) {
+    e.preventDefault();
+    const next = activeSuggestionIndex > 0 ? activeSuggestionIndex - 1 : suggestionItems.length - 1;
+    setActiveSuggestion(next);
+    return;
+  }
+
+  if (e.key === "Escape") {
+    closeSuggestions();
+    return;
+  }
+
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (activeSuggestionIndex >= 0) {
+      selectSuggestionByIndex(activeSuggestionIndex);
+      return;
+    }
+    onGuess();
+  }
 });
 
 submitBtn.addEventListener("click", () => {
@@ -452,12 +600,7 @@ submitBtn.addEventListener("click", () => {
 
 // click New Game
 newBtn.addEventListener("click", () => {
-  attempts = 0;
-  isSolved = false;
-  msg.textContent = "";
-  rows.innerHTML = "";
-  guessInput.value = "";
-  pickRandomAnswer();
+  startNewGame();
 });
 
 
