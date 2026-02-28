@@ -166,16 +166,27 @@ function savePlayerStats() {
 function renderStatsDashboard() {
   if (!statsDashboardEl || !playerStats) return;
   const modeStats = getModeStats();
-  const winRate = playerStats.gamesPlayed ? Math.round((playerStats.wins / playerStats.gamesPlayed) * 100) : 0;
+  const isWrMode = activeModePreset === "hard" || activeModePreset === "extreme";
+
+  const hardStats = getModeStats("hard");
+  const extremeStats = getModeStats("extreme");
+  const rankedGames = hardStats.gamesPlayed + extremeStats.gamesPlayed;
+  const rankedWins = hardStats.wins + extremeStats.wins;
+  const rankedWinRate = rankedGames ? Math.round((rankedWins / rankedGames) * 100) : 0;
   const modeWinRate = modeStats.gamesPlayed ? Math.round((modeStats.wins / modeStats.gamesPlayed) * 100) : 0;
 
-  statsDashboardEl.innerHTML = [
+  const statTiles = [
     { label: "Games", value: playerStats.gamesPlayed },
-    { label: "Win Rate", value: `${winRate}%` },
     { label: "Streak", value: playerStats.currentStreak },
-    { label: `${getModeLabel()} WR`, value: `${modeWinRate}%` },
     { label: "Best Guess", value: modeStats.bestAttempts ?? "--" }
-  ].map((x) => `
+  ];
+
+  if (isWrMode) {
+    statTiles.splice(1, 0, { label: "Win Rate", value: `${rankedWinRate}%` });
+    statTiles.splice(3, 0, { label: `${getModeLabel()} WR`, value: `${modeWinRate}%` });
+  }
+
+  statsDashboardEl.innerHTML = statTiles.map((x) => `
     <div class="statTile">
       <div class="statLabel">${x.label}</div>
       <div class="statValue">${x.value}</div>
@@ -880,9 +891,6 @@ function onGuess() {
       submitBtn.disabled = true;
     }
     closeSuggestions();
-    setTimeout(() => {
-      startNewGame();
-    }, 1100);
     return;
   }
 

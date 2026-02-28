@@ -2,7 +2,7 @@
     {
         "name":  "Monkey D. Luffy",
         "affiliation":  "Straw Hat Pirates",
-        "devilFruit":  "Paramecia",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪",
@@ -224,7 +224,7 @@
     },
     {
         "name":  "Dracule Mihawk",
-        "affiliation":  "Former Warlord",
+        "affiliation":  "Cross Guild",
         "devilFruit":  "None",
         "haki":  [
                      "👀",
@@ -238,7 +238,7 @@
     },
     {
         "name":  "Crocodile",
-        "affiliation":  "Baroque Works",
+        "affiliation":  "Cross Guild",
         "devilFruit":  "Logia",
         "haki":  [
                      "👀",
@@ -324,7 +324,7 @@
     {
         "name":  "Sengoku",
         "affiliation":  "Marines",
-        "devilFruit":  "Mythical Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪"
@@ -351,7 +351,7 @@
     },
     {
         "name":  "Kuzan (Aokiji)",
-        "affiliation":  "Marines",
+        "affiliation":  "Blackbeard Pirates",
         "devilFruit":  "Logia",
         "haki":  [
                      "👀",
@@ -479,7 +479,7 @@
     {
         "name":  "Yamato",
         "affiliation":  "Samurai Alliance",
-        "devilFruit":  "Mythical Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪",
@@ -494,7 +494,7 @@
     {
         "name":  "Kozuki Momonosuke",
         "affiliation":  "Kozuki Clan",
-        "devilFruit":  "Mythical Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "👑"
@@ -574,7 +574,7 @@
     {
         "name":  "King",
         "affiliation":  "Beasts Pirates",
-        "devilFruit":  "Ancient Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "💪"
                  ],
@@ -587,7 +587,7 @@
     {
         "name":  "Queen",
         "affiliation":  "Beasts Pirates",
-        "devilFruit":  "Ancient Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪"
@@ -601,7 +601,7 @@
     {
         "name":  "Jack",
         "affiliation":  "Beasts Pirates",
-        "devilFruit":  "Ancient Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪"
@@ -615,7 +615,7 @@
     {
         "name":  "Ulti",
         "affiliation":  "Beasts Pirates",
-        "devilFruit":  "Ancient Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀",
                      "💪"
@@ -629,7 +629,7 @@
     {
         "name":  "Page One",
         "affiliation":  "Beasts Pirates",
-        "devilFruit":  "Ancient Zoan",
+        "devilFruit":  "Zoan",
         "haki":  [
                      "👀"
                  ],
