@@ -1,4 +1,4 @@
-let CHARACTERS = [];
+﻿let CHARACTERS = [];
 let answer = null;
 
 let attempts = 0;
@@ -10,14 +10,17 @@ const rows = document.getElementById("rows");
 const msg = document.getElementById("msg");
 const guessInput = document.getElementById("guessInput");
 const newBtn = document.getElementById("newBtn");
+const controlsEl = document.querySelector(".controls");
 const suggestionsEl = document.getElementById("suggestions");
 const boardWrap = document.querySelector(".boardWrap");
 const menuBtn = document.getElementById("menuBtn");
 const menuPanel = document.getElementById("menuPanel");
-const hardModeEl = document.getElementById("hardMode");
+const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
 const progressPillEl = document.getElementById("progressPill");
 const recentGuessesEl = document.getElementById("recentGuesses");
+const statsDashboardEl = document.getElementById("statsDashboard");
+const recapCardEl = document.getElementById("recapCard");
 const imageModal = document.getElementById("imageModal");
 const imageModalImg = document.getElementById("imageModalImg");
 const imageModalClose = document.getElementById("imageModalClose");
@@ -28,14 +31,251 @@ let activeSuggestionIndex = -1;
 let victoryFxTimer = null;
 let recentGuessNames = [];
 let isHardMode = false;
+let isDailyMode = false;
+let isMysteryTilesMode = false;
+let activeModePreset = "casual";
+let playerStats = null;
+let hiddenFieldKeys = [];
 
 const HARD_GUESS_LIMIT = 5;
+const PLAYER_STATS_KEY = "op_player_stats_v1";
+const MODE_PRESET_KEY = "op_mode_preset";
+const PLACEHOLDER_IMAGE = "img/placeholder.png";
+const MYSTERY_FIELD_POOL = ["affiliation", "haki", "firstArc", "gender"];
+
+playerStats = loadPlayerStats();
 
 
 
 
 function normalize(str) {
   return (str || "").trim().toLowerCase();
+}
+
+function getModeLabel(modeKey = activeModePreset) {
+  switch (modeKey) {
+    case "hard": return "Hard";
+    case "daily": return "Daily";
+    case "mystery_tiles": return "Mystery Tiles";
+    default: return "Casual";
+  }
+}
+
+function pickHiddenFields(count = 2) {
+  const pool = [...MYSTERY_FIELD_POOL];
+  const picked = [];
+  while (pool.length && picked.length < count) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picked.push(pool[idx]);
+    pool.splice(idx, 1);
+  }
+  return picked;
+}
+
+function updateHiddenHeaders() {
+  const header = document.querySelector(".headerRow");
+  if (!header) return;
+  const cells = Array.from(header.children);
+  const mapping = {
+    affiliation: { index: 2, label: "Affiliation" },
+    haki: { index: 4, label: "Haki" },
+    firstArc: { index: 7, label: "First Arc" },
+    gender: { index: 8, label: "Gender" }
+  };
+
+  Object.values(mapping).forEach(({ index, label }) => {
+    if (!cells[index]) return;
+    cells[index].textContent = label;
+    cells[index].classList.remove("hiddenHeader");
+  });
+
+  hiddenFieldKeys.forEach((key) => {
+    const cfg = mapping[key];
+    if (!cfg || !cells[cfg.index]) return;
+    cells[cfg.index].textContent = "Hidden";
+    cells[cfg.index].classList.add("hiddenHeader");
+  });
+}
+
+function getLocalDateKey() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function hashString(input) {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function createDefaultStats() {
+  return {
+    gamesPlayed: 0,
+    wins: 0,
+    currentStreak: 0,
+    bestStreak: 0,
+    totalAttempts: 0,
+    bestAttempts: null,
+    byMode: {}
+  };
+}
+
+function getModeStats(modeKey = activeModePreset) {
+  if (!playerStats.byMode[modeKey]) {
+    playerStats.byMode[modeKey] = {
+      gamesPlayed: 0,
+      wins: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      totalAttempts: 0,
+      bestAttempts: null
+    };
+  }
+  return playerStats.byMode[modeKey];
+}
+
+function loadPlayerStats() {
+  try {
+    const raw = localStorage.getItem(PLAYER_STATS_KEY);
+    if (!raw) return createDefaultStats();
+    const parsed = JSON.parse(raw);
+    return { ...createDefaultStats(), ...parsed, byMode: parsed.byMode || {} };
+  } catch {
+    return createDefaultStats();
+  }
+}
+
+function savePlayerStats() {
+  localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(playerStats));
+}
+
+function renderStatsDashboard() {
+  if (!statsDashboardEl || !playerStats) return;
+  const modeStats = getModeStats();
+  const winRate = playerStats.gamesPlayed ? Math.round((playerStats.wins / playerStats.gamesPlayed) * 100) : 0;
+  const modeWinRate = modeStats.gamesPlayed ? Math.round((modeStats.wins / modeStats.gamesPlayed) * 100) : 0;
+
+  statsDashboardEl.innerHTML = [
+    { label: "Games", value: playerStats.gamesPlayed },
+    { label: "Win Rate", value: `${winRate}%` },
+    { label: "Streak", value: playerStats.currentStreak },
+    { label: `${getModeLabel()} WR`, value: `${modeWinRate}%` },
+    { label: "Best Guess", value: modeStats.bestAttempts ?? "--" }
+  ].map((x) => `
+    <div class="statTile">
+      <div class="statLabel">${x.label}</div>
+      <div class="statValue">${x.value}</div>
+    </div>
+  `).join("");
+}
+
+function recordGameResult(didWin) {
+  playerStats.gamesPlayed += 1;
+  if (didWin) playerStats.wins += 1;
+  playerStats.totalAttempts += attempts;
+  if (didWin) {
+    playerStats.bestAttempts = playerStats.bestAttempts === null ? attempts : Math.min(playerStats.bestAttempts, attempts);
+  }
+
+  if (didWin) {
+    playerStats.currentStreak += 1;
+    playerStats.bestStreak = Math.max(playerStats.bestStreak, playerStats.currentStreak);
+  } else {
+    playerStats.currentStreak = 0;
+  }
+
+  const modeStats = getModeStats();
+  modeStats.gamesPlayed += 1;
+  if (didWin) modeStats.wins += 1;
+  modeStats.totalAttempts += attempts;
+  if (didWin) {
+    modeStats.currentStreak += 1;
+    modeStats.bestStreak = Math.max(modeStats.bestStreak, modeStats.currentStreak);
+    modeStats.bestAttempts = modeStats.bestAttempts === null ? attempts : Math.min(modeStats.bestAttempts, attempts);
+  } else {
+    modeStats.currentStreak = 0;
+  }
+
+  savePlayerStats();
+  renderStatsDashboard();
+}
+
+function getVisibleImageSrc(rawSrc) {
+  return rawSrc && String(rawSrc).trim() ? rawSrc : PLACEHOLDER_IMAGE;
+}
+
+function renderRecap(didWin) {
+  if (!recapCardEl || !answer) return;
+  const modeLabel = getModeLabel();
+  const dateSuffix = isDailyMode ? ` | ${getLocalDateKey()}` : "";
+  const recapTitle = didWin ? "Round Complete" : "Round Failed";
+  const recapSub = didWin
+    ? `Solved in ${attempts} guess${attempts === 1 ? "" : "es"}`
+    : `Answer was ${answer.name} after ${attempts} guesses`;
+
+  recapCardEl.classList.remove("hidden");
+  const replayMarkup = isDailyMode ? "" : `<button id="recapPlayAgain" class="recapBtn secondary" type="button">Play Again</button>`;
+
+  recapCardEl.innerHTML = `
+    <div class="recapTitle">${recapTitle} | ${modeLabel}${dateSuffix}</div>
+    <div class="recapBody">
+      <img class="recapImage" src="${escapeHtml(getVisibleImageSrc(answer.image))}" data-fallback="${PLACEHOLDER_IMAGE}" alt="${escapeHtml(answer.name)}">
+      <div class="recapMeta">
+        <div class="recapName">${escapeHtml(answer.name)}</div>
+        <div class="recapSub">${escapeHtml(recapSub)}</div>
+      </div>
+      ${replayMarkup}
+    </div>
+  `;
+
+  attachImageFallback(recapCardEl);
+  const recapBtn = document.getElementById("recapPlayAgain");
+  if (recapBtn) {
+    recapBtn.addEventListener("click", () => startNewGame());
+  }
+}
+
+function hideRecap() {
+  if (!recapCardEl) return;
+  recapCardEl.classList.add("hidden");
+  recapCardEl.innerHTML = "";
+}
+
+function applyModePreset(modeKey, restart = true) {
+  const safeMode = ["casual", "hard", "daily", "mystery_tiles"].includes(modeKey) ? modeKey : "casual";
+  activeModePreset = safeMode;
+  isHardMode = safeMode === "hard";
+  isDailyMode = safeMode === "daily";
+  isMysteryTilesMode = safeMode === "mystery_tiles";
+  hiddenFieldKeys = isMysteryTilesMode ? pickHiddenFields(2) : [];
+
+  localStorage.setItem(MODE_PRESET_KEY, safeMode);
+  if (modePresetEl) modePresetEl.value = safeMode;
+  if (newBtn) {
+    newBtn.classList.toggle("hidden", isDailyMode);
+  }
+  if (controlsEl) {
+    controlsEl.classList.toggle("dailyOnly", isDailyMode);
+  }
+  updateHiddenHeaders();
+
+  updateStats();
+  renderStatsDashboard();
+  if (restart) startNewGame();
+}
+
+function pickAnswerByCurrentMode() {
+  if (!CHARACTERS.length) return null;
+  if (isDailyMode) {
+    const idx = hashString(getLocalDateKey()) % CHARACTERS.length;
+    return CHARACTERS[idx];
+  }
+  return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
 }
 
 function setStatus(text, tone = "info") {
@@ -48,7 +288,7 @@ function setStatus(text, tone = "info") {
 
 function updateStats() {
   const best = localStorage.getItem("op_best");
-  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
   if (boardWrap) {
     boardWrap.classList.toggle("hardMode", isHardMode);
   }
@@ -56,6 +296,8 @@ function updateStats() {
     if (isHardMode) {
       const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
       progressPillEl.textContent = `Guess ${Math.min(attempts + 1, HARD_GUESS_LIMIT)} / ${HARD_GUESS_LIMIT} \u2022 ${remaining} left`;
+    } else if (isDailyMode) {
+      progressPillEl.textContent = `Daily ${getLocalDateKey()} \u2022 Guess ${attempts + 1}`;
     } else {
       progressPillEl.textContent = `Guess ${attempts + 1}`;
     }
@@ -207,9 +449,14 @@ function launchConfetti() {
 
 
 function pickRandomAnswer() {
-  answer = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+  if (isMysteryTilesMode) {
+    hiddenFieldKeys = pickHiddenFields(2);
+  }
+  updateHiddenHeaders();
+  answer = pickAnswerByCurrentMode();
   rows.innerHTML = "";
   setStatus("");
+  hideRecap();
   guessInput.value = "";
   guessInput.focus();
 
@@ -378,46 +625,51 @@ function renderRow(guess) {
     firstArc: compareArc(answer.firstArc, guess.firstArc),
     gender: compareExact(answer.gender, guess.gender)
   };
+  const hiddenSet = new Set(hiddenFieldKeys);
 
  const cells = [
-  { kind: "image", src: guess.image, cls: "tile imageCell" },
+  { kind: "image", src: getVisibleImageSrc(guess.image), cls: "tile imageCell", fieldKey: "image" },
   { text: guess.name, cls: `tile ${results.name} nameCell` },
-  { text: guess.affiliation, cls: `tile ${results.affiliation} affiliationCell` },
-  { text: guess.devilFruit, cls: `tile ${results.devilFruit} devilFruitCell` },
-  { text: (guess.haki || []).join(", ") || "None", cls: `tile ${results.haki} hakiCell` },
-  { text: guess.origin, cls: `tile ${results.origin} originCell` },
+  { text: guess.affiliation, cls: `tile ${results.affiliation} affiliationCell`, fieldKey: "affiliation" },
+  { text: guess.devilFruit, cls: `tile ${results.devilFruit} devilFruitCell`, fieldKey: "devilFruit" },
+  { text: (guess.haki || []).join(", ") || "None", cls: `tile ${results.haki} hakiCell`, fieldKey: "haki" },
+  { text: guess.origin, cls: `tile ${results.origin} originCell`, fieldKey: "origin" },
 
   {
   kind: "bounty",
   value: formatBounty(guess.bounty),
   arrow: bountyHint(answer.bounty, guess.bounty).trim(),
-  cls: `tile ${results.bounty} bountyCell`
+  cls: `tile ${results.bounty} bountyCell`,
+  fieldKey: "bounty"
 },
 
 {
   kind: "arc",
   value: (guess.firstArc || "\u2014"),
   arrow: arcHint(answer.firstArc, guess.firstArc),
-  cls: `tile ${results.firstArc} arcCell`
+  cls: `tile ${results.firstArc} arcCell`,
+  fieldKey: "firstArc"
 },
 
 
   {
     text: guess.gender,
-    cls: `tile ${results.gender}`
+    cls: `tile ${results.gender}`,
+    fieldKey: "gender"
   }
 ];
 
 
   cells.forEach((c, i) => {
   let d;
+  const isHiddenField = hiddenSet.has(c.fieldKey);
 
   if (c.kind === "image") {
     d = document.createElement("div");
     d.className = c.cls;
 
     d.innerHTML = `
-      <img class="gridAvatar" src="${c.src || ""}" data-fallback="img/placeholder.png" alt="">
+      <img class="gridAvatar" src="${c.src || PLACEHOLDER_IMAGE}" data-fallback="${PLACEHOLDER_IMAGE}" alt="">
     `;
     const img = d.querySelector(".gridAvatar");
     if (img) {
@@ -425,14 +677,20 @@ function renderRow(guess) {
     }
   }
   else if (c.kind === "bounty" || c.kind === "arc") {
-    d = makeCell(c.value, "", c.arrow);
-    d.className = c.cls;
-    d.setAttribute("data-tip", c.value);
+    if (isHiddenField) {
+      d = makeCell("Hidden", "grey", "");
+      d.className = "tile grey maskedCell";
+      d.removeAttribute("data-tip");
+    } else {
+      d = makeCell(c.value, "", c.arrow);
+      d.className = c.cls;
+      d.setAttribute("data-tip", c.value);
+    }
   }
   else {
     d = document.createElement("div");
-    d.className = c.cls;
-    d.innerHTML = c.text || "-";
+    d.className = isHiddenField ? "tile grey maskedCell" : c.cls;
+    d.innerHTML = isHiddenField ? "Hidden" : (c.text || "-");
   }
 
   d.classList.add("pop");
@@ -468,6 +726,8 @@ if (results.name === "green") {
   updateStats();
 
   setStatus(`You got it: ${answer.name} (in ${attempts} guesses)`, "success");
+  recordGameResult(true);
+  renderRecap(true);
 
   guessInput.value = "";
   guessInput.disabled = true;
@@ -513,6 +773,8 @@ function onGuess() {
 
   if (!isSolved && isHardMode && attempts >= HARD_GUESS_LIMIT) {
     setStatus(`Out of guesses. The answer was ${answer.name}.`, "error");
+    recordGameResult(false);
+    renderRecap(false);
     guessInput.value = "";
     guessInput.disabled = true;
     if (submitBtn) {
@@ -543,7 +805,8 @@ async function init() {
       throw new Error("characters.json did not contain a character list");
     }
 
-    pickRandomAnswer();
+    renderStatsDashboard();
+    startNewGame();
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     setStatus(`Failed to load game data. ${detail}`, "error");
@@ -595,7 +858,7 @@ function showSuggestions(items, query = "") {
     const meta = `${c.affiliation || ""}${c.origin ? " \u2022 " + c.origin : ""}`;
     const faction = getFactionTag(c.affiliation);
 
-    const imgSrc = c.image && c.image.trim() ? c.image : "img/placeholder.png";
+    const imgSrc = getVisibleImageSrc(c.image);
     const highlightedName = highlightMatch(c.name, query);
 
     return `
@@ -720,12 +983,9 @@ if (compactModeEl) {
   });
 }
 
-if (hardModeEl) {
-  hardModeEl.addEventListener("change", () => {
-    isHardMode = hardModeEl.checked;
-    localStorage.setItem("op_hard_mode", isHardMode ? "1" : "0");
-    startNewGame();
-    updateStats();
+if (modePresetEl) {
+  modePresetEl.addEventListener("change", () => {
+    applyModePreset(modePresetEl.value, true);
   });
 }
 
@@ -756,9 +1016,6 @@ if (compactModeEl) {
   document.body.classList.toggle("compactMode", savedCompact);
 }
 
-if (hardModeEl) {
-  const savedHard = localStorage.getItem("op_hard_mode") === "1";
-  hardModeEl.checked = savedHard;
-  isHardMode = savedHard;
-  updateStats();
-}
+applyModePreset(localStorage.getItem(MODE_PRESET_KEY) || "casual", false);
+
+

@@ -11,10 +11,13 @@
   <aside class="sideMenu" aria-label="Game options">
     <button id="menuBtn" class="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">Menu</button>
     <div id="menuPanel" class="menuPanel hidden">
-      <label class="menuToggle" for="hardMode">
-        <input id="hardMode" type="checkbox" />
-        Hard Mode (5 guesses)
-      </label>
+      <label class="menuFieldLabel" for="modePreset">Mode Preset</label>
+      <select id="modePreset" class="menuSelect">
+        <option value="casual">Casual</option>
+        <option value="hard">Hard (5 guesses)</option>
+        <option value="daily">Daily</option>
+        <option value="mystery_tiles">Mystery Tiles</option>
+      </select>
       <label class="menuToggle" for="compactMode">
         <input id="compactMode" type="checkbox" />
         Compact Tiles
@@ -50,9 +53,11 @@
     </div>
 
     <div id="stats" class="msg"></div>
+    <div id="statsDashboard" class="statsDashboard"></div>
     <div id="progressPill" class="progressPill"></div>
     <div id="recentGuesses" class="recentGuesses hidden" aria-live="polite"></div>
     <div id="msg" class="msg statusCard"></div>
+    <section id="recapCard" class="recapCard hidden" aria-live="polite"></section>
 
     <div class="boardWrap" role="region" aria-label="Guess board">
       <div class="headerRow">
