@@ -33,15 +33,21 @@ let recentGuessNames = [];
 let isHardMode = false;
 let isDailyMode = false;
 let isMysteryTilesMode = false;
+let isDuelMode = false;
 let activeModePreset = "casual";
 let playerStats = null;
 let hiddenFieldKeys = [];
+let duelCurrentTurn = 0;
+let duelAttempts = [0, 0];
+let duelOutcomeText = "";
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
 const MODE_PRESET_KEY = "op_mode_preset";
 const PLACEHOLDER_IMAGE = "img/placeholder.png";
 const MYSTERY_FIELD_POOL = ["affiliation", "haki", "firstArc", "gender"];
+const DUEL_GUESS_LIMIT = 6;
+const DUEL_PLAYERS = ["Player 1", "Player 2"];
 
 playerStats = loadPlayerStats();
 
@@ -57,6 +63,7 @@ function getModeLabel(modeKey = activeModePreset) {
     case "hard": return "Hard";
     case "daily": return "Daily";
     case "mystery_tiles": return "Mystery Tiles";
+    case "duel_1v1": return "1v1 Duel";
     default: return "Casual";
   }
 }
@@ -213,10 +220,14 @@ function renderRecap(didWin) {
   if (!recapCardEl || !answer) return;
   const modeLabel = getModeLabel();
   const dateSuffix = isDailyMode ? ` | ${getLocalDateKey()}` : "";
-  const recapTitle = didWin ? "Round Complete" : "Round Failed";
-  const recapSub = didWin
+  const recapTitle = isDuelMode
+    ? (duelOutcomeText || "Duel Complete")
+    : (didWin ? "Round Complete" : "Round Failed");
+  const recapSub = isDuelMode
+    ? `P1: ${duelAttempts[0]}/${DUEL_GUESS_LIMIT} • P2: ${duelAttempts[1]}/${DUEL_GUESS_LIMIT}`
+    : (didWin
     ? `Solved in ${attempts} guess${attempts === 1 ? "" : "es"}`
-    : `Answer was ${answer.name} after ${attempts} guesses`;
+    : `Answer was ${answer.name} after ${attempts} guesses`);
 
   recapCardEl.classList.remove("hidden");
   const replayMarkup = isDailyMode ? "" : `<button id="recapPlayAgain" class="recapBtn secondary" type="button">Play Again</button>`;
@@ -247,11 +258,17 @@ function hideRecap() {
 }
 
 function applyModePreset(modeKey, restart = true) {
-  const safeMode = ["casual", "hard", "daily", "mystery_tiles"].includes(modeKey) ? modeKey : "casual";
+  const safeMode = ["casual", "hard", "daily", "mystery_tiles", "duel_1v1"].includes(modeKey) ? modeKey : "casual";
   activeModePreset = safeMode;
   isHardMode = safeMode === "hard";
   isDailyMode = safeMode === "daily";
   isMysteryTilesMode = safeMode === "mystery_tiles";
+  isDuelMode = safeMode === "duel_1v1";
+  if (isDuelMode) {
+    duelAttempts = [0, 0];
+    duelCurrentTurn = 0;
+    duelOutcomeText = "";
+  }
   hiddenFieldKeys = isMysteryTilesMode ? pickHiddenFields(2) : [];
 
   localStorage.setItem(MODE_PRESET_KEY, safeMode);
@@ -288,12 +305,19 @@ function setStatus(text, tone = "info") {
 
 function updateStats() {
   const best = localStorage.getItem("op_best");
-  stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  if (isDuelMode) {
+    stats.textContent = `Mode: ${getModeLabel()} \u2022 P1: ${duelAttempts[0]}/${DUEL_GUESS_LIMIT} \u2022 P2: ${duelAttempts[1]}/${DUEL_GUESS_LIMIT}`;
+  } else {
+    stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  }
   if (boardWrap) {
     boardWrap.classList.toggle("hardMode", isHardMode);
   }
   if (progressPillEl) {
-    if (isHardMode) {
+    if (isDuelMode) {
+      const left = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
+      progressPillEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} turn \u2022 ${left} left`;
+    } else if (isHardMode) {
       const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
       progressPillEl.textContent = `Guess ${Math.min(attempts + 1, HARD_GUESS_LIMIT)} / ${HARD_GUESS_LIMIT} \u2022 ${remaining} left`;
     } else if (isDailyMode) {
@@ -449,6 +473,11 @@ function launchConfetti() {
 
 
 function pickRandomAnswer() {
+  if (isDuelMode) {
+    duelAttempts = [0, 0];
+    duelCurrentTurn = 0;
+    duelOutcomeText = "";
+  }
   if (isMysteryTilesMode) {
     hiddenFieldKeys = pickHiddenFields(2);
   }
@@ -478,6 +507,9 @@ function pickRandomAnswer() {
   renderRecentGuesses();
 
   updateStats();
+  if (isDuelMode) {
+    setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+  }
 }
 
 
@@ -610,10 +642,14 @@ function closeImageModal() {
 
 
 
-function renderRow(guess) {
+function renderRow(guess, options = {}) {
+  const { playerIndex = null, suppressEndHandling = false } = options;
   const r = document.createElement("div");
   r.className = "row";
   r.dataset.attempt = String(attempts);
+  if (playerIndex !== null) {
+    r.dataset.player = DUEL_PLAYERS[playerIndex];
+  }
 
   const results = {
     name: normalize(guess.name) === normalize(answer.name) ? "green" : "red",
@@ -706,7 +742,12 @@ function renderRow(guess) {
   const bestBefore = localStorage.getItem("op_best");
   updateStats();
 
-if (results.name === "green") {
+  const matched = results.name === "green";
+  if (suppressEndHandling) {
+    return matched;
+  }
+
+if (matched) {
   isSolved = true;
   launchConfetti();
   if (boardWrap) {
@@ -742,6 +783,7 @@ if (results.name === "green") {
   setStatus("Keep going", "info");
 }
 
+  return matched;
 }
 
 function onGuess() {
@@ -768,6 +810,59 @@ function onGuess() {
   guessedNames.add(normalize(guess.name));
   recentGuessNames = [guess.name, ...recentGuessNames.filter((n) => normalize(n) !== normalize(guess.name))].slice(0, 6);
   renderRecentGuesses();
+
+  if (isDuelMode) {
+    const player = duelCurrentTurn;
+    duelAttempts[player] += 1;
+    attempts++;
+    const didMatch = renderRow(guess, { playerIndex: player, suppressEndHandling: true });
+
+    if (didMatch) {
+      isSolved = true;
+      duelOutcomeText = `${DUEL_PLAYERS[player]} Wins`;
+      launchConfetti();
+      if (boardWrap) {
+        boardWrap.classList.add("victory-glow");
+        if (victoryFxTimer) clearTimeout(victoryFxTimer);
+        victoryFxTimer = setTimeout(() => {
+          boardWrap.classList.remove("victory-glow");
+          victoryFxTimer = null;
+        }, 1500);
+      }
+
+      setStatus(`${DUEL_PLAYERS[player]} guessed ${answer.name} first!`, "success");
+      recordGameResult(true);
+      renderRecap(true);
+      guessInput.value = "";
+      guessInput.disabled = true;
+      closeSuggestions();
+      return;
+    }
+
+    const p1Out = duelAttempts[0] >= DUEL_GUESS_LIMIT;
+    const p2Out = duelAttempts[1] >= DUEL_GUESS_LIMIT;
+    if (p1Out && p2Out) {
+      isSolved = true;
+      duelOutcomeText = "Draw";
+      setStatus(`No one found it in 6 turns each. Answer: ${answer.name}`, "error");
+      recordGameResult(false);
+      renderRecap(false);
+      guessInput.value = "";
+      guessInput.disabled = true;
+      closeSuggestions();
+      return;
+    }
+
+    const other = player === 0 ? 1 : 0;
+    duelCurrentTurn = duelAttempts[other] < DUEL_GUESS_LIMIT ? other : player;
+    setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+    updateStats();
+    guessInput.value = "";
+    closeSuggestions();
+    guessInput.focus();
+    return;
+  }
+
   attempts++;
   renderRow(guess);
 
