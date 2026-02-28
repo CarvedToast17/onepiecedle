@@ -12,11 +12,24 @@ const guessInput = document.getElementById("guessInput");
 const newBtn = document.getElementById("newBtn");
 const suggestionsEl = document.getElementById("suggestions");
 const boardWrap = document.querySelector(".boardWrap");
+const menuBtn = document.getElementById("menuBtn");
+const menuPanel = document.getElementById("menuPanel");
+const hardModeEl = document.getElementById("hardMode");
+const compactModeEl = document.getElementById("compactMode");
+const progressPillEl = document.getElementById("progressPill");
+const recentGuessesEl = document.getElementById("recentGuesses");
+const imageModal = document.getElementById("imageModal");
+const imageModalImg = document.getElementById("imageModalImg");
+const imageModalClose = document.getElementById("imageModalClose");
 
 let guessedNames = new Set();
 let suggestionItems = [];
 let activeSuggestionIndex = -1;
 let victoryFxTimer = null;
+let recentGuessNames = [];
+let isHardMode = false;
+
+const HARD_GUESS_LIMIT = 5;
 
 
 
@@ -26,15 +39,34 @@ function normalize(str) {
 }
 
 function setStatus(text, tone = "info") {
-  msg.textContent = text || "";
+  const prefix = tone === "success" ? "\u2705 " : tone === "error" ? "\u274c " : "\u2139\ufe0f ";
+  msg.textContent = text ? `${prefix}${text}` : "";
   msg.classList.remove("status-info", "status-error", "status-success");
   if (!text) return;
   msg.classList.add(`status-${tone}`);
 }
 
+function updateStats() {
+  const best = localStorage.getItem("op_best");
+  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  if (boardWrap) {
+    boardWrap.classList.toggle("hardMode", isHardMode);
+  }
+  if (progressPillEl) {
+    if (isHardMode) {
+      const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
+      progressPillEl.textContent = `Guess ${Math.min(attempts + 1, HARD_GUESS_LIMIT)} / ${HARD_GUESS_LIMIT} \u2022 ${remaining} left`;
+    } else {
+      progressPillEl.textContent = `Guess ${attempts + 1}`;
+    }
+  }
+}
+
 function setSubmitState() {
   const hasInput = guessInput.value.trim().length > 0;
-  submitBtn.disabled = isSolved || !hasInput;
+  if (submitBtn) {
+    submitBtn.disabled = isSolved || !hasInput;
+  }
 }
 
 function closeSuggestions() {
@@ -42,6 +74,29 @@ function closeSuggestions() {
   suggestionsEl.innerHTML = "";
   suggestionItems = [];
   activeSuggestionIndex = -1;
+}
+
+function renderRecentGuesses() {
+  if (!recentGuessesEl) return;
+
+  if (!recentGuessNames.length) {
+    recentGuessesEl.classList.add("hidden");
+    recentGuessesEl.innerHTML = "";
+    return;
+  }
+
+  recentGuessesEl.classList.remove("hidden");
+  recentGuessesEl.innerHTML = `<span class="recentLabel">Recent</span>${recentGuessNames
+    .map((name) => `<button class="recentChip" type="button" data-name="${escapeHtml(name)}">${escapeHtml(name)}</button>`)
+    .join("")}`;
+
+  recentGuessesEl.querySelectorAll(".recentChip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      guessInput.value = chip.dataset.name || "";
+      setSubmitState();
+      guessInput.focus();
+    });
+  });
 }
 
 function escapeHtml(value) {
@@ -161,6 +216,7 @@ function pickRandomAnswer() {
   attempts = 0;
   isSolved = false;
   guessedNames = new Set();
+  recentGuessNames = [];
   if (victoryFxTimer) {
     clearTimeout(victoryFxTimer);
     victoryFxTimer = null;
@@ -172,9 +228,9 @@ function pickRandomAnswer() {
   guessInput.disabled = false;
   setSubmitState();
   closeSuggestions();
+  renderRecentGuesses();
 
-  const best = localStorage.getItem("op_best");
-  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  updateStats();
 }
 
 
@@ -291,11 +347,26 @@ function makeCell(value, color, arrow = "") {
   return d;
 }
 
+function openImageModal(src) {
+  if (!imageModal || !imageModalImg || !src) return;
+  imageModalImg.src = src;
+  imageModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeImageModal() {
+  if (!imageModal || !imageModalImg) return;
+  imageModal.classList.add("hidden");
+  imageModalImg.src = "";
+  document.body.style.overflow = "";
+}
+
 
 
 function renderRow(guess) {
   const r = document.createElement("div");
   r.className = "row";
+  r.dataset.attempt = String(attempts);
 
   const results = {
     name: normalize(guess.name) === normalize(answer.name) ? "green" : "red",
@@ -348,6 +419,10 @@ function renderRow(guess) {
     d.innerHTML = `
       <img class="gridAvatar" src="${c.src || ""}" data-fallback="img/placeholder.png" alt="">
     `;
+    const img = d.querySelector(".gridAvatar");
+    if (img) {
+      img.addEventListener("click", () => openImageModal(img.getAttribute("src")));
+    }
   }
   else if (c.kind === "bounty" || c.kind === "arc") {
     d = makeCell(c.value, "", c.arrow);
@@ -370,9 +445,8 @@ function renderRow(guess) {
 
   rows.prepend(r);
 
-  // update stats every guess
-const bestBefore = localStorage.getItem("op_best");
-stats.textContent = `Attempts: ${attempts} \u2022 Best: ${bestBefore ? bestBefore : "\u2014"}`;
+  const bestBefore = localStorage.getItem("op_best");
+  updateStats();
 
 if (results.name === "green") {
   isSolved = true;
@@ -391,20 +465,21 @@ if (results.name === "green") {
     localStorage.setItem("op_best", String(attempts));
   }
 
-  const bestAfter = localStorage.getItem("op_best");
-  stats.textContent = `Attempts: ${attempts} \u2022 Best: ${bestAfter ? bestAfter : "\u2014"}`;
+  updateStats();
 
-  setStatus(`\u2705 You got it: ${answer.name} (in ${attempts} guesses)`, "success");
+  setStatus(`You got it: ${answer.name} (in ${attempts} guesses)`, "success");
 
   guessInput.value = "";
   guessInput.disabled = true;
-  submitBtn.disabled = true;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+  }
 
   newBtn.focus();
   newBtn.scrollIntoView({ behavior: "smooth", block: "center" });
 
 } else {
-  setStatus("Keep going \u{1F440}", "info");
+  setStatus("Keep going", "info");
 }
 
 }
@@ -431,8 +506,25 @@ function onGuess() {
   }
 
   guessedNames.add(normalize(guess.name));
+  recentGuessNames = [guess.name, ...recentGuessNames.filter((n) => normalize(n) !== normalize(guess.name))].slice(0, 6);
+  renderRecentGuesses();
   attempts++;
   renderRow(guess);
+
+  if (!isSolved && isHardMode && attempts >= HARD_GUESS_LIMIT) {
+    setStatus(`Out of guesses. The answer was ${answer.name}.`, "error");
+    guessInput.value = "";
+    guessInput.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+    closeSuggestions();
+    setTimeout(() => {
+      startNewGame();
+    }, 1100);
+    return;
+  }
+
   guessInput.value = "";
   setSubmitState();
   closeSuggestions();
@@ -456,7 +548,9 @@ async function init() {
     const detail = err instanceof Error ? err.message : String(err);
     setStatus(`Failed to load game data. ${detail}`, "error");
     guessInput.disabled = true;
-    submitBtn.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
   }
 }
 
@@ -482,6 +576,7 @@ function selectSuggestionByIndex(index) {
   if (index < 0 || index >= suggestionItems.length) return;
   const selected = suggestionItems[index];
   guessInput.value = selected.dataset.name || "";
+  onGuess();
   setSubmitState();
   closeSuggestions();
   guessInput.focus();
@@ -546,7 +641,10 @@ function startNewGame() {
   setStatus("");
   rows.innerHTML = "";
   guessInput.value = "";
+  recentGuessNames = [];
+  renderRecentGuesses();
   pickRandomAnswer();
+  updateStats();
 }
 
 
@@ -559,6 +657,15 @@ guessInput.addEventListener("input", (e) => {
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".searchWrap")) {
     closeSuggestions();
+  }
+
+  if (menuPanel && menuBtn && !e.target.closest(".sideMenu")) {
+    menuPanel.classList.add("hidden");
+    menuBtn.setAttribute("aria-expanded", "false");
+  }
+
+  if (imageModal && e.target === imageModal) {
+    closeImageModal();
   }
 });
 
@@ -580,6 +687,7 @@ guessInput.addEventListener("keydown", (e) => {
   }
 
   if (e.key === "Escape") {
+    closeImageModal();
     closeSuggestions();
     return;
   }
@@ -594,14 +702,63 @@ guessInput.addEventListener("keydown", (e) => {
   }
 });
 
-submitBtn.addEventListener("click", () => {
-  onGuess();
-});
+if (submitBtn) {
+  submitBtn.addEventListener("click", () => {
+    onGuess();
+  });
+}
 
 // click New Game
 newBtn.addEventListener("click", () => {
   startNewGame();
 });
 
+if (compactModeEl) {
+  compactModeEl.addEventListener("change", () => {
+    document.body.classList.toggle("compactMode", compactModeEl.checked);
+    localStorage.setItem("op_compact_mode", compactModeEl.checked ? "1" : "0");
+  });
+}
+
+if (hardModeEl) {
+  hardModeEl.addEventListener("change", () => {
+    isHardMode = hardModeEl.checked;
+    localStorage.setItem("op_hard_mode", isHardMode ? "1" : "0");
+    startNewGame();
+    updateStats();
+  });
+}
+
+if (menuBtn && menuPanel) {
+  menuBtn.addEventListener("click", () => {
+    const isOpen = !menuPanel.classList.contains("hidden");
+    menuPanel.classList.toggle("hidden", isOpen);
+    menuBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+  });
+}
+
+if (imageModalClose) {
+  imageModalClose.addEventListener("click", closeImageModal);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeImageModal();
+  }
+});
+
 
 init();
+
+if (compactModeEl) {
+  const savedCompact = localStorage.getItem("op_compact_mode") === "1";
+  compactModeEl.checked = savedCompact;
+  document.body.classList.toggle("compactMode", savedCompact);
+}
+
+if (hardModeEl) {
+  const savedHard = localStorage.getItem("op_hard_mode") === "1";
+  hardModeEl.checked = savedHard;
+  isHardMode = savedHard;
+  updateStats();
+}

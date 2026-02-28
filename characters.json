@@ -1,12 +1,12 @@
-[
+﻿[
     {
         "name":  "Monkey D. Luffy",
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "East Blue",
         "bounty":  3000000000,
@@ -19,9 +19,9 @@
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "East Blue",
         "bounty":  1111000000,
@@ -47,7 +47,7 @@
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation"
+                     "👀"
                  ],
         "origin":  "East Blue",
         "bounty":  500000000,
@@ -60,8 +60,8 @@
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "North Blue",
         "bounty":  1032000000,
@@ -126,8 +126,8 @@
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  1100000000,
@@ -140,9 +140,9 @@
         "affiliation":  "Red Hair Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "West Blue",
         "bounty":  4048900000,
@@ -155,8 +155,8 @@
         "affiliation":  "Blackbeard Pirates",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  3996000000,
@@ -182,9 +182,9 @@
         "affiliation":  "Whitebeard Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  5046000000,
@@ -197,9 +197,9 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  4611100000,
@@ -212,9 +212,9 @@
         "affiliation":  "Big Mom Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  4388000000,
@@ -227,8 +227,8 @@
         "affiliation":  "Former Warlord",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  3590000000,
@@ -241,8 +241,8 @@
         "affiliation":  "Baroque Works",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  1965000000,
@@ -255,9 +255,9 @@
         "affiliation":  "Donquixote Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "North Blue",
         "bounty":  340000000,
@@ -270,9 +270,9 @@
         "affiliation":  "Kuja Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Amazon Lily",
         "bounty":  1659000000,
@@ -285,7 +285,7 @@
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Armament"
+                     "💪"
                  ],
         "origin":  "South Blue",
         "bounty":  296000000,
@@ -311,9 +311,9 @@
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "East Blue",
         "bounty":  3000000000,
@@ -326,8 +326,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Mythical Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -340,8 +340,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "North Blue",
         "bounty":  5000000000,
@@ -354,8 +354,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "South Blue",
         "bounty":  0,
@@ -368,8 +368,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "North Blue",
         "bounty":  3000000000,
@@ -382,8 +382,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
@@ -396,8 +396,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
@@ -410,8 +410,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "East Blue",
         "bounty":  500000000,
@@ -424,8 +424,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  3000000000,
@@ -438,8 +438,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  3000000000,
@@ -452,8 +452,8 @@
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
@@ -466,9 +466,9 @@
         "affiliation":  "Kozuki Clan",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -481,9 +481,9 @@
         "affiliation":  "Samurai Alliance",
         "devilFruit":  "Mythical Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+                     "👀",
+                     "💪",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -496,8 +496,8 @@
         "affiliation":  "Kozuki Clan",
         "devilFruit":  "Mythical Zoan",
         "haki":  [
-                     "Observation",
-                     "Conqueror"
+                     "👀",
+                     "👑"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -510,8 +510,8 @@
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -550,7 +550,7 @@
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "None",
         "haki":  [
-                     "Armament"
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -563,7 +563,7 @@
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "None",
         "haki":  [
-                     "Armament"
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -576,7 +576,7 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Ancient Zoan",
         "haki":  [
-                     "Armament"
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  1390000000,
@@ -589,8 +589,8 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Ancient Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  1320000000,
@@ -603,8 +603,8 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Ancient Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  1000000000,
@@ -617,8 +617,8 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Ancient Zoan",
         "haki":  [
-                     "Observation",
-                     "Armament"
+                     "👀",
+                     "💪"
                  ],
         "origin":  "Grand Line",
         "bounty":  400000000,
@@ -631,7 +631,7 @@
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Ancient Zoan",
         "haki":  [
-                     "Observation"
+                     "👀"
                  ],
         "origin":  "Grand Line",
         "bounty":  290000000,

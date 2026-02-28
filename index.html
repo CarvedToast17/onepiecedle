@@ -8,9 +8,24 @@
 </head>
 <body>
   <div class="bg"></div>
+  <aside class="sideMenu" aria-label="Game options">
+    <button id="menuBtn" class="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">Menu</button>
+    <div id="menuPanel" class="menuPanel hidden">
+      <label class="menuToggle" for="hardMode">
+        <input id="hardMode" type="checkbox" />
+        Hard Mode (5 guesses)
+      </label>
+      <label class="menuToggle" for="compactMode">
+        <input id="compactMode" type="checkbox" />
+        Compact Tiles
+      </label>
+    </div>
+  </aside>
 
   <main class="container">
-    <h1 class="logo-title">OnePiecedle</h1>
+    <h1 class="logo-title">
+      <span class="logo-one">One</span><span class="logo-piece">Piece</span><span class="logo-dle">dle</span>
+    </h1>
     <p class="subtitle">Infinite</p>
 
     <div class="controls">
@@ -22,35 +37,45 @@
           type="text"
           placeholder="Search a character..."
           autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+          enterkeyhint="search"
         />
 
         <div id="suggestions" class="suggestions hidden"></div>
       </div>
 
-      <button id="submitBtn">Guess</button>
       <button id="newBtn" class="secondary">New Game</button>
     </div>
 
     <div id="stats" class="msg"></div>
-    <div id="msg" class="msg"></div>
+    <div id="progressPill" class="progressPill"></div>
+    <div id="recentGuesses" class="recentGuesses hidden" aria-live="polite"></div>
+    <div id="msg" class="msg statusCard"></div>
 
     <div class="boardWrap" role="region" aria-label="Guess board">
       <div class="headerRow">
-        <div></div>
-        <div>Name</div>
-        <div>Affiliation</div>
-        <div>Devil Fruit</div>
-        <div>Haki</div>
-        <div>Origin</div>
-        <div>Bounty</div>
-        <div>First Arc</div>
-        <div>Gender</div>
+        <div title="Character portrait">Character</div>
+        <div title="Character name">Name</div>
+        <div title="Crew, organization, or faction">Affiliation</div>
+        <div title="Devil fruit type or none">Devil Fruit</div>
+        <div title="Known haki types">Haki</div>
+        <div title="Sea or region of origin">Origin</div>
+        <div title="Current bounty">Bounty</div>
+        <div title="First major story arc">First Arc</div>
+        <div title="Gender">Gender</div>
       </div>
 
       <div id="rows"></div>
     </div>
     <div class="boardHint" aria-hidden="true">Swipe the board to view all columns</div>
   </main>
+
+  <div id="imageModal" class="imageModal hidden" role="dialog" aria-modal="true" aria-label="Character image preview">
+    <button id="imageModalClose" class="imageModalClose" aria-label="Close image preview">&times;</button>
+    <img id="imageModalImg" alt="Character preview" />
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="app.js"></script>
