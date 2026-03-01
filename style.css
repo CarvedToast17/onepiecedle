@@ -1306,6 +1306,13 @@ button:focus-visible,
   backdrop-filter: blur(2px);
 }
 
+body.duelGateOpen .container,
+body.duelGateOpen .sideMenu {
+  filter: blur(16px);
+  pointer-events: none;
+  user-select: none;
+}
+
 .duelPassCard {
   width: min(420px, 92vw);
   border-radius: 16px;

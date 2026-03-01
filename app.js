@@ -45,6 +45,8 @@ let duelCurrentTurn = 0;
 let duelAttempts = [0, 0];
 let duelOutcomeText = "";
 let duelAwaitingReady = false;
+let duelGuessedNames = [new Set(), new Set()];
+let duelHandoffTimer = null;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
@@ -361,10 +363,18 @@ function closeSuggestions() {
   activeSuggestionIndex = -1;
 }
 
+function clearDuelHandoffTimer() {
+  if (duelHandoffTimer) {
+    clearTimeout(duelHandoffTimer);
+    duelHandoffTimer = null;
+  }
+}
+
 function updateDuelRowPrivacy() {
   if (!rows) return;
   const activePlayer = DUEL_PLAYERS[duelCurrentTurn];
   const shouldMask = isDuelMode && !isSolved;
+  const hideAllRows = shouldMask && duelAwaitingReady;
   Array.from(rows.children).forEach((rowEl) => {
     if (!rowEl || !rowEl.dataset) return;
     if (!shouldMask) {
@@ -372,13 +382,14 @@ function updateDuelRowPrivacy() {
       return;
     }
     const owner = rowEl.dataset.player || "";
-    const hideRow = owner && owner !== activePlayer;
+    const hideRow = hideAllRows ? !!owner : (owner && owner !== activePlayer);
     rowEl.classList.toggle("duelHiddenRow", hideRow);
   });
 }
 
 function showDuelReadyGate() {
   if (!isDuelMode || isSolved) return;
+  clearDuelHandoffTimer();
   duelAwaitingReady = true;
   guessInput.value = "";
   guessInput.disabled = true;
@@ -393,14 +404,17 @@ function showDuelReadyGate() {
   if (duelPassModalEl) {
     duelPassModalEl.classList.remove("hidden");
   }
+  document.body.classList.add("duelGateOpen");
   setStatus(`Pass device to ${DUEL_PLAYERS[duelCurrentTurn]}.`, "info");
 }
 
 function hideDuelReadyGate() {
   duelAwaitingReady = false;
+  clearDuelHandoffTimer();
   if (duelPassModalEl) {
     duelPassModalEl.classList.add("hidden");
   }
+  document.body.classList.remove("duelGateOpen");
 }
 
 function startDuelTurn() {
@@ -554,6 +568,7 @@ function pickRandomAnswer() {
     duelCurrentTurn = 0;
     duelOutcomeText = "";
     duelAwaitingReady = false;
+    duelGuessedNames = [new Set(), new Set()];
   }
   if (isMysteryTilesMode) {
     hiddenFieldKeys = pickHiddenFields(2);
@@ -886,7 +901,14 @@ function onGuess() {
     return;
   }
 
-  if (guessedNames.has(normalize(guessName))) {
+  const normalizedGuess = normalize(guessName);
+  if (isDuelMode) {
+    const playerSet = duelGuessedNames[duelCurrentTurn];
+    if (playerSet.has(normalizedGuess)) {
+      setStatus("You already guessed that character.", "error");
+      return;
+    }
+  } else if (guessedNames.has(normalizedGuess)) {
     setStatus("You already guessed that character.", "error");
     return;
   }
@@ -898,7 +920,11 @@ function onGuess() {
     return;
   }
 
-  guessedNames.add(normalize(guess.name));
+  if (isDuelMode) {
+    duelGuessedNames[duelCurrentTurn].add(normalize(guess.name));
+  } else {
+    guessedNames.add(normalize(guess.name));
+  }
   recentGuessNames = [guess.name, ...recentGuessNames.filter((n) => normalize(n) !== normalize(guess.name))].slice(0, 6);
   renderRecentGuesses();
 
@@ -924,6 +950,7 @@ function onGuess() {
       setStatus(`${DUEL_PLAYERS[player]} guessed ${answer.name} first!`, "success");
       recordGameResult(true);
       renderRecap(true);
+      clearDuelHandoffTimer();
       guessInput.value = "";
       guessInput.disabled = true;
       hideDuelReadyGate();
@@ -940,6 +967,7 @@ function onGuess() {
       setStatus(`No one found it in 6 turns each. Answer: ${answer.name}`, "error");
       recordGameResult(false);
       renderRecap(false);
+      clearDuelHandoffTimer();
       guessInput.value = "";
       guessInput.disabled = true;
       hideDuelReadyGate();
@@ -954,9 +982,19 @@ function onGuess() {
     duelCurrentTurn = nextTurn;
     updateStats();
     guessInput.value = "";
+    guessInput.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
     closeSuggestions();
     if (switchedPlayer) {
-      showDuelReadyGate();
+      setStatus(`${DUEL_PLAYERS[player]} locked in. Pass device.`, "info");
+      clearDuelHandoffTimer();
+      duelHandoffTimer = setTimeout(() => {
+        duelHandoffTimer = null;
+        if (!isDuelMode || isSolved) return;
+        showDuelReadyGate();
+      }, 1000);
     } else {
       startDuelTurn();
     }
