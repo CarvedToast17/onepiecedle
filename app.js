@@ -478,12 +478,16 @@ function highlightMatch(text, query) {
   return safeText.replace(pattern, "<mark>$1</mark>");
 }
 
-function getFactionTag(affiliation) {
+function getFactionTag(affiliation, name = "") {
   const a = normalize(affiliation);
+  const n = normalize(name);
   if (!a) return { label: "Unknown", className: "faction-unknown" };
   if (a.includes("marine")) return { label: "Marines", className: "faction-marines" };
   if (a.includes("straw hat")) return { label: "Straw Hat", className: "faction-strawhat" };
   if (a.includes("cross guild") || a.includes("warlord")) return { label: "Warlord", className: "faction-warlord" };
+  if (a.includes("beasts pirates") && (n.includes("ulti") || n.includes("page one"))) {
+    return { label: "Pirate", className: "faction-pirate" };
+  }
   if (a.includes("yonko") || a.includes("beasts pirates") || a.includes("big mom pirates") || a.includes("red hair pirates") || a.includes("blackbeard pirates") || a.includes("whitebeard pirates")) {
     return { label: "Yonko", className: "faction-yonko" };
   }
@@ -1086,7 +1090,7 @@ function showSuggestions(items, query = "") {
 
   suggestionsEl.innerHTML = items.map(c => {
     const meta = `${c.affiliation || ""}${c.origin ? " \u2022 " + c.origin : ""}`;
-    const faction = getFactionTag(c.affiliation);
+    const faction = getFactionTag(c.affiliation, c.name);
 
     const imgSrc = getVisibleImageSrc(c.image);
     const highlightedName = highlightMatch(c.name, query);
