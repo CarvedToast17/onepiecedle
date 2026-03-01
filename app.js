@@ -24,6 +24,9 @@ const recapCardEl = document.getElementById("recapCard");
 const imageModal = document.getElementById("imageModal");
 const imageModalImg = document.getElementById("imageModalImg");
 const imageModalClose = document.getElementById("imageModalClose");
+const duelPassModalEl = document.getElementById("duelPassModal");
+const duelReadyTitleEl = document.getElementById("duelReadyTitle");
+const duelReadyBtn = document.getElementById("duelReadyBtn");
 
 let guessedNames = new Set();
 let suggestionItems = [];
@@ -41,6 +44,7 @@ let hiddenFieldKeys = [];
 let duelCurrentTurn = 0;
 let duelAttempts = [0, 0];
 let duelOutcomeText = "";
+let duelAwaitingReady = false;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
@@ -154,7 +158,7 @@ function loadPlayerStats() {
     if (!raw) return createDefaultStats();
     const parsed = JSON.parse(raw);
     return { ...createDefaultStats(), ...parsed, byMode: parsed.byMode || {} };
-  } catch {
+  } catch (err) {
     return createDefaultStats();
   }
 }
@@ -178,7 +182,7 @@ function renderStatsDashboard() {
   const statTiles = [
     { label: "Games", value: playerStats.gamesPlayed },
     { label: "Streak", value: playerStats.currentStreak },
-    { label: "Best Guess", value: modeStats.bestAttempts ?? "--" }
+    { label: "Best Guess", value: modeStats.bestAttempts == null ? "--" : modeStats.bestAttempts }
   ];
 
   if (isWrMode) {
@@ -346,7 +350,7 @@ function updateStats() {
 function setSubmitState() {
   const hasInput = guessInput.value.trim().length > 0;
   if (submitBtn) {
-    submitBtn.disabled = isSolved || !hasInput;
+    submitBtn.disabled = isSolved || duelAwaitingReady || !hasInput;
   }
 }
 
@@ -357,8 +361,65 @@ function closeSuggestions() {
   activeSuggestionIndex = -1;
 }
 
+function updateDuelRowPrivacy() {
+  if (!rows) return;
+  const activePlayer = DUEL_PLAYERS[duelCurrentTurn];
+  const shouldMask = isDuelMode && !isSolved;
+  Array.from(rows.children).forEach((rowEl) => {
+    if (!rowEl || !rowEl.dataset) return;
+    if (!shouldMask) {
+      rowEl.classList.remove("duelHiddenRow");
+      return;
+    }
+    const owner = rowEl.dataset.player || "";
+    const hideRow = owner && owner !== activePlayer;
+    rowEl.classList.toggle("duelHiddenRow", hideRow);
+  });
+}
+
+function showDuelReadyGate() {
+  if (!isDuelMode || isSolved) return;
+  duelAwaitingReady = true;
+  guessInput.value = "";
+  guessInput.disabled = true;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+  }
+  closeSuggestions();
+  updateDuelRowPrivacy();
+  if (duelReadyTitleEl) {
+    duelReadyTitleEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} ready?`;
+  }
+  if (duelPassModalEl) {
+    duelPassModalEl.classList.remove("hidden");
+  }
+  setStatus(`Pass device to ${DUEL_PLAYERS[duelCurrentTurn]}.`, "info");
+}
+
+function hideDuelReadyGate() {
+  duelAwaitingReady = false;
+  if (duelPassModalEl) {
+    duelPassModalEl.classList.add("hidden");
+  }
+}
+
+function startDuelTurn() {
+  hideDuelReadyGate();
+  if (!isDuelMode || isSolved) return;
+  guessInput.disabled = false;
+  setSubmitState();
+  updateDuelRowPrivacy();
+  setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+  guessInput.focus();
+}
+
 function renderRecentGuesses() {
   if (!recentGuessesEl) return;
+  if (isDuelMode) {
+    recentGuessesEl.classList.add("hidden");
+    recentGuessesEl.innerHTML = "";
+    return;
+  }
 
   if (!recentGuessNames.length) {
     recentGuessesEl.classList.add("hidden");
@@ -382,11 +443,11 @@ function renderRecentGuesses() {
 
 function escapeHtml(value) {
   return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function escapeRegExp(value) {
@@ -394,7 +455,7 @@ function escapeRegExp(value) {
 }
 
 function highlightMatch(text, query) {
-  const safeText = escapeHtml(text ?? "");
+  const safeText = escapeHtml(text == null ? "" : text);
   const q = (query || "").trim();
   if (!q) return safeText;
 
@@ -492,6 +553,7 @@ function pickRandomAnswer() {
     duelAttempts = [0, 0];
     duelCurrentTurn = 0;
     duelOutcomeText = "";
+    duelAwaitingReady = false;
   }
   if (isMysteryTilesMode) {
     hiddenFieldKeys = pickHiddenFields(2);
@@ -502,7 +564,9 @@ function pickRandomAnswer() {
   setStatus("");
   hideRecap();
   guessInput.value = "";
-  guessInput.focus();
+  if (!isDuelMode) {
+    guessInput.focus();
+  }
 
   attempts = 0;
   isSolved = false;
@@ -516,6 +580,7 @@ function pickRandomAnswer() {
     boardWrap.classList.remove("victory-glow");
   }
 
+  hideDuelReadyGate();
   guessInput.disabled = false;
   setSubmitState();
   closeSuggestions();
@@ -523,7 +588,9 @@ function pickRandomAnswer() {
 
   updateStats();
   if (isDuelMode) {
-    setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+    showDuelReadyGate();
+  } else {
+    updateDuelRowPrivacy();
   }
 }
 
@@ -627,15 +694,24 @@ function arcHint(answerArc, guessArc) {
   return "";
 }
 
+function safeScrollIntoView(el, options) {
+  if (!el || typeof el.scrollIntoView !== "function") return;
+  try {
+    el.scrollIntoView(options);
+  } catch (err) {
+    el.scrollIntoView();
+  }
+}
+
 function makeCell(value, color, arrow = "") {
   const d = document.createElement("div");
   d.className = `tile ${color || ""}`.trim();
 
-  const safeValue = value ?? "";
+  const safeValue = value == null ? "" : value;
 
   d.innerHTML = `
-    <span class="cellText" title="${String(safeValue).replaceAll('"', '&quot;')}">${safeValue}</span>
-    <span class="cellArrow">${arrow ?? ""}</span>
+    <span class="cellText" title="${String(safeValue).replace(/\"/g, '&quot;')}">${safeValue}</span>
+    <span class="cellArrow">${arrow == null ? "" : arrow}</span>
   `;
 
   return d;
@@ -792,7 +868,7 @@ if (matched) {
   }
 
   newBtn.focus();
-  newBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+  safeScrollIntoView(newBtn, { behavior: "smooth", block: "center" });
 
 } else {
   setStatus("Keep going", "info");
@@ -802,7 +878,7 @@ if (matched) {
 }
 
 function onGuess() {
-  if (isSolved) return;
+  if (isSolved || duelAwaitingReady) return;
 
   const guessName = guessInput.value.trim();
   if (!guessName) {
@@ -850,6 +926,8 @@ function onGuess() {
       renderRecap(true);
       guessInput.value = "";
       guessInput.disabled = true;
+      hideDuelReadyGate();
+      updateDuelRowPrivacy();
       closeSuggestions();
       return;
     }
@@ -864,17 +942,24 @@ function onGuess() {
       renderRecap(false);
       guessInput.value = "";
       guessInput.disabled = true;
+      hideDuelReadyGate();
+      updateDuelRowPrivacy();
       closeSuggestions();
       return;
     }
 
     const other = player === 0 ? 1 : 0;
-    duelCurrentTurn = duelAttempts[other] < DUEL_GUESS_LIMIT ? other : player;
-    setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+    const nextTurn = duelAttempts[other] < DUEL_GUESS_LIMIT ? other : player;
+    const switchedPlayer = nextTurn !== player;
+    duelCurrentTurn = nextTurn;
     updateStats();
     guessInput.value = "";
     closeSuggestions();
-    guessInput.focus();
+    if (switchedPlayer) {
+      showDuelReadyGate();
+    } else {
+      startDuelTurn();
+    }
     return;
   }
 
@@ -937,7 +1022,7 @@ function setActiveSuggestion(index) {
     el.classList.toggle("active", isActive);
     el.setAttribute("aria-selected", isActive ? "true" : "false");
     if (isActive) {
-      el.scrollIntoView({ block: "nearest" });
+      safeScrollIntoView(el, { block: "nearest" });
     }
   });
 }
@@ -995,6 +1080,10 @@ function showSuggestions(items, query = "") {
 }
 
 function updateSuggestions(query) {
+  if (duelAwaitingReady) {
+    closeSuggestions();
+    return;
+  }
   const q = (query || "").trim().toLowerCase();
   if (!q) return showSuggestions([]);
 
@@ -1114,6 +1203,12 @@ if (menuBtn && menuPanel) {
 
 if (imageModalClose) {
   imageModalClose.addEventListener("click", closeImageModal);
+}
+
+if (duelReadyBtn) {
+  duelReadyBtn.addEventListener("click", () => {
+    startDuelTurn();
+  });
 }
 
 document.addEventListener("keydown", (e) => {
