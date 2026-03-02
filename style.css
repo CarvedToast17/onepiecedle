@@ -1501,6 +1501,25 @@ body.compactMode .tile .cellArrow {
     grid-template-columns: minmax(0, 80%) minmax(0, 20%);
   }
 
+  .searchWrap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .suggestions {
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-top: 8px;
+    max-height: min(44vh, 320px);
+    transform: none;
+  }
+
+  .suggestions.hidden {
+    transform: none;
+  }
+
   .headerRow > *,
   .headers > * {
     font-size: 0.7rem;
