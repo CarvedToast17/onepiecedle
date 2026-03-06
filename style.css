@@ -918,6 +918,12 @@ button:focus-visible,
   line-height: 1.24;
 }
 
+.hakiCell .cellText {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
 .tile.imageCell {
   padding: 0;
 }

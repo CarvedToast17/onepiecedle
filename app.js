@@ -56,7 +56,7 @@ const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
 const MODE_PRESET_KEY = "op_mode_preset";
 const CURRENT_GAME_STATE_KEY = "op_current_game_v1";
-const PLACEHOLDER_IMAGE = "img/placeholder.png";
+const PLACEHOLDER_IMAGE = "img/placeholder.jpg";
 const MYSTERY_FIELD_POOL = ["affiliation", "haki", "firstArc", "gender"];
 const DUEL_GUESS_LIMIT = 6;
 const DUEL_PLAYERS = ["Player 1", "Player 2"];
@@ -777,7 +777,7 @@ function attachImageFallback(root = document) {
     img.dataset.fallbackBound = "1";
 
     img.addEventListener("error", () => {
-      const fallback = img.dataset.fallback || "img/placeholder.png";
+      const fallback = img.dataset.fallback || "img/placeholder.jpg";
       if (img.getAttribute("src") !== fallback) {
         img.setAttribute("src", fallback);
       } else {
@@ -786,7 +786,7 @@ function attachImageFallback(root = document) {
     });
 
     img.addEventListener("load", () => {
-      const fallback = img.dataset.fallback || "img/placeholder.png";
+      const fallback = img.dataset.fallback || "img/placeholder.jpg";
       if (img.getAttribute("src") === fallback) {
         img.classList.add("is-fallback");
       } else {
@@ -1035,10 +1035,38 @@ function compareExact(a, b) {
   return normalize(a) === normalize(b) ? "green" : "red";
 }
 
+const HAKI_CANONICAL_MAP = {
+  observation: "observation",
+  armament: "armament",
+  conqueror: "conqueror",
+  "\ud83d\udc40": "observation",
+  "\ud83d\udcaa": "armament",
+  "\ud83d\udc51": "conqueror"
+};
+
+const HAKI_DISPLAY_MAP = {
+  observation: "\ud83d\udc40",
+  armament: "\ud83d\udcaa",
+  conqueror: "\ud83d\udc51"
+};
+
+function canonicalizeHaki(value) {
+  const key = normalize(value);
+  return HAKI_CANONICAL_MAP[key] || key;
+}
+
+function formatHaki(hakiList) {
+  const items = (hakiList || [])
+    .map(canonicalizeHaki)
+    .filter(Boolean)
+    .map((item) => HAKI_DISPLAY_MAP[item] || item);
+  return items.join(", ") || "None";
+}
+
 
 function compareHaki(answerHaki, guessHaki) {
-  const a = new Set((answerHaki || []).map(normalize));
-  const g = new Set((guessHaki || []).map(normalize));
+  const a = new Set((answerHaki || []).map(canonicalizeHaki));
+  const g = new Set((guessHaki || []).map(canonicalizeHaki));
 
   // both have no haki -> exact match
   if (a.size === 0 && g.size === 0) return "green";
@@ -1199,7 +1227,7 @@ function renderRow(guess, options = {}) {
   { text: guess.name, cls: `tile ${results.name} nameCell` },
   { text: guess.affiliation, cls: `tile ${results.affiliation} affiliationCell`, fieldKey: "affiliation" },
   { text: guess.devilFruit, cls: `tile ${results.devilFruit} devilFruitCell`, fieldKey: "devilFruit" },
-  { text: (guess.haki || []).join(", ") || "None", cls: `tile ${results.haki} hakiCell`, fieldKey: "haki" },
+  { text: formatHaki(guess.haki), cls: `tile ${results.haki} hakiCell`, fieldKey: "haki" },
   { text: guess.origin, cls: `tile ${results.origin} originCell`, fieldKey: "origin" },
 
   {
@@ -1566,7 +1594,7 @@ function showSuggestions(items, query = "") {
 
     return `
       <div id="suggestion-option-${index}" class="suggestionItem" role="option" aria-selected="false" data-name="${escapeHtml(c.name)}">
-        <img class="suggestionImg" src="${escapeHtml(imgSrc)}" data-fallback="img/placeholder.png" alt="${escapeHtml(c.name)}">
+        <img class="suggestionImg" src="${escapeHtml(imgSrc)}" data-fallback="img/placeholder.jpg" alt="${escapeHtml(c.name)}">
         <div class="suggestionText">
           <div class="suggestionName">${highlightedName}</div>
           <span class="factionBadge ${faction.className}">${faction.label}</span>
