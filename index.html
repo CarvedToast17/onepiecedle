@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>OnePieceWho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Atmospheric background -->
+  <div class="ocean-bg">
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+    <div class="stars"></div>
+    <div class="fog"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-emblem">☠</div>
+        <div class="logo-text">
+          <div class="logo-main">
+            <span class="logo-one">One</span><span class="logo-piece">Piece</span><span class="logo-who">Who</span>
+          </div>
+          <span class="logo-sub">Guess the character</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="helpBtn" title="How to play" aria-label="How to play">?</button>
+        <button class="icon-btn" id="menuBtn" title="Settings" aria-label="Settings">⚙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Settings panel -->
+  <div id="settingsPanel" class="side-panel hidden" role="dialog" aria-modal="true" aria-label="Settings">
+    <div class="panel-header">
+      <span>Settings</span>
+      <button class="panel-close" id="settingsClose" aria-label="Close settings">×</button>
+    </div>
+    <div class="panel-body">
+      <label class="panel-label">Game Mode</label>
+      <div class="mode-grid" id="modeGrid">
+        <button class="mode-btn active" data-mode="casual">
+          <span class="mode-icon">∞</span>
+          <span class="mode-name">Casual</span>
+          <span class="mode-desc">Unlimited guesses</span>
+        </button>
+        <button class="mode-btn" data-mode="hard">
+          <span class="mode-icon">5</span>
+          <span class="mode-name">Hard</span>
+          <span class="mode-desc">5 guesses only</span>
+        </button>
+        <button class="mode-btn" data-mode="extreme">
+          <span class="mode-icon">⚡</span>
+          <span class="mode-name">Extreme</span>
+          <span class="mode-desc">5 guesses + hidden cols</span>
+        </button>
+        <button class="mode-btn" data-mode="daily">
+          <span class="mode-icon">📅</span>
+          <span class="mode-name">Daily</span>
+          <span class="mode-desc">Same for everyone</span>
+        </button>
+        <button class="mode-btn" data-mode="mystery">
+          <span class="mode-icon">👁</span>
+          <span class="mode-name">Mystery</span>
+          <span class="mode-desc">Hidden tile columns</span>
+        </button>
+        <button class="mode-btn" data-mode="duel">
+          <span class="mode-icon">⚔</span>
+          <span class="mode-name">1v1 Duel</span>
+          <span class="mode-desc">Pass & play</span>
+        </button>
+      </div>
+
+      <label class="panel-label" style="margin-top:20px">Display</label>
+      <label class="toggle-row">
+        <span>Compact tiles</span>
+        <input type="checkbox" id="compactToggle" />
+        <span class="toggle-switch"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Help panel -->
+  <div id="helpPanel" class="side-panel hidden" role="dialog" aria-modal="true" aria-label="How to play">
+    <div class="panel-header">
+      <span>How to Play</span>
+      <button class="panel-close" id="helpClose" aria-label="Close help">×</button>
+    </div>
+    <div class="panel-body help-body">
+      <p>Guess the secret One Piece character. Each guess reveals clues:</p>
+      <div class="legend">
+        <div class="legend-row"><span class="legend-tile green">✓</span><span>Exact match</span></div>
+        <div class="legend-row"><span class="legend-tile yellow">~</span><span>Partial match (Haki) or close range (Bounty)</span></div>
+        <div class="legend-row"><span class="legend-tile red">✗</span><span>No match</span></div>
+      </div>
+      <p>Arrow hints (↑↓) show if Bounty or First Arc is higher or lower than the answer.</p>
+      <div class="col-guide">
+        <div class="col-row"><strong>Affiliation</strong> — crew or faction</div>
+        <div class="col-row"><strong>Devil Fruit</strong> — type or None</div>
+        <div class="col-row"><strong>Haki</strong> — 👀 Observation · 💪 Armament · 👑 Conqueror's</div>
+        <div class="col-row"><strong>Origin</strong> — sea of birth</div>
+        <div class="col-row"><strong>Bounty</strong> — current bounty (₿)</div>
+        <div class="col-row"><strong>First Arc</strong> — debut story arc</div>
+        <div class="col-row"><strong>Gender</strong> — character gender</div>
+      </div>
+      <p class="hint-tip">💡 Press <kbd>N</kbd> after solving to start a new game.</p>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="overlay hidden"></div>
+
+  <!-- Main game -->
+  <main class="main">
+
+    <!-- Stats bar -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-chip" id="modeChip">Casual</div>
+      <div class="stat-chip" id="attemptChip">Guess 1</div>
+      <div class="stat-chip streak-chip" id="streakChip">🔥 0</div>
+    </div>
+
+    <!-- Stats dashboard -->
+    <div class="stats-dashboard hidden" id="statsDash"></div>
+
+    <!-- Search -->
+    <div class="search-zone" id="searchZone">
+      <div class="search-bar">
+        <span class="search-glyph">⚓</span>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search a character…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+          enterkeyhint="search"
+          aria-label="Search for a character"
+          aria-autocomplete="list"
+          aria-controls="suggestions"
+        />
+        <button class="new-game-btn" id="newBtn">New Game</button>
+      </div>
+      <div id="suggestions" class="suggestions hidden" role="listbox" aria-label="Character suggestions"></div>
+    </div>
+
+    <!-- Status message -->
+    <div id="statusMsg" class="status-msg" role="status" aria-live="polite"></div>
+
+    <!-- Recent guesses -->
+    <div id="recentBar" class="recent-bar hidden" aria-label="Recent guesses"></div>
+
+    <!-- Recap card -->
+    <div id="recapCard" class="recap-card hidden" aria-live="polite"></div>
+
+    <!-- Progress bar (hard mode) -->
+    <div id="progressBar" class="progress-bar hidden">
+      <div class="progress-fill" id="progressFill"></div>
+      <span class="progress-label" id="progressLabel"></span>
+    </div>
+
+    <!-- Board -->
+    <div class="board-container" id="boardContainer">
+      <div class="board-scroll" id="boardScroll">
+        <div class="board-inner">
+          <!-- Header row -->
+          <div class="board-header" id="boardHeader">
+            <div class="col-header col-avatar" title="Portrait">👤</div>
+            <div class="col-header" data-field="affiliation" title="Crew or faction">Affiliation</div>
+            <div class="col-header" data-field="devilFruit" title="Devil fruit type">Devil Fruit</div>
+            <div class="col-header" data-field="haki" title="Haki types">Haki</div>
+            <div class="col-header" data-field="origin" title="Sea of origin">Origin</div>
+            <div class="col-header" data-field="bounty" title="Bounty amount">Bounty</div>
+            <div class="col-header" data-field="firstArc" title="First story arc">First Arc</div>
+            <div class="col-header" data-field="gender" title="Gender">Gender</div>
+          </div>
+
+          <!-- Rows inserted here -->
+          <div id="boardRows"></div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-skull">☠</div>
+            <p>Search for a character to begin your hunt</p>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" id="scrollHint">← swipe to see all columns →</div>
+    </div>
+
+  </main>
+
+  <!-- Image lightbox -->
+  <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Character image">
+    <button id="lightboxClose" class="lightbox-close" aria-label="Close image">×</button>
+    <img id="lightboxImg" alt="Character" />
+  </div>
+
+  <!-- Duel pass gate -->
+  <div id="duelGate" class="duel-gate hidden" role="dialog" aria-modal="true" aria-labelledby="duelGateTitle">
+    <div class="duel-gate-card">
+      <div class="duel-skull">⚔</div>
+      <h2 id="duelGateTitle">Player 1 Ready?</h2>
+      <p id="duelGateMsg">Pass the device to continue.</p>
+      <button id="duelReadyBtn" class="btn-primary">Ready — Let's Go</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="game.js"></script>
+  <!-- Screen reader live regions -->
+  <div id="srAnnouncer" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></div>
+  <div id="srStatus" aria-live="assertive" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></div>
+</body>
+</html>
