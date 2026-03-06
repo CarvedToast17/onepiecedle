@@ -1074,18 +1074,20 @@ function compareHaki(answerHaki, guessHaki) {
   // one has haki and the other doesn't -> mismatch
   if (a.size === 0 || g.size === 0) return "red";
 
-  // count overlap
-  let shared = 0;
-  for (const x of g) if (a.has(x)) shared++;
-
   // exact same set -> green
-  if (shared === a.size && shared === g.size) return "green";
+  if (a.size === g.size) {
+    let exactMatch = true;
+    for (const x of g) {
+      if (!a.has(x)) {
+        exactMatch = false;
+        break;
+      }
+    }
+    if (exactMatch) return "green";
+  }
 
-  // some overlap -> yellow
-  if (shared > 0) return "yellow";
-
-  // no overlap -> red
-  return "red";
+  // both characters have haki, but the sets differ
+  return "yellow";
 }
 
 function compareBounty(a, b) {
