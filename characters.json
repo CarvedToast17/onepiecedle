@@ -4,30 +4,46 @@
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  3000000000,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
-        "image":  "img/strawhats/luffy.jpg"
+        "image":  "img/strawhats/luffy.jpg",
+        "aliases":  [
+                        "Luffy",
+                        "Straw Hat Luffy",
+                        "Mugiwara no Luffy",
+                        "Mugiwara",
+                        "Strawhat Luffy",
+                        "Monkey Luffy",
+                        "Lucy"
+                    ]
     },
     {
         "name":  "Roronoa Zoro",
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  1111000000,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
-        "image":  "img/strawhats/zoro.jpg"
+        "image":  "img/strawhats/zoro.jpg",
+        "aliases":  [
+                        "Zoro",
+                        "Pirate Hunter Zoro",
+                        "Zorojuro",
+                        "Roronoa",
+                        "Mr Bushido"
+                    ]
     },
     {
         "name":  "Nami",
@@ -40,34 +56,52 @@
         "bounty":  366000000,
         "firstArc":  "Orange Town",
         "gender":  "Female",
-        "image":  "img/strawhats/nami.jpg"
+        "image":  "img/strawhats/nami.jpg",
+        "aliases":  [
+                        "Cat Burglar Nami",
+                        "Nami-swan",
+                        "Navigator Nami"
+                    ]
     },
     {
         "name":  "Usopp",
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€"
+                     "Observation"
                  ],
         "origin":  "East Blue",
         "bounty":  500000000,
         "firstArc":  "Syrup Village",
         "gender":  "Male",
-        "image":  "img/strawhats/usopp.jpg"
+        "image":  "img/strawhats/usopp.jpg",
+        "aliases":  [
+                        "God Usopp",
+                        "Sogeking",
+                        "Usohachi",
+                        "Sniper King"
+                    ]
     },
     {
         "name":  "Sanji",
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  1032000000,
         "firstArc":  "Baratie",
         "gender":  "Male",
-        "image":  "img/strawhats/sanji.jpg"
+        "image":  "img/strawhats/sanji.jpg",
+        "aliases":  [
+                        "Black Leg Sanji",
+                        "Vinsmoke Sanji",
+                        "Sanji-kun",
+                        "Sangoro",
+                        "Mr Prince"
+                    ]
     },
     {
         "name":  "Tony Tony Chopper",
@@ -80,7 +114,14 @@
         "bounty":  1000,
         "firstArc":  "Drum Island",
         "gender":  "Male",
-        "image":  "img/strawhats/chopper.jpg"
+        "image":  "img/strawhats/chopper.jpg",
+        "aliases":  [
+                        "Chopper",
+                        "Cotton Candy Lover Chopper",
+                        "Tony Chopper",
+                        "Chopa-emon",
+                        "Emergency Food"
+                    ]
     },
     {
         "name":  "Nico Robin",
@@ -93,7 +134,15 @@
         "bounty":  930000000,
         "firstArc":  "Arabasta",
         "gender":  "Female",
-        "image":  "img/strawhats/robin.jpg"
+        "image":  "img/strawhats/robin.jpg",
+        "aliases":  [
+                        "Robin",
+                        "Devil Child",
+                        "Miss All Sunday",
+                        "Robin-chwan",
+                        "O-Robi",
+                        "Demon Child"
+                    ]
     },
     {
         "name":  "Franky",
@@ -106,7 +155,13 @@
         "bounty":  394000000,
         "firstArc":  "Water 7",
         "gender":  "Male",
-        "image":  "img/strawhats/franky.jpg"
+        "image":  "img/strawhats/franky.jpg",
+        "aliases":  [
+                        "Cyborg Franky",
+                        "Cutty Flam",
+                        "Franosuke",
+                        "Iron Man Franky"
+                    ]
     },
     {
         "name":  "Brook",
@@ -119,50 +174,73 @@
         "bounty":  383000000,
         "firstArc":  "Thriller Bark",
         "gender":  "Male",
-        "image":  "img/strawhats/brook.jpg"
+        "image":  "img/strawhats/brook.jpg",
+        "aliases":  [
+                        "Soul King Brook",
+                        "Bonekichi",
+                        "Humming Brook"
+                    ]
     },
     {
         "name":  "Jinbe",
         "affiliation":  "Straw Hat Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1100000000,
         "firstArc":  "Impel Down",
         "gender":  "Male",
-        "image":  "img/strawhats/jinbe.jpg"
+        "image":  "img/strawhats/jinbe.jpg",
+        "aliases":  [
+                        "Jimbei",
+                        "First Son of the Sea",
+                        "Knight of the Sea",
+                        "Boss Jinbe"
+                    ]
     },
     {
         "name":  "Shanks",
         "affiliation":  "Red Hair Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "West Blue",
         "bounty":  4048900000,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
-        "image":  "img/yonkos/shanks.jpg"
+        "image":  "img/yonkos/shanks.jpg",
+        "aliases":  [
+                        "Red-Haired Shanks",
+                        "Red Hair Shanks",
+                        "Yonko Shanks",
+                        "Red Hair"
+                    ]
     },
     {
         "name":  "Marshall D. Teach",
         "affiliation":  "Blackbeard Pirates",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  3996000000,
         "firstArc":  "Jaya",
         "gender":  "Male",
-        "image":  "img/yonkos/teach.jpg"
+        "image":  "img/yonkos/teach.jpg",
+        "aliases":  [
+                        "Blackbeard",
+                        "Teach",
+                        "Marshall Teach",
+                        "Kurohige"
+                    ]
     },
     {
         "name":  "Buggy",
@@ -175,123 +253,178 @@
         "bounty":  3189000000,
         "firstArc":  "Orange Town",
         "gender":  "Male",
-        "image":  "img/yonkos/buggy.jpg"
+        "image":  "img/yonkos/buggy.jpg",
+        "aliases":  [
+                        "Buggy the Clown",
+                        "Emperor Buggy",
+                        "Buggy-sama",
+                        "Star Clown"
+                    ]
     },
     {
         "name":  "Edward Newgate",
         "affiliation":  "Whitebeard Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  5046000000,
         "firstArc":  "Jaya",
         "gender":  "Male",
-        "image":  "img/yonkos/edward.jpg"
+        "image":  "img/yonkos/edward.jpg",
+        "aliases":  [
+                        "Whitebeard",
+                        "Pops",
+                        "Shirohige",
+                        "Oyaji"
+                    ]
     },
     {
         "name":  "Kaido",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  4611100000,
         "firstArc":  "Dressrosa",
         "gender":  "Male",
-        "image":  "img/yonkos/kaido.jpg"
+        "image":  "img/yonkos/kaido.jpg",
+        "aliases":  [
+                        "Kaido of the Beasts",
+                        "Hundred Beasts Kaido",
+                        "Kaidou",
+                        "Strongest Creature"
+                    ]
     },
     {
         "name":  "Charlotte Linlin",
         "affiliation":  "Big Mom Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  4388000000,
         "firstArc":  "Fish-Man Island",
         "gender":  "Female",
-        "image":  "img/yonkos/bigmom.jpg"
+        "image":  "img/yonkos/bigmom.jpg",
+        "aliases":  [
+                        "Big Mom",
+                        "Linlin",
+                        "Big Momma",
+                        "Olin"
+                    ]
     },
     {
         "name":  "Dracule Mihawk",
         "affiliation":  "Cross Guild",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  3590000000,
         "firstArc":  "Baratie",
         "gender":  "Male",
-        "image":  "img/warlords/mihawk.jpg"
+        "image":  "img/warlords/mihawk.jpg",
+        "aliases":  [
+                        "Mihawk",
+                        "Hawk Eyes",
+                        "Hawkeye Mihawk",
+                        "Hawk Eye Mihawk",
+                        "Greatest Swordsman"
+                    ]
     },
     {
         "name":  "Crocodile",
         "affiliation":  "Cross Guild",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1965000000,
         "firstArc":  "Arabasta",
         "gender":  "Male",
-        "image":  "img/warlords/crocodile.jpg"
+        "image":  "img/warlords/crocodile.jpg",
+        "aliases":  [
+                        "Sir Crocodile",
+                        "Mr. 0",
+                        "Croc",
+                        "Desert King"
+                    ]
     },
     {
         "name":  "Donquixote Doflamingo",
         "affiliation":  "Donquixote Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "North Blue",
         "bounty":  340000000,
         "firstArc":  "Jaya",
         "gender":  "Male",
-        "image":  "img/warlords/doflamingo.jpg"
+        "image":  "img/warlords/doflamingo.jpg",
+        "aliases":  [
+                        "Doflamingo",
+                        "Joker",
+                        "Doffy",
+                        "Heavenly Yaksha"
+                    ]
     },
     {
         "name":  "Boa Hancock",
         "affiliation":  "Kuja Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Amazon Lily",
         "bounty":  1659000000,
         "firstArc":  "Amazon Lily",
         "gender":  "Female",
-        "image":  "img/warlords/hancock.jpg"
+        "image":  "img/warlords/hancock.jpg",
+        "aliases":  [
+                        "Hancock",
+                        "Pirate Empress",
+                        "Snake Princess",
+                        "Hebihime"
+                    ]
     },
     {
         "name":  "Bartholomew Kuma",
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "South Blue",
         "bounty":  296000000,
         "firstArc":  "Thriller Bark",
         "gender":  "Male",
-        "image":  "img/warlords/kuma.jpg"
+        "image":  "img/warlords/kuma.jpg",
+        "aliases":  [
+                        "Kuma",
+                        "Tyrant Kuma",
+                        "Pacifista Kuma",
+                        "PX-0"
+                    ]
     },
     {
         "name":  "Gecko Moria",
@@ -304,220 +437,312 @@
         "bounty":  320000000,
         "firstArc":  "Thriller Bark",
         "gender":  "Male",
-        "image":  "img/warlords/moria.jpg"
+        "image":  "img/warlords/moria.jpg",
+        "aliases":  [
+                        "Moria",
+                        "Moriah"
+                    ]
     },
     {
         "name":  "Monkey D. Garp",
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  3000000000,
         "firstArc":  "Water 7",
         "gender":  "Male",
-        "image":  "img/marines/garp.jpg"
+        "image":  "img/marines/garp.jpg",
+        "aliases":  [
+                        "Garp",
+                        "Hero of the Marines",
+                        "Vice Admiral Garp",
+                        "Garp the Fist"
+                    ]
     },
     {
         "name":  "Sengoku",
         "affiliation":  "Marines",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Jaya",
         "gender":  "Male",
-        "image":  "img/marines/sengoku.jpg"
+        "image":  "img/marines/sengoku.jpg",
+        "aliases":  [
+                        "Sengoku the Buddha",
+                        "Buddha Sengoku",
+                        "Fleet Admiral Sengoku"
+                    ]
     },
     {
         "name":  "Sakazuki (Akainu)",
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  5000000000,
         "firstArc":  "Marineford",
         "gender":  "Male",
-        "image":  "img/marines/akainu.jpg"
+        "image":  "img/marines/akainu.jpg",
+        "aliases":  [
+                        "Sakazuki",
+                        "Akainu",
+                        "Red Dog",
+                        "Fleet Admiral Akainu",
+                        "Sakazuki Akainu"
+                    ]
     },
     {
         "name":  "Kuzan (Aokiji)",
         "affiliation":  "Blackbeard Pirates",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "South Blue",
         "bounty":  0,
         "firstArc":  "Long Ring Long Land",
         "gender":  "Male",
-        "image":  "img/marines/aokiji.jpg"
+        "image":  "img/marines/aokiji.jpg",
+        "aliases":  [
+                        "Kuzan",
+                        "Aokiji",
+                        "Blue Pheasant",
+                        "Kuzan Aokiji",
+                        "Former Admiral Aokiji"
+                    ]
     },
     {
         "name":  "Borsalino (Kizaru)",
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  3000000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
-        "image":  "img/marines/kizaru.jpg"
+        "image":  "img/marines/kizaru.jpg",
+        "aliases":  [
+                        "Borsalino",
+                        "Kizaru",
+                        "Yellow Monkey",
+                        "Borsalino Kizaru",
+                        "Uncle Kizaru"
+                    ]
     },
     {
         "name":  "Smoker",
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
         "firstArc":  "Loguetown",
         "gender":  "Male",
-        "image":  "img/marines/smoker.jpg"
+        "image":  "img/marines/smoker.jpg",
+        "aliases":  [
+                        "White Hunter Smoker",
+                        "Smoker the White Hunter",
+                        "Vice Admiral Smoker"
+                    ]
     },
     {
         "name":  "Tashigi",
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
         "firstArc":  "Loguetown",
         "gender":  "Female",
-        "image":  "img/marines/tashigi.jpg"
+        "image":  "img/marines/tashigi.jpg",
+        "aliases":  [
+                        "Captain Tashigi",
+                        "Tashigi-chan"
+                    ]
     },
     {
         "name":  "Koby",
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "East Blue",
         "bounty":  500000000,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
-        "image":  "img/marines/koby.jpg"
+        "image":  "img/marines/koby.jpg",
+        "aliases":  [
+                        "Coby",
+                        "Hero Koby",
+                        "Captain Koby",
+                        "Pink-Haired Koby"
+                    ]
     },
     {
         "name":  "Issho (Fujitora)",
         "affiliation":  "Marines",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  3000000000,
         "firstArc":  "Dressrosa",
         "gender":  "Male",
-        "image":  "img/marines/fujitora.jpg"
+        "image":  "img/marines/fujitora.jpg",
+        "aliases":  [
+                        "Issho",
+                        "Fujitora",
+                        "Purple Tiger",
+                        "Issho Fujitora",
+                        "Blind Swordsman"
+                    ]
     },
     {
         "name":  "Aramaki (Ryokugyu)",
         "affiliation":  "Marines",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  3000000000,
         "firstArc":  "Reverie",
         "gender":  "Male",
-        "image":  "img/marines/ryokugyu.jpg"
+        "image":  "img/marines/ryokugyu.jpg",
+        "aliases":  [
+                        "Aramaki",
+                        "Ryokugyu",
+                        "Green Bull",
+                        "Greenbull",
+                        "Ryokugyuu"
+                    ]
     },
     {
         "name":  "Helmeppo",
         "affiliation":  "Marines",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
-        "image":  "img/marines/helmeppo.jpg"
+        "image":  "img/marines/helmeppo.jpg",
+        "aliases":  [
+                        "Captain Helmeppo",
+                        "Lieutenant Commander Helmeppo"
+                    ]
     },
     {
         "name":  "Kozuki Oden",
         "affiliation":  "Kozuki Clan",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/oden.jpg"
+        "image":  "img/wano/oden.jpg",
+        "aliases":  [
+                        "Oden",
+                        "Oden-sama",
+                        "Kozuki Sukiyaki Son"
+                    ]
     },
     {
         "name":  "Yamato",
         "affiliation":  "Samurai Alliance",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Wano Country",
         "gender":  "Female",
-        "image":  "img/wano/yamato.jpg"
+        "image":  "img/wano/yamato.jpg",
+        "aliases":  [
+                        "Oni Princess Yamato",
+                        "Oni Princess",
+                        "Kozuki Oden Yamato"
+                    ]
     },
     {
         "name":  "Kozuki Momonosuke",
         "affiliation":  "Kozuki Clan",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Punk Hazard",
         "gender":  "Male",
-        "image":  "img/wano/momo.jpg"
+        "image":  "img/wano/momo.jpg",
+        "aliases":  [
+                        "Momonosuke",
+                        "Momo",
+                        "Momonosuke Kozuki",
+                        "Shogun Momo"
+                    ]
     },
     {
         "name":  "Kin\u0027emon",
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Punk Hazard",
         "gender":  "Male",
-        "image":  "img/wano/kinemon.jpg"
+        "image":  "img/wano/kinemon.jpg",
+        "aliases":  [
+                        "Kinemon",
+                        "Foxfire Kinemon",
+                        "Foxfire Kin\u0027emon",
+                        "Kin emon",
+                        "Foxfire"
+                    ]
     },
     {
         "name":  "Kanjuro",
@@ -530,7 +755,13 @@
         "bounty":  0,
         "firstArc":  "Punk Hazard",
         "gender":  "Male",
-        "image":  "img/wano/kanjuro.jpg"
+        "image":  "img/wano/kanjuro.jpg",
+        "aliases":  [
+                        "Kurozumi Kanjuro",
+                        "Evening Shower Kanjuro",
+                        "Kanjurou",
+                        "Traitor Kanjuro"
+                    ]
     },
     {
         "name":  "Raizo",
@@ -543,225 +774,285 @@
         "bounty":  0,
         "firstArc":  "Zou",
         "gender":  "Male",
-        "image":  "img/wano/raizo.jpg"
+        "image":  "img/wano/raizo.jpg",
+        "aliases":  [
+                        "Raizo of the Mist",
+                        "Raizou"
+                    ]
     },
     {
         "name":  "Denjiro",
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/denjiro.jpg"
+        "image":  "img/wano/denjiro.jpg",
+        "aliases":  [
+                        "Kyoshiro",
+                        "Denjirou",
+                        "Yakuza Boss Kyoshiro"
+                    ]
     },
     {
         "name":  "Ashura Doji",
         "affiliation":  "Akazaya Nine",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/ashura.jpg"
+        "image":  "img/wano/ashura.jpg",
+        "aliases":  [
+                        "Shutenmaru",
+                        "Ashura Douji",
+                        "Asura Doji"
+                    ]
     },
     {
         "name":  "King",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1390000000,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/king.jpg"
+        "image":  "img/wano/king.jpg",
+        "aliases":  [
+                        "King the Wildfire",
+                        "Wildfire",
+                        "King the Conflagration",
+                        "Alber"
+                    ]
     },
     {
         "name":  "Queen",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1320000000,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/queen.jpg"
+        "image":  "img/wano/queen.jpg",
+        "aliases":  [
+                        "Queen the Plague",
+                        "Plague",
+                        "Queen the Funk",
+                        "Plague Queen"
+                    ]
     },
     {
         "name":  "Jack",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1000000000,
         "firstArc":  "Zou",
         "gender":  "Male",
-        "image":  "img/wano/jack.jpg"
+        "image":  "img/wano/jack.jpg",
+        "aliases":  [
+                        "Jack the Drought",
+                        "Drought",
+                        "Jack the Mammoth",
+                        "Drought Jack"
+                    ]
     },
     {
         "name":  "Ulti",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  400000000,
         "firstArc":  "Wano Country",
         "gender":  "Female",
-        "image":  "img/wano/ulti.jpg"
+        "image":  "img/wano/ulti.jpg",
+        "aliases":  [
+                        "Ulti-chan",
+                        "Ulti sama"
+                    ]
     },
     {
         "name":  "Page One",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  290000000,
         "firstArc":  "Wano Country",
         "gender":  "Male",
-        "image":  "img/wano/pageone.jpg"
+        "image":  "img/wano/pageone.jpg",
+        "aliases":  [
+                        "Pageone",
+                        "Page-One",
+                        "Pay-tan",
+                        "Page 1"
+                    ]
     },
     {
         "name":  "Portgas D. Ace",
         "affiliation":  "Whitebeard Pirates",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "South Blue",
         "bounty":  550000000,
         "firstArc":  "Alabasta",
         "gender":  "Male",
+        "image":  "img/acetocarrot/ace.jpg",
         "aliases":  [
                         "Ace",
-                        "Fire Fist Ace"
-                    ],
-        "image":  "img/acetocarrot/ace.jpg"
+                        "Fire Fist Ace",
+                        "Portgas Ace",
+                        "Ace-san",
+                        "Hiken no Ace"
+                    ]
     },
     {
         "name":  "Sabo",
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Goa Kingdom",
         "bounty":  0,
         "firstArc":  "Dressrosa",
         "gender":  "Male",
+        "image":  "img/acetocarrot/sabo.jpg",
         "aliases":  [
-                        "Flame Emperor"
-                    ],
-        "image":  "img/acetocarrot/sabo.jpg"
+                        "Flame Emperor",
+                        "Sabo-kun",
+                        "Chief of Staff Sabo",
+                        "Flame-Flame Sabo"
+                    ]
     },
     {
         "name":  "Trafalgar D. Water Law",
         "affiliation":  "Heart Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  3000000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/law.jpg",
         "aliases":  [
                         "Law",
-                        "Surgeon of Death"
-                    ],
-        "image":  "img/acetocarrot/law.jpg"
+                        "Surgeon of Death",
+                        "Torao",
+                        "Trafalgar Law",
+                        "Tra-guy",
+                        "Surgeon Law"
+                    ]
     },
     {
         "name":  "Eustass Kid",
         "affiliation":  "Kid Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "South Blue",
         "bounty":  3000000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/kid.jpg",
         "aliases":  [
                         "Kid",
-                        "Captain Kid"
-                    ],
-        "image":  "img/acetocarrot/kid.jpg"
+                        "Captain Kid",
+                        "Eustass Captain Kid",
+                        "Captain Eustass Kid"
+                    ]
     },
     {
         "name":  "Killer",
         "affiliation":  "Kid Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "South Blue",
         "bounty":  200000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/killer.jpg",
         "aliases":  [
-                        "Massacre Soldier"
-                    ],
-        "image":  "img/acetocarrot/killer.jpg"
+                        "Massacre Soldier",
+                        "Kamazo",
+                        "Kamazo the Manslayer"
+                    ]
     },
     {
         "name":  "Rob Lucci",
         "affiliation":  "Cipher Pol",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Water 7",
         "gender":  "Male",
+        "image":  "img/acetocarrot/lucci.jpg",
         "aliases":  [
-                        "Lucci"
-                    ],
-        "image":  "img/acetocarrot/lucci.jpg"
+                        "Lucci",
+                        "CP0 Lucci",
+                        "Cipher Pol Lucci"
+                    ]
     },
     {
         "name":  "Enel",
         "affiliation":  "Skypiea",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€"
+                     "Observation"
                  ],
         "origin":  "Sky Island",
         "bounty":  0,
         "firstArc":  "Skypiea",
         "gender":  "Male",
+        "image":  "img/acetocarrot/enel.jpg",
         "aliases":  [
                         "Eneru",
-                        "God Enel"
-                    ],
-        "image":  "img/acetocarrot/enel.jpg"
+                        "God Enel",
+                        "God Eneru",
+                        "Kami Enel"
+                    ]
     },
     {
         "name":  "Arlong",
@@ -774,10 +1065,12 @@
         "bounty":  20000000,
         "firstArc":  "Arlong Park",
         "gender":  "Male",
+        "image":  "img/acetocarrot/arlong.jpg",
         "aliases":  [
-                        "Saw Arlong"
-                    ],
-        "image":  "img/acetocarrot/arlong.jpg"
+                        "Saw Arlong",
+                        "Arlong the Saw",
+                        "Sawtooth Arlong"
+                    ]
     },
     {
         "name":  "Nefertari Vivi",
@@ -790,101 +1083,116 @@
         "bounty":  0,
         "firstArc":  "Whisky Peak",
         "gender":  "Female",
+        "image":  "img/acetocarrot/vivi.jpg",
         "aliases":  [
                         "Vivi",
-                        "Miss Wednesday"
-                    ],
-        "image":  "img/acetocarrot/vivi.jpg"
+                        "Miss Wednesday",
+                        "Princess Vivi",
+                        "Princess Nefertari Vivi",
+                        "Vivi Nefertari"
+                    ]
     },
     {
         "name":  "Marco",
         "affiliation":  "Whitebeard Pirates",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  1374000000,
         "firstArc":  "Marineford",
         "gender":  "Male",
+        "image":  "img/acetocarrot/marco.jpg",
         "aliases":  [
-                        "Marco the Phoenix"
-                    ],
-        "image":  "img/acetocarrot/marco.jpg"
+                        "Marco the Phoenix",
+                        "Phoenix Marco",
+                        "Marco-san"
+                    ]
     },
     {
         "name":  "Gol D. Roger",
         "affiliation":  "Roger Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  5564800000,
         "firstArc":  "Loguetown",
         "gender":  "Male",
+        "image":  "img/acetocarrot/roger.jpg",
         "aliases":  [
                         "Gold Roger",
-                        "Roger"
-                    ],
-        "image":  "img/acetocarrot/roger.jpg"
+                        "Roger",
+                        "Pirate King",
+                        "Gold D Roger",
+                        "Gol Roger",
+                        "Roger the Pirate King"
+                    ]
     },
     {
         "name":  "Silvers Rayleigh",
         "affiliation":  "Roger Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/rayleigh.jpg",
         "aliases":  [
                         "Rayleigh",
-                        "Dark King Rayleigh"
-                    ],
-        "image":  "img/acetocarrot/rayleigh.jpg"
+                        "Dark King Rayleigh",
+                        "Dark King",
+                        "Ray-san"
+                    ]
     },
     {
         "name":  "Benn Beckman",
         "affiliation":  "Red Hair Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  0,
         "firstArc":  "Romance Dawn",
         "gender":  "Male",
+        "image":  "img/acetocarrot/beckman.jpg",
         "aliases":  [
-                        "Beckman"
-                    ],
-        "image":  "img/acetocarrot/beckman.jpg"
+                        "Beckman",
+                        "Ben Beckman",
+                        "Benn"
+                    ]
     },
     {
         "name":  "Charlotte Katakuri",
         "affiliation":  "Big Mom Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "Grand Line",
         "bounty":  1057000000,
         "firstArc":  "Whole Cake Island",
         "gender":  "Male",
+        "image":  "img/acetocarrot/katakuri.jpg",
         "aliases":  [
-                        "Katakuri"
-                    ],
-        "image":  "img/acetocarrot/katakuri.jpg"
+                        "Katakuri",
+                        "Dogtooth",
+                        "Charlotte Dogtooth"
+                    ]
     },
     {
         "name":  "Caesar Clown",
@@ -897,11 +1205,13 @@
         "bounty":  300000000,
         "firstArc":  "Punk Hazard",
         "gender":  "Male",
+        "image":  "img/acetocarrot/caesar.jpg",
         "aliases":  [
                         "Caesar",
-                        "Master Caesar"
-                    ],
-        "image":  "img/acetocarrot/caesar.jpg"
+                        "Master Caesar",
+                        "Gangster Gastino",
+                        "Gastino"
+                    ]
     },
     {
         "name":  "Perona",
@@ -914,10 +1224,12 @@
         "bounty":  0,
         "firstArc":  "Thriller Bark",
         "gender":  "Female",
+        "image":  "img/acetocarrot/perona.jpg",
         "aliases":  [
-                        "Ghost Princess"
-                    ],
-        "image":  "img/acetocarrot/perona.jpg"
+                        "Ghost Princess",
+                        "Negative Ghost Princess",
+                        "Horo Horo Princess"
+                    ]
     },
     {
         "name":  "Bartolomeo",
@@ -930,10 +1242,12 @@
         "bounty":  200000000,
         "firstArc":  "Dressrosa",
         "gender":  "Male",
+        "image":  "img/acetocarrot/bartolomeo.jpg",
         "aliases":  [
-                        "Barto"
-                    ],
-        "image":  "img/acetocarrot/bartolomeo.jpg"
+                        "Barto",
+                        "Cannibal Bartolomeo",
+                        "Bartolomeo the Cannibal"
+                    ]
     },
     {
         "name":  "Jewelry Bonney",
@@ -946,10 +1260,13 @@
         "bounty":  320000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Female",
+        "image":  "img/acetocarrot/bonney.jpg",
         "aliases":  [
-                        "Bonney"
-                    ],
-        "image":  "img/acetocarrot/bonney.jpg"
+                        "Bonney",
+                        "Big Eater",
+                        "Jewellery Bonney",
+                        "Big Eater Bonney"
+                    ]
     },
     {
         "name":  "Shirahoshi",
@@ -962,10 +1279,13 @@
         "bounty":  0,
         "firstArc":  "Fish-Man Island",
         "gender":  "Female",
+        "image":  "img/acetocarrot/shirahoshi.jpg",
         "aliases":  [
-                        "Princess Shirahoshi"
-                    ],
-        "image":  "img/acetocarrot/shirahoshi.jpg"
+                        "Princess Shirahoshi",
+                        "Mermaid Princess",
+                        "Poseidon",
+                        "Shirahoshi-hime"
+                    ]
     },
     {
         "name":  "Vinsmoke Reiju",
@@ -978,10 +1298,13 @@
         "bounty":  0,
         "firstArc":  "Whole Cake Island",
         "gender":  "Female",
+        "image":  "img/acetocarrot/reiju.jpg",
         "aliases":  [
-                        "Reiju"
-                    ],
-        "image":  "img/acetocarrot/reiju.jpg"
+                        "Reiju",
+                        "Poison Pink",
+                        "Reiju Vinsmoke",
+                        "Poison Pink Reiju"
+                    ]
     },
     {
         "name":  "Bentham",
@@ -994,61 +1317,69 @@
         "bounty":  32000000,
         "firstArc":  "Arabasta",
         "gender":  "Male",
+        "image":  "img/acetocarrot/bentham.jpg",
         "aliases":  [
                         "Bon Clay",
-                        "Mr. 2 Bon Clay"
-                    ],
-        "image":  "img/acetocarrot/bentham.jpg"
+                        "Mr. 2 Bon Clay",
+                        "Bentham of the Wild",
+                        "Mr 2"
+                    ]
     },
     {
         "name":  "Cavendish",
         "affiliation":  "Beautiful Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  330000000,
         "firstArc":  "Dressrosa",
         "gender":  "Male",
+        "image":  "img/acetocarrot/cavendish.jpg",
         "aliases":  [
-                        "Cabbage"
-                    ],
-        "image":  "img/acetocarrot/cavendish.jpg"
+                        "Cabbage",
+                        "White Horse",
+                        "Cavendish of the White Horse",
+                        "Hakuba"
+                    ]
     },
     {
         "name":  "Edward Weevil",
         "affiliation":  "Self-Proclaimed Whitebeard Pirates",
         "devilFruit":  "None",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  480000000,
         "firstArc":  "Reverie",
         "gender":  "Male",
+        "image":  "img/acetocarrot/weevil.jpg",
         "aliases":  [
-                        "Weevil"
-                    ],
-        "image":  "img/acetocarrot/weevil.jpg"
+                        "Weevil",
+                        "Whitebeard Jr",
+                        "Whitebeard Junior"
+                    ]
     },
     {
         "name":  "Shiryu",
         "affiliation":  "Blackbeard Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Impel Down",
         "gender":  "Male",
+        "image":  "img/acetocarrot/shiryu.jpg",
         "aliases":  [
-                        "Shiryu of the Rain"
-                    ],
-        "image":  "img/acetocarrot/shiryu.jpg"
+                        "Shiryu of the Rain",
+                        "Shiliew"
+                    ]
     },
     {
         "name":  "Magellan",
@@ -1061,10 +1392,12 @@
         "bounty":  0,
         "firstArc":  "Impel Down",
         "gender":  "Male",
+        "image":  "img/acetocarrot/magellan.jpg",
         "aliases":  [
-                        "Chief Warden Magellan"
-                    ],
-        "image":  "img/acetocarrot/magellan.jpg"
+                        "Chief Warden Magellan",
+                        "Vice Warden Magellan",
+                        "Venom Man"
+                    ]
     },
     {
         "name":  "Emporio Ivankov",
@@ -1077,28 +1410,33 @@
         "bounty":  0,
         "firstArc":  "Impel Down",
         "gender":  "Male",
+        "image":  "img/acetocarrot/ivankov.jpg",
         "aliases":  [
                         "Ivankov",
-                        "Iva"
-                    ],
-        "image":  "img/acetocarrot/ivankov.jpg"
+                        "Iva",
+                        "Miracle Person",
+                        "Emporio Iva",
+                        "Okama King"
+                    ]
     },
     {
         "name":  "Karasu",
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Logia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  0,
         "firstArc":  "Reverie",
         "gender":  "Male",
+        "image":  "img/acetocarrot/karasu.jpg",
         "aliases":  [
-                        "Crow Man"
-                    ],
-        "image":  "img/acetocarrot/karasu.jpg"
+                        "Crow Man",
+                        "Crow-Crow Karasu",
+                        "North Army Commander"
+                    ]
     },
     {
         "name":  "Koala",
@@ -1111,28 +1449,33 @@
         "bounty":  0,
         "firstArc":  "Dressrosa",
         "gender":  "Female",
+        "image":  "img/acetocarrot/koala.jpg",
         "aliases":  [
-
-                    ],
-        "image":  "img/acetocarrot/koala.jpg"
+                        "Revolutionary Koala",
+                        "Koala-chan",
+                        "Fish-Man Karate Koala"
+                    ]
     },
     {
         "name":  "Monkey D. Dragon",
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Unknown",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª",
-                     "ðŸ‘‘"
+                     "Observation",
+                     "Armament",
+                     "Conqueror"
                  ],
         "origin":  "East Blue",
         "bounty":  0,
         "firstArc":  "Loguetown",
         "gender":  "Male",
+        "image":  "img/acetocarrot/dragon.jpg",
         "aliases":  [
-                        "Dragon"
-                    ],
-        "image":  "img/acetocarrot/dragon.jpg"
+                        "Dragon",
+                        "Worlds Worst Criminal",
+                        "Dragon the Revolutionary",
+                        "Most Wanted Man"
+                    ]
     },
     {
         "name":  "Bepo",
@@ -1145,94 +1488,107 @@
         "bounty":  500,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/bepo.jpg",
         "aliases":  [
-
-                    ],
-        "image":  "img/acetocarrot/bepo.jpg"
+                        "Polar Bear Mink",
+                        "Navigator Bepo",
+                        "Sulong Bepo"
+                    ]
     },
     {
         "name":  "X Drake",
         "affiliation":  "Marines",
         "devilFruit":  "Zoan",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "North Blue",
         "bounty":  222000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/drake.jpg",
         "aliases":  [
                         "Drake",
-                        "Diez Drake"
-                    ],
-        "image":  "img/acetocarrot/drake.jpg"
+                        "Diez Drake",
+                        "Drake X"
+                    ]
     },
     {
         "name":  "Basil Hawkins",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€"
+                     "Observation"
                  ],
         "origin":  "North Blue",
         "bounty":  320000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/hawkins.jpg",
         "aliases":  [
-                        "Hawkins"
-                    ],
-        "image":  "img/acetocarrot/hawkins.jpg"
+                        "Hawkins",
+                        "Magician",
+                        "Magician Hawkins",
+                        "Basil Hawkin"
+                    ]
     },
     {
         "name":  "Urouge",
         "affiliation":  "Fallen Monk Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ’ª"
+                     "Armament"
                  ],
         "origin":  "Sky Island",
         "bounty":  108000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/urouge.jpg",
         "aliases":  [
-                        "Mad Monk Urouge"
-                    ],
-        "image":  "img/acetocarrot/urouge.jpg"
+                        "Mad Monk Urouge",
+                        "Mad Monk",
+                        "Fallen Monk"
+                    ]
     },
     {
         "name":  "Capone Bege",
         "affiliation":  "Fire Tank Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€",
-                     "ðŸ’ª"
+                     "Observation",
+                     "Armament"
                  ],
         "origin":  "West Blue",
         "bounty":  350000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/bege.jpg",
         "aliases":  [
                         "Bege",
-                        "Gang Bege"
-                    ],
-        "image":  "img/acetocarrot/bege.jpg"
+                        "Gang Bege",
+                        "Capone Gang Bege",
+                        "Gangster Bege"
+                    ]
     },
     {
         "name":  "Scratchmen Apoo",
         "affiliation":  "Beasts Pirates",
         "devilFruit":  "Paramecia",
         "haki":  [
-                     "ðŸ‘€"
+                     "Observation"
                  ],
         "origin":  "Grand Line",
         "bounty":  350000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
+        "image":  "img/acetocarrot/apoo.jpg",
         "aliases":  [
-                        "Apoo"
-                    ],
-        "image":  "img/acetocarrot/apoo.jpg"
+                        "Apoo",
+                        "Roar of the Sea",
+                        "Scratchman Apoo",
+                        "Apoo Scratchmen"
+                    ]
     },
     {
         "name":  "Vinsmoke Judge",
@@ -1245,10 +1601,13 @@
         "bounty":  0,
         "firstArc":  "Whole Cake Island",
         "gender":  "Male",
+        "image":  "img/acetocarrot/judge.jpg",
         "aliases":  [
-                        "Judge"
-                    ],
-        "image":  "img/acetocarrot/judge.jpg"
+                        "Judge",
+                        "Garuda",
+                        "Judge Vinsmoke",
+                        "Garuda Judge"
+                    ]
     },
     {
         "name":  "Pudding",
@@ -1261,10 +1620,12 @@
         "bounty":  0,
         "firstArc":  "Whole Cake Island",
         "gender":  "Female",
+        "image":  "img/acetocarrot/pudding.jpg",
         "aliases":  [
-                        "Charlotte Pudding"
-                    ],
-        "image":  "img/acetocarrot/pudding.jpg"
+                        "Charlotte Pudding",
+                        "Purin",
+                        "Three-Eyed Pudding"
+                    ]
     },
     {
         "name":  "Carrot",
@@ -1277,9 +1638,12 @@
         "bounty":  0,
         "firstArc":  "Zou",
         "gender":  "Female",
+        "image":  "img/acetocarrot/carrot.jpg",
         "aliases":  [
-
-                    ],
-        "image":  "img/acetocarrot/carrot.jpg"
+                        "Musketeer Carrot",
+                        "Rabbit Mink",
+                        "Sulong Carrot",
+                        "Carrot-chan"
+                    ]
     }
 ]
