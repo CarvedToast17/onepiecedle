@@ -27,12 +27,15 @@ const imageModalClose = document.getElementById("imageModalClose");
 const duelPassModalEl = document.getElementById("duelPassModal");
 const duelReadyTitleEl = document.getElementById("duelReadyTitle");
 const duelReadyBtn = document.getElementById("duelReadyBtn");
+const srAnnouncer = document.getElementById("srAnnouncer");
+const srStatusAnnouncer = document.getElementById("srStatusAnnouncer");
 
 let guessedNames = new Set();
 let suggestionItems = [];
 let activeSuggestionIndex = -1;
 let victoryFxTimer = null;
 let recentGuessNames = [];
+let guessHistory = [];
 let isHardMode = false;
 let isDailyMode = false;
 let isMysteryTilesMode = false;
@@ -47,14 +50,26 @@ let duelOutcomeText = "";
 let duelAwaitingReady = false;
 let duelGuessedNames = [new Set(), new Set()];
 let duelHandoffTimer = null;
+let lastFocusEl = null;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
 const MODE_PRESET_KEY = "op_mode_preset";
+const CURRENT_GAME_STATE_KEY = "op_current_game_v1";
 const PLACEHOLDER_IMAGE = "img/placeholder.png";
 const MYSTERY_FIELD_POOL = ["affiliation", "haki", "firstArc", "gender"];
 const DUEL_GUESS_LIMIT = 6;
 const DUEL_PLAYERS = ["Player 1", "Player 2"];
+const SEARCH_SUGGESTION_LIMIT = 8;
+const MATCH_NO_RESULT_HINT_LEN = 2;
+const PRECISE_MATCH_THRESHOLD = 920;
+const FUZZY_MATCH_THRESHOLD = 700;
+const MIN_SUGGESTION_SCORE = 240;
+const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const SEARCH_DEBOUNCE_MS = 90;
+
+let characterSearchIndex = [];
+let suggestionDebounceTimer = null;
 
 playerStats = loadPlayerStats();
 
@@ -63,6 +78,10 @@ playerStats = loadPlayerStats();
 
 function normalize(str) {
   return (str || "").trim().toLowerCase();
+}
+
+function normalizeForSearch(str) {
+  return normalize(str).replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function getModeLabel(modeKey = activeModePreset) {
@@ -74,6 +93,244 @@ function getModeLabel(modeKey = activeModePreset) {
     case "duel_1v1": return "1v1 Duel";
     default: return "Casual";
   }
+}
+
+function rememberFocus() {
+  if (document.activeElement instanceof HTMLElement) {
+    lastFocusEl = document.activeElement;
+  }
+}
+
+function restoreFocus(fallbackEl = null) {
+  const target = (lastFocusEl && document.contains(lastFocusEl)) ? lastFocusEl : fallbackEl;
+  if (target && typeof target.focus === "function") {
+    target.focus();
+  }
+  lastFocusEl = null;
+}
+
+function announceLive(regionEl, text) {
+  if (!regionEl) return;
+  regionEl.textContent = "";
+  if (!text) return;
+  window.setTimeout(() => {
+    regionEl.textContent = text;
+  }, 20);
+}
+
+function getFocusableElements(container) {
+  if (!container) return [];
+  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR))
+    .filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true");
+}
+
+function trapFocus(container, event) {
+  if (!container || event.key !== "Tab") return false;
+
+  const focusable = getFocusableElements(container);
+  if (!focusable.length) {
+    event.preventDefault();
+    if (typeof container.focus === "function") container.focus();
+    return true;
+  }
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+    return true;
+  }
+
+  if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+    return true;
+  }
+
+  return false;
+}
+
+function getOpenTrapContainer() {
+  if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) return duelPassModalEl;
+  if (imageModal && !imageModal.classList.contains("hidden")) return imageModal;
+  if (menuPanel && !menuPanel.classList.contains("hidden")) return menuPanel;
+  return null;
+}
+
+function openMenuPanel() {
+  if (!menuPanel || !menuBtn) return;
+  rememberFocus();
+  menuPanel.classList.remove("hidden");
+  menuPanel.setAttribute("aria-hidden", "false");
+  menuBtn.setAttribute("aria-expanded", "true");
+  const focusable = getFocusableElements(menuPanel);
+  (focusable[0] || menuPanel).focus();
+}
+
+function closeMenuPanel(restore = false) {
+  if (!menuPanel || !menuBtn) return;
+  menuPanel.classList.add("hidden");
+  menuPanel.setAttribute("aria-hidden", "true");
+  menuBtn.setAttribute("aria-expanded", "false");
+  if (restore) restoreFocus(menuBtn);
+}
+
+function getMatchLabel(color) {
+  switch (color) {
+    case "green": return "Match";
+    case "yellow": return "Partial";
+    case "red": return "Miss";
+    default: return "";
+  }
+}
+
+function announceRowResult(guess, results, playerIndex = null) {
+  const exact = Object.values(results).filter((value) => value === "green").length;
+  const partial = Object.values(results).filter((value) => value === "yellow").length;
+  const missed = Object.values(results).filter((value) => value === "red").length;
+  const lead = playerIndex !== null ? `${DUEL_PLAYERS[playerIndex]} guessed ${guess.name}. ` : `${guess.name}. `;
+  announceLive(srAnnouncer, `${lead}${exact} exact, ${partial} partial, ${missed} missed fields.`);
+}
+
+function getCharacterByExactName(name) {
+  const n = normalize(name);
+  return CHARACTERS.find((c) => normalize(c.name) === n) || null;
+}
+
+function clearCurrentGameState() {
+  localStorage.removeItem(CURRENT_GAME_STATE_KEY);
+}
+
+function persistCurrentGameState() {
+  if (!answer || isSolved) {
+    clearCurrentGameState();
+    return;
+  }
+
+  const payload = {
+    version: 1,
+    mode: activeModePreset,
+    answerName: answer.name,
+    attempts,
+    hiddenFieldKeys,
+    recentGuessNames,
+    guessHistory,
+    duelCurrentTurn,
+    duelAttempts,
+    duelOutcomeText,
+    duelAwaitingReady,
+    dailyDateKey: isDailyMode ? getLocalDateKey() : null
+  };
+
+  localStorage.setItem(CURRENT_GAME_STATE_KEY, JSON.stringify(payload));
+}
+
+function restoreCurrentGameState() {
+  const raw = localStorage.getItem(CURRENT_GAME_STATE_KEY);
+  if (!raw) return false;
+
+  try {
+    const saved = JSON.parse(raw);
+    if (!saved || saved.version !== 1 || !saved.answerName) {
+      clearCurrentGameState();
+      return false;
+    }
+
+    if (saved.mode && saved.mode !== activeModePreset) {
+      applyModePreset(saved.mode, false);
+    }
+
+    if (saved.mode === "daily" && saved.dailyDateKey !== getLocalDateKey()) {
+      clearCurrentGameState();
+      return false;
+    }
+
+    const savedAnswer = getCharacterByExactName(saved.answerName);
+    if (!savedAnswer) {
+      clearCurrentGameState();
+      return false;
+    }
+
+    answer = savedAnswer;
+    hiddenFieldKeys = Array.isArray(saved.hiddenFieldKeys) ? saved.hiddenFieldKeys : [];
+    attempts = 0;
+    isSolved = false;
+    guessedNames = new Set();
+    duelGuessedNames = [new Set(), new Set()];
+    guessHistory = Array.isArray(saved.guessHistory) ? saved.guessHistory : [];
+    recentGuessNames = Array.isArray(saved.recentGuessNames) ? saved.recentGuessNames : [];
+    duelAttempts = Array.isArray(saved.duelAttempts) ? saved.duelAttempts : [0, 0];
+    duelCurrentTurn = Number.isInteger(saved.duelCurrentTurn) ? saved.duelCurrentTurn : 0;
+    duelOutcomeText = typeof saved.duelOutcomeText === "string" ? saved.duelOutcomeText : "";
+    duelAwaitingReady = !!saved.duelAwaitingReady;
+
+    rows.innerHTML = "";
+    hideRecap();
+    closeSuggestions();
+    guessInput.value = "";
+    guessInput.disabled = false;
+    updateHiddenHeaders();
+
+    guessHistory.forEach((entry, index) => {
+      const guess = getCharacterByExactName(entry.name);
+      if (!guess) return;
+
+      attempts = index + 1;
+      if (isDuelMode && Number.isInteger(entry.playerIndex)) {
+        duelGuessedNames[entry.playerIndex].add(normalize(guess.name));
+      } else {
+        guessedNames.add(normalize(guess.name));
+      }
+
+      renderRow(guess, {
+        playerIndex: Number.isInteger(entry.playerIndex) ? entry.playerIndex : null,
+        suppressEndHandling: true,
+        suppressAnnouncement: true
+      });
+    });
+
+    attempts = Number.isInteger(saved.attempts) ? saved.attempts : guessHistory.length;
+    renderRecentGuesses();
+    updateStats();
+    setSubmitState();
+
+    if (isDuelMode) {
+      if (duelAwaitingReady) {
+        showDuelReadyGate();
+      } else {
+        updateDuelRowPrivacy();
+        setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+      }
+    } else {
+      updateDuelRowPrivacy();
+      setStatus("Restored your unfinished round.", "info");
+      guessInput.focus();
+    }
+
+    return true;
+  } catch (err) {
+    clearCurrentGameState();
+    return false;
+  }
+}
+
+function scheduleSuggestionsUpdate(query) {
+  if (suggestionDebounceTimer) {
+    clearTimeout(suggestionDebounceTimer);
+    suggestionDebounceTimer = null;
+  }
+
+  if (!(query || "").trim()) {
+    updateSuggestions("");
+    return;
+  }
+
+  suggestionDebounceTimer = setTimeout(() => {
+    suggestionDebounceTimer = null;
+    updateSuggestions(query);
+  }, SEARCH_DEBOUNCE_MS);
 }
 
 function pickHiddenFields(count = 2) {
@@ -319,8 +576,12 @@ function setStatus(text, tone = "info") {
   const prefix = tone === "success" ? "\u2705 " : tone === "error" ? "\u274c " : "\u2139\ufe0f ";
   msg.textContent = text ? `${prefix}${text}` : "";
   msg.classList.remove("status-info", "status-error", "status-success");
-  if (!text) return;
+  if (!text) {
+    announceLive(srStatusAnnouncer, "");
+    return;
+  }
   msg.classList.add(`status-${tone}`);
+  announceLive(tone === "error" ? srStatusAnnouncer : srAnnouncer, text);
 }
 
 function updateStats() {
@@ -357,10 +618,16 @@ function setSubmitState() {
 }
 
 function closeSuggestions() {
+  if (suggestionDebounceTimer) {
+    clearTimeout(suggestionDebounceTimer);
+    suggestionDebounceTimer = null;
+  }
   suggestionsEl.classList.add("hidden");
   suggestionsEl.innerHTML = "";
   suggestionItems = [];
   activeSuggestionIndex = -1;
+  guessInput.setAttribute("aria-expanded", "false");
+  guessInput.removeAttribute("aria-activedescendant");
 }
 
 function clearDuelHandoffTimer() {
@@ -389,6 +656,7 @@ function updateDuelRowPrivacy() {
 
 function showDuelReadyGate() {
   if (!isDuelMode || isSolved) return;
+  rememberFocus();
   clearDuelHandoffTimer();
   duelAwaitingReady = true;
   guessInput.value = "";
@@ -403,9 +671,14 @@ function showDuelReadyGate() {
   }
   if (duelPassModalEl) {
     duelPassModalEl.classList.remove("hidden");
+    duelPassModalEl.setAttribute("aria-hidden", "false");
   }
   document.body.classList.add("duelGateOpen");
   setStatus(`Pass device to ${DUEL_PLAYERS[duelCurrentTurn]}.`, "info");
+  if (duelReadyBtn) {
+    duelReadyBtn.focus();
+  }
+  persistCurrentGameState();
 }
 
 function hideDuelReadyGate() {
@@ -413,6 +686,7 @@ function hideDuelReadyGate() {
   clearDuelHandoffTimer();
   if (duelPassModalEl) {
     duelPassModalEl.classList.add("hidden");
+    duelPassModalEl.setAttribute("aria-hidden", "true");
   }
   document.body.classList.remove("duelGateOpen");
 }
@@ -425,6 +699,7 @@ function startDuelTurn() {
   updateDuelRowPrivacy();
   setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
   guessInput.focus();
+  persistCurrentGameState();
 }
 
 function renderRecentGuesses() {
@@ -591,6 +866,7 @@ function pickRandomAnswer() {
   isSolved = false;
   guessedNames = new Set();
   recentGuessNames = [];
+  guessHistory = [];
   if (victoryFxTimer) {
     clearTimeout(victoryFxTimer);
     victoryFxTimer = null;
@@ -615,8 +891,144 @@ function pickRandomAnswer() {
 
 
 function findCharacterByName(name) {
-  const n = normalize(name);
-  return CHARACTERS.find(c => normalize(c.name) === n) || null;
+  return resolveCharacterFromInput(name);
+}
+
+function buildCharacterSearchIndex() {
+  characterSearchIndex = CHARACTERS
+    .map((character) => {
+      const names = new Set();
+      const add = (value) => {
+        const normalized = normalizeForSearch(value);
+        if (normalized.length >= 2) {
+          names.add(normalized);
+        }
+      };
+
+      const baseName = character && character.name ? String(character.name) : "";
+      add(baseName);
+
+      if (baseName) {
+        const compact = normalizeForSearch(baseName);
+        if (compact) add(compact);
+        const inParens = /\(([^)]+)\)/.exec(baseName);
+        if (inParens && inParens[1]) add(inParens[1]);
+      }
+
+      const parts = normalizeForSearch(baseName).split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        add(parts[0]);
+        add(parts[parts.length - 1]);
+        add(`${parts[0]} ${parts[parts.length - 1]}`);
+      }
+
+      if (Array.isArray(character && character.aliases)) {
+        character.aliases.forEach(add);
+      }
+      if (Array.isArray(character && character.nicknames)) {
+        character.nicknames.forEach(add);
+      }
+      if (Array.isArray(character && character.alsoKnownAs)) {
+        character.alsoKnownAs.forEach(add);
+      }
+      if (typeof character.alias === "string") add(character.alias);
+      if (typeof character.nickname === "string") add(character.nickname);
+      if (typeof character.alsoKnownAs === "string") add(character.alsoKnownAs);
+
+      return { character, names: Array.from(names) };
+    })
+    .filter((entry) => entry.character && typeof entry.character.name === "string");
+}
+
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+
+  const left = a.length;
+  const right = b.length;
+  let prev = Array(right + 1).fill(0);
+  let curr = Array(right + 1).fill(0);
+
+  for (let c = 0; c <= right; c++) {
+    prev[c] = c;
+  }
+
+  for (let i = 1; i <= left; i++) {
+    curr[0] = i;
+    const ac = a.charCodeAt(i - 1);
+    for (let j = 1; j <= right; j++) {
+      const cost = ac === b.charCodeAt(j - 1) ? 0 : 1;
+      const del = prev[j] + 1;
+      const ins = curr[j - 1] + 1;
+      const sub = prev[j - 1] + cost;
+      curr[j] = Math.min(del, ins, sub);
+    }
+    const swap = prev;
+    prev = curr;
+    curr = swap;
+  }
+
+  return prev[right];
+}
+
+function getMatchScore(query, candidate) {
+  const q = normalizeForSearch(query);
+  const c = normalizeForSearch(candidate);
+  if (!q || !c) return 0;
+
+  if (q === c) return 1000;
+  if (c.startsWith(q)) return 900 + Math.min(80, q.length * 4);
+  if (c.includes(q)) return 780 + Math.min(60, q.length * 3);
+  if (q.startsWith(c) && c.length >= 3) return 650 + Math.min(50, c.length * 2);
+
+  const maxLen = Math.max(q.length, c.length);
+  const distance = levenshteinDistance(q, c);
+  const ratio = 1 - distance / maxLen;
+  if (ratio < 0.58) return 0;
+  return Math.round(ratio * 500);
+}
+
+function getCharacterMatches(query, { limit = SEARCH_SUGGESTION_LIMIT, minScore = 0 } = {}) {
+  const q = normalizeForSearch(query);
+  if (!q) return [];
+
+  const matches = [];
+  for (const entry of characterSearchIndex) {
+    let bestScore = 0;
+    for (const candidate of entry.names) {
+      const score = getMatchScore(q, candidate);
+      if (score > bestScore) bestScore = score;
+    }
+    if (bestScore >= minScore) {
+      matches.push({
+        character: entry.character,
+        score: bestScore
+      });
+    }
+  }
+
+  matches.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return normalize(a.character.name).localeCompare(normalize(b.character.name));
+  });
+  return matches.slice(0, limit);
+}
+
+function resolveCharacterFromInput(input) {
+  const matches = getCharacterMatches(input, { limit: 4, minScore: MIN_SUGGESTION_SCORE });
+  if (!matches.length) return null;
+
+  const best = matches[0];
+  const next = matches[1];
+  const gap = next ? best.score - next.score : Infinity;
+
+  if (best.score >= PRECISE_MATCH_THRESHOLD) return best.character;
+  if (best.score >= FUZZY_MATCH_THRESHOLD && (normalizeForSearch(input).length >= 3 || gap >= 110)) return best.character;
+  if (best.score >= FUZZY_MATCH_THRESHOLD && gap >= 120) return best.character;
+  if (best.score >= 860 && !next) return best.character;
+
+  return null;
 }
 
 function compareExact(a, b) {
@@ -738,22 +1150,31 @@ function makeCell(value, color, arrow = "") {
 
 function openImageModal(src) {
   if (!imageModal || !imageModalImg || !src) return;
+  rememberFocus();
   imageModalImg.src = src;
   imageModal.classList.remove("hidden");
+  imageModal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  if (imageModalClose) {
+    imageModalClose.focus();
+  }
 }
 
-function closeImageModal() {
+function closeImageModal(restore = true) {
   if (!imageModal || !imageModalImg) return;
   imageModal.classList.add("hidden");
+  imageModal.setAttribute("aria-hidden", "true");
   imageModalImg.src = "";
   document.body.style.overflow = "";
+  if (restore) {
+    restoreFocus(guessInput);
+  }
 }
 
 
 
 function renderRow(guess, options = {}) {
-  const { playerIndex = null, suppressEndHandling = false } = options;
+  const { playerIndex = null, suppressEndHandling = false, suppressAnnouncement = false } = options;
   const r = document.createElement("div");
   r.className = "row";
   r.dataset.attempt = String(attempts);
@@ -841,6 +1262,10 @@ function renderRow(guess, options = {}) {
 
   d.classList.add("pop");
   d.style.animationDelay = `${i * 70}ms`;
+  const matchTone = ["green", "yellow", "red"].find((tone) => d.classList.contains(tone));
+  if (matchTone) {
+    d.dataset.matchLabel = getMatchLabel(matchTone);
+  }
 
   r.appendChild(d);
 });
@@ -848,6 +1273,9 @@ function renderRow(guess, options = {}) {
   attachImageFallback(r);
 
   rows.prepend(r);
+  if (!suppressAnnouncement) {
+    announceRowResult(guess, results, playerIndex);
+  }
 
   const bestBefore = localStorage.getItem("op_best");
   updateStats();
@@ -879,6 +1307,7 @@ if (matched) {
   setStatus(`You got it: ${answer.name} (in ${attempts} guesses)`, "success");
   recordGameResult(true);
   renderRecap(true);
+  clearCurrentGameState();
 
   guessInput.value = "";
   guessInput.disabled = true;
@@ -905,7 +1334,21 @@ function onGuess() {
     return;
   }
 
-  const normalizedGuess = normalize(guessName);
+  const guess = findCharacterByName(guessName);
+
+  if (!guess) {
+    const closeMatches = getCharacterMatches(guessName, { limit: 4, minScore: 260 });
+    if (closeMatches.length >= 2) {
+      setStatus("Multiple close matches. Pick from the list below.", "error");
+    } else if (closeMatches.length === 1) {
+      setStatus(`Did you mean “${closeMatches[0].character.name}”?`, "error");
+    } else {
+      setStatus("Pick a name from the list.", "error");
+    }
+    return;
+  }
+
+  const normalizedGuess = normalize(guess.name);
   if (isDuelMode) {
     const playerSet = duelGuessedNames[duelCurrentTurn];
     if (playerSet.has(normalizedGuess)) {
@@ -917,18 +1360,15 @@ function onGuess() {
     return;
   }
 
-  const guess = findCharacterByName(guessName);
-
-  if (!guess) {
-    setStatus("Pick a name from the list.", "error");
-    return;
-  }
-
   if (isDuelMode) {
     duelGuessedNames[duelCurrentTurn].add(normalize(guess.name));
   } else {
     guessedNames.add(normalize(guess.name));
   }
+  guessHistory.push({
+    name: guess.name,
+    playerIndex: isDuelMode ? duelCurrentTurn : null
+  });
   recentGuessNames = [guess.name, ...recentGuessNames.filter((n) => normalize(n) !== normalize(guess.name))].slice(0, 6);
   renderRecentGuesses();
 
@@ -960,6 +1400,7 @@ function onGuess() {
       hideDuelReadyGate();
       updateDuelRowPrivacy();
       closeSuggestions();
+      clearCurrentGameState();
       return;
     }
 
@@ -977,6 +1418,7 @@ function onGuess() {
       hideDuelReadyGate();
       updateDuelRowPrivacy();
       closeSuggestions();
+      clearCurrentGameState();
       return;
     }
 
@@ -1002,6 +1444,7 @@ function onGuess() {
     } else {
       startDuelTurn();
     }
+    persistCurrentGameState();
     return;
   }
 
@@ -1018,6 +1461,7 @@ function onGuess() {
       submitBtn.disabled = true;
     }
     closeSuggestions();
+    clearCurrentGameState();
     return;
   }
 
@@ -1025,6 +1469,7 @@ function onGuess() {
   setSubmitState();
   closeSuggestions();
   guessInput.focus();
+  persistCurrentGameState();
 }
 
 async function init() {
@@ -1038,9 +1483,12 @@ async function init() {
     if (!Array.isArray(CHARACTERS) || CHARACTERS.length === 0) {
       throw new Error("characters.json did not contain a character list");
     }
+    buildCharacterSearchIndex();
 
     renderStatsDashboard();
-    startNewGame();
+    if (!restoreCurrentGameState()) {
+      startNewGame();
+    }
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     setStatus(`Failed to load game data. ${detail}`, "error");
@@ -1055,6 +1503,7 @@ async function init() {
 function setActiveSuggestion(index) {
   if (!suggestionItems.length) {
     activeSuggestionIndex = -1;
+    guessInput.removeAttribute("aria-activedescendant");
     return;
   }
 
@@ -1064,9 +1513,14 @@ function setActiveSuggestion(index) {
     el.classList.toggle("active", isActive);
     el.setAttribute("aria-selected", isActive ? "true" : "false");
     if (isActive) {
+      guessInput.setAttribute("aria-activedescendant", el.id);
       safeScrollIntoView(el, { block: "nearest" });
     }
   });
+
+  if (activeSuggestionIndex < 0) {
+    guessInput.removeAttribute("aria-activedescendant");
+  }
 }
 
 function selectSuggestionByIndex(index) {
@@ -1081,14 +1535,29 @@ function selectSuggestionByIndex(index) {
 
 function showSuggestions(items, query = "") {
   if (!items.length) {
+    if (query && query.length >= MATCH_NO_RESULT_HINT_LEN) {
+      suggestionsEl.classList.remove("hidden");
+      suggestionsEl.setAttribute("role", "listbox");
+      guessInput.setAttribute("aria-expanded", "true");
+      suggestionsEl.innerHTML = `
+        <div class="suggestionItem no-match" role="status" aria-live="polite">
+          No character found for “${escapeHtml(query)}”.
+        </div>
+      `;
+      suggestionItems = [];
+      activeSuggestionIndex = -1;
+      return;
+    }
+
     closeSuggestions();
     return;
   }
 
   suggestionsEl.classList.remove("hidden");
   suggestionsEl.setAttribute("role", "listbox");
+  guessInput.setAttribute("aria-expanded", "true");
 
-  suggestionsEl.innerHTML = items.map(c => {
+  suggestionsEl.innerHTML = items.map((c, index) => {
     const meta = `${c.affiliation || ""}${c.origin ? " \u2022 " + c.origin : ""}`;
     const faction = getFactionTag(c.affiliation, c.name);
 
@@ -1096,7 +1565,7 @@ function showSuggestions(items, query = "") {
     const highlightedName = highlightMatch(c.name, query);
 
     return `
-      <div class="suggestionItem" role="option" aria-selected="false" data-name="${escapeHtml(c.name)}">
+      <div id="suggestion-option-${index}" class="suggestionItem" role="option" aria-selected="false" data-name="${escapeHtml(c.name)}">
         <img class="suggestionImg" src="${escapeHtml(imgSrc)}" data-fallback="img/placeholder.png" alt="${escapeHtml(c.name)}">
         <div class="suggestionText">
           <div class="suggestionName">${highlightedName}</div>
@@ -1129,11 +1598,14 @@ function updateSuggestions(query) {
   const q = (query || "").trim().toLowerCase();
   if (!q) return showSuggestions([]);
 
-  const matches = CHARACTERS
-    .filter(c => (c.name || "").toLowerCase().includes(q))
-    .slice(0, 8);
+  const matches = getCharacterMatches(q, { limit: SEARCH_SUGGESTION_LIMIT, minScore: MIN_SUGGESTION_SCORE });
+  const suggestions = matches.map((match) => match.character);
 
-  showSuggestions(matches, q);
+  if (!suggestions.length && q.length < MATCH_NO_RESULT_HINT_LEN) {
+    return closeSuggestions();
+  }
+
+  showSuggestions(suggestions, q);
 }
 
 function startNewGame() {
@@ -1146,13 +1618,14 @@ function startNewGame() {
   renderRecentGuesses();
   pickRandomAnswer();
   updateStats();
+  persistCurrentGameState();
 }
 
 
 guessInput.addEventListener("input", (e) => {
   setStatus("");
   setSubmitState();
-  updateSuggestions(e.target.value);
+  scheduleSuggestionsUpdate(e.target.value);
 });
 
 document.addEventListener("click", (e) => {
@@ -1161,12 +1634,11 @@ document.addEventListener("click", (e) => {
   }
 
   if (menuPanel && menuBtn && !e.target.closest(".sideMenu")) {
-    menuPanel.classList.add("hidden");
-    menuBtn.setAttribute("aria-expanded", "false");
+    closeMenuPanel(false);
   }
 
   if (imageModal && e.target === imageModal) {
-    closeImageModal();
+    closeImageModal(true);
   }
 });
 
@@ -1181,8 +1653,12 @@ guessInput.addEventListener("blur", () => {
 
 // Press Enter to submit guess or choose active suggestion.
 guessInput.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowDown" && suggestionItems.length) {
+  if (e.key === "ArrowDown") {
     e.preventDefault();
+    if (!suggestionItems.length) {
+      updateSuggestions(guessInput.value);
+    }
+    if (!suggestionItems.length) return;
     const next = activeSuggestionIndex < suggestionItems.length - 1 ? activeSuggestionIndex + 1 : 0;
     setActiveSuggestion(next);
     return;
@@ -1195,10 +1671,27 @@ guessInput.addEventListener("keydown", (e) => {
     return;
   }
 
-  if (e.key === "Escape") {
-    closeImageModal();
-    closeSuggestions();
+  if (e.key === "Home" && suggestionItems.length) {
+    e.preventDefault();
+    setActiveSuggestion(0);
     return;
+  }
+
+  if (e.key === "End" && suggestionItems.length) {
+    e.preventDefault();
+    setActiveSuggestion(suggestionItems.length - 1);
+    return;
+  }
+
+  if (e.key === "Escape") {
+    closeImageModal(false);
+    closeSuggestions();
+    closeMenuPanel(false);
+    return;
+  }
+
+  if (e.key === "Tab" && suggestionItems.length) {
+    closeSuggestions();
   }
 
   if (e.key === "Enter") {
@@ -1236,15 +1729,20 @@ if (modePresetEl) {
 }
 
 if (menuBtn && menuPanel) {
+  menuPanel.tabIndex = -1;
+  menuPanel.setAttribute("aria-hidden", "true");
   menuBtn.addEventListener("click", () => {
     const isOpen = !menuPanel.classList.contains("hidden");
-    menuPanel.classList.toggle("hidden", isOpen);
-    menuBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    if (isOpen) {
+      closeMenuPanel(true);
+    } else {
+      openMenuPanel();
+    }
   });
 }
 
 if (imageModalClose) {
-  imageModalClose.addEventListener("click", closeImageModal);
+  imageModalClose.addEventListener("click", () => closeImageModal(true));
 }
 
 if (duelReadyBtn) {
@@ -1254,8 +1752,25 @@ if (duelReadyBtn) {
 }
 
 document.addEventListener("keydown", (e) => {
+  const trapContainer = getOpenTrapContainer();
+  if (trapContainer && e.key === "Tab") {
+    if (trapFocus(trapContainer, e)) return;
+  }
+
   if (e.key === "Escape") {
-    closeImageModal();
+    if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) {
+      startDuelTurn();
+      return;
+    }
+    if (imageModal && !imageModal.classList.contains("hidden")) {
+      closeImageModal(true);
+      return;
+    }
+    if (menuPanel && !menuPanel.classList.contains("hidden")) {
+      closeMenuPanel(true);
+      return;
+    }
+    closeSuggestions();
   }
 });
 
@@ -1269,5 +1784,22 @@ if (compactModeEl) {
 }
 
 applyModePreset(localStorage.getItem(MODE_PRESET_KEY) || "casual", false);
+
+if (guessInput) {
+  guessInput.setAttribute("aria-autocomplete", "list");
+  guessInput.setAttribute("aria-controls", "suggestions");
+  guessInput.setAttribute("aria-expanded", "false");
+  guessInput.setAttribute("aria-haspopup", "listbox");
+}
+
+if (imageModal) {
+  imageModal.tabIndex = -1;
+  imageModal.setAttribute("aria-hidden", "true");
+}
+
+if (duelPassModalEl) {
+  duelPassModalEl.tabIndex = -1;
+  duelPassModalEl.setAttribute("aria-hidden", "true");
+}
 
 

@@ -43,6 +43,18 @@
   display: none !important;
 }
 
+.srOnly {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 html,
 body {
   margin: 0;
@@ -271,6 +283,13 @@ body.keyboardOpen .controls {
   box-shadow: var(--shadow-panel);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+
+.menuPanel:focus-visible,
+.imageModal:focus-visible,
+.duelPassModal:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.95);
+  outline-offset: 4px;
 }
 
 .menuToggle {
@@ -838,8 +857,10 @@ button:focus-visible,
   text-align: center;
   padding: 10px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(224, 233, 247, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.22);
   font-size: 13px;
   line-height: 1.2;
   transition: transform 120ms var(--ease-smooth), box-shadow 140ms var(--ease-smooth), border-color 140ms var(--ease-smooth);
@@ -847,8 +868,10 @@ button:focus-visible,
 
 .tile:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.24);
-  border-color: rgba(242, 207, 116, 0.24);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 10px 18px rgba(0, 0, 0, 0.24);
+  border-color: rgba(242, 207, 116, 0.34);
 }
 
 .tile .cellText {
@@ -914,15 +937,21 @@ button:focus-visible,
 }
 
 .green {
-  background: var(--green);
+  background: #176f39;
+  color: #f6fff8;
+  border-color: rgba(147, 241, 183, 0.72);
 }
 
 .yellow {
-  background: var(--yellow);
+  background: #d7a928;
+  color: #191304;
+  border-color: rgba(255, 234, 170, 0.82);
 }
 
 .red {
-  background: var(--red);
+  background: #a63636;
+  color: #fff4f4;
+  border-color: rgba(255, 188, 188, 0.74);
 }
 
 .grey {
@@ -941,7 +970,7 @@ button:focus-visible,
 .tile.green,
 .tile.yellow,
 .tile.red {
-  padding-top: 18px;
+  padding-top: 28px;
 }
 
 .tile.green::before,
@@ -950,25 +979,40 @@ button:focus-visible,
   position: absolute;
   top: 6px;
   left: 8px;
-  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
   line-height: 1;
-  opacity: 0.95;
-}
-
-.tile.green::before {
-  content: "\2713";
-}
-
-.tile.yellow::before {
-  content: "~";
-}
-
-.tile.red::before {
-  content: "\2715";
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.98;
+  background: rgba(6, 10, 18, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  content: attr(data-match-label);
 }
 
 .tile.green {
-  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2), 0 10px 20px rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 2px rgba(46, 204, 113, 0.22),
+    0 10px 20px rgba(0, 0, 0, 0.28);
+}
+
+.tile.yellow .cellArrow {
+  color: rgba(52, 33, 0, 0.34);
+  text-shadow:
+    0 0 2px rgba(255, 248, 220, 0.28),
+    0 5px 14px rgba(56, 38, 0, 0.25);
+}
+
+.tile.yellow .cellText {
+  text-shadow: none;
+}
+
+.tile.red .cellArrow,
+.tile.green .cellArrow {
+  color: rgba(0, 0, 0, 0.38);
 }
 
 .arcCell,
@@ -1091,9 +1135,10 @@ button:focus-visible,
   justify-content: space-between;
   gap: 12px;
   padding: 10px 12px;
+  border-left: 3px solid transparent;
   cursor: pointer;
   font-size: 0.95rem;
-  transition: background 120ms ease;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .suggestionItem + .suggestionItem {
@@ -1108,6 +1153,13 @@ button:focus-visible,
 .suggestionItem.active {
   outline: 2px solid rgba(224, 173, 54, 0.6);
   outline-offset: -2px;
+  border-left-color: #ba7716;
+}
+
+.suggestionItem.no-match {
+  cursor: default;
+  color: #3f4654;
+  border-left-color: transparent;
 }
 
 .suggestionImg {
