@@ -1204,6 +1204,7 @@ button:focus-visible,
   width: 56px;
   height: 56px;
   object-fit: cover;
+  object-position: center top;
   border-radius: 12px;
   border: 2px solid rgba(212, 170, 82, 0.7);
   box-shadow:
