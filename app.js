@@ -26,7 +26,8 @@ const settingsOverlay = document.getElementById("settingsOverlay");
 const settingsClose = document.getElementById("settingsClose");
 const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
-const modeCardEls = Array.from(document.querySelectorAll(".modeCard"));
+const modeCardEls = Array.from(document.querySelectorAll("#menuPanel .modeCard"));
+const landingModeCardEls = Array.from(document.querySelectorAll(".modeLandingCard"));
 const modeLandingEl = document.getElementById("modeLanding");
 const gameShellEl = document.getElementById("gameShell");
 const progressPillEl = document.getElementById("progressPill");
@@ -280,6 +281,15 @@ function openModeLanding() {
 function closeModeLanding() {
   if (modeLandingEl) modeLandingEl.classList.add("hidden");
   if (gameShellEl) gameShellEl.classList.remove("hidden");
+}
+
+function selectMode(mode) {
+  const nextMode = mode || "casual";
+  if (modePresetEl) modePresetEl.value = nextMode;
+  applyModePreset(nextMode, true);
+  closeModeLanding();
+  closeMenuPanel(false);
+  window.scrollTo(0, 0);
 }
 
 function getCharacterHint(character) {
@@ -2398,9 +2408,7 @@ if (compactModeEl) {
 
 if (modePresetEl) {
   modePresetEl.addEventListener("change", () => {
-    applyModePreset(modePresetEl.value, true);
-    closeModeLanding();
-    closeMenuPanel(false);
+    selectMode(modePresetEl.value);
   });
 }
 
@@ -2408,11 +2416,20 @@ if (modeCardEls.length) {
   modeCardEls.forEach((card) => {
     card.addEventListener("click", () => {
       const mode = card.dataset.mode || "casual";
-      if (modePresetEl) modePresetEl.value = mode;
-      applyModePreset(mode, true);
-      closeModeLanding();
-      closeMenuPanel(false);
+      selectMode(mode);
     });
+  });
+}
+
+if (landingModeCardEls.length) {
+  landingModeCardEls.forEach((card) => {
+    const activate = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      selectMode(card.dataset.mode || "casual");
+    };
+    card.addEventListener("click", activate);
+    card.addEventListener("touchend", activate, { passive: false });
   });
 }
 
