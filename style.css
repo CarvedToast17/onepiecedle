@@ -149,7 +149,7 @@ h1 {
   position: sticky;
   top: 0;
   z-index: 80;
-  border-bottom: 1px solid rgba(242, 207, 116, 0.16);
+  border-bottom: 1px solid rgba(173, 221, 255, 0.24);
   background: rgba(3, 11, 22, 0.9);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
@@ -299,7 +299,7 @@ h1 {
   padding: 7px;
   border-radius: 14px;
   background: rgba(3, 11, 22, 0.93);
-  border: 1px solid rgba(242, 207, 116, 0.34);
+  border: 1px solid rgba(173, 221, 255, 0.38);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   box-shadow: 0 6px 28px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.03);
@@ -377,7 +377,7 @@ body.keyboardOpen .controls {
   width: min(320px, 86vw);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(242, 207, 116, 0.22);
+  border: 1px solid rgba(173, 221, 255, 0.28);
   background: rgba(6, 18, 36, 0.96);
   box-shadow: var(--shadow-panel);
   -webkit-backdrop-filter: blur(16px);
@@ -401,7 +401,7 @@ body.keyboardOpen .controls {
   height: 100%;
   z-index: 200;
   background: rgba(3, 9, 18, 0.98);
-  border-left: 1px solid rgba(242, 207, 116, 0.26);
+  border-left: 1px solid rgba(173, 221, 255, 0.3);
   -webkit-backdrop-filter: blur(22px);
   backdrop-filter: blur(22px);
   display: flex;
@@ -424,7 +424,7 @@ body.keyboardOpen .controls {
   gap: 12px;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(242, 207, 116, 0.14);
+  border-bottom: 1px solid rgba(173, 221, 255, 0.2);
   color: var(--gold);
   font-family: var(--font-display);
   font-size: 0.78rem;
@@ -438,7 +438,7 @@ body.keyboardOpen .controls {
   width: 30px;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid rgba(242, 207, 116, 0.22);
+  border: 1px solid rgba(173, 221, 255, 0.32);
   background: transparent;
   color: var(--ink-muted);
   box-shadow: none;
@@ -447,8 +447,8 @@ body.keyboardOpen .controls {
 
 .panelCloseBtn:hover:not(:disabled) {
   color: var(--ink);
-  border-color: rgba(242, 207, 116, 0.5);
-  background: rgba(242, 207, 116, 0.08);
+  border-color: rgba(198, 231, 255, 0.82);
+  background: rgba(108, 176, 236, 0.12);
 }
 
 .panelBody {
@@ -641,7 +641,6 @@ body.keyboardOpen .controls {
 }
 
 .searchWrap {
-  position: static;
   display: flex;
   align-items: center;
   flex: 1 1 auto;
@@ -659,10 +658,10 @@ body.keyboardOpen .controls {
 
 #guessInput {
   width: 100%;
-  height: 50px;
-  min-height: 50px;
-  font-size: 1.05rem;
-  padding: 6px 0;
+  height: 44px;
+  min-height: 44px;
+  font-size: 1rem;
+  padding: 4px 0;
   border-radius: 0;
   border: none;
   background: transparent;
@@ -688,7 +687,7 @@ body.keyboardOpen .controls {
 button {
   position: relative;
   overflow: hidden;
-  min-height: 50px;
+  min-height: 44px;
   touch-action: manipulation;
   padding: 12px 20px;
   border-radius: 14px;
@@ -758,7 +757,7 @@ button.secondary:hover:not(:disabled) {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 7px 16px;
+  padding: 6px 15px;
   border-radius: 9px;
   font-family: var(--font-display);
   font-size: 0.7rem;
@@ -907,11 +906,15 @@ button:focus-visible,
 
 .statsBar {
   width: var(--content-width);
-  margin: 0 auto 10px;
+  margin: 6px auto 10px;
   display: flex;
   align-items: center;
   gap: 7px;
   flex-wrap: wrap;
+}
+
+.statsDashboard + .controls {
+  margin-top: 10px;
 }
 
 .statChip {
@@ -1001,7 +1004,7 @@ button:focus-visible,
   width: var(--content-width);
   margin: 8px auto 12px;
   border-radius: 14px;
-  border: 1px solid rgba(242, 207, 116, 0.3);
+  border: 1px solid rgba(173, 221, 255, 0.3);
   background: rgba(8, 16, 30, 0.84);
   padding: 14px;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
@@ -1056,12 +1059,13 @@ button:focus-visible,
 
 .boardWrap {
   position: relative;
+  z-index: 1;
   width: var(--content-width);
   margin: var(--space-3) auto 0;
   padding: var(--space-2) 52px;
   border-radius: 18px;
   background: var(--panel-strong);
-  border: 1px solid rgba(242, 207, 116, 0.22);
+  border: 1px solid rgba(173, 221, 255, 0.28);
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
   overflow-x: auto;
   overflow-y: visible;
@@ -1077,10 +1081,8 @@ button:focus-visible,
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  background:
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 10px),
-    radial-gradient(150% 120% at 50% 0%, rgba(245, 230, 184, 0.08), transparent 55%);
-  opacity: 0.22;
+  background: none;
+  opacity: 0;
 }
 
 .boardWrap.victory-glow {
@@ -1565,10 +1567,8 @@ button:focus-visible,
 }
 
 .suggestions {
-  position: absolute;
-  top: calc(100% + 12px);
-  left: 0;
-  right: 0;
+  width: var(--content-width);
+  margin: 0 auto var(--space-2);
   max-height: 380px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -1577,7 +1577,6 @@ button:focus-visible,
   background: rgba(255, 255, 255, 0.98);
   color: #101010;
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
-  z-index: 40;
   opacity: 1;
   transform: translateY(0);
   visibility: visible;
@@ -1600,6 +1599,11 @@ button:focus-visible,
   transform: translateY(-4px);
   visibility: hidden;
   pointer-events: none;
+  max-height: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  border-width: 0;
+  box-shadow: none;
 }
 
 .suggestionItem {
@@ -1850,7 +1854,7 @@ body.duelGateOpen .sideMenu {
 .duelPassCard {
   width: min(420px, 92vw);
   border-radius: 16px;
-  border: 1px solid rgba(242, 207, 116, 0.35);
+  border: 1px solid rgba(173, 221, 255, 0.34);
   background: rgba(7, 18, 35, 0.96);
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
   padding: 18px 16px;
@@ -2007,9 +2011,10 @@ body.compactMode .tile .cellArrow {
   }
 
   .controls {
-    position: sticky;
-    top: calc(10px + env(safe-area-inset-top));
+    position: static;
+    top: auto;
     flex-wrap: wrap;
+    margin-bottom: var(--space-3);
   }
 
   .floatingPanel {
@@ -2051,10 +2056,7 @@ body.compactMode .tile .cellArrow {
   }
 
   .suggestions {
-    position: static;
-    top: auto;
-    left: auto;
-    right: auto;
+    width: 100%;
     margin-top: 8px;
     max-height: min(44vh, 320px);
     transform: none;
@@ -2062,6 +2064,11 @@ body.compactMode .tile .cellArrow {
 
   .suggestions.hidden {
     transform: none;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    border-width: 0;
+    box-shadow: none;
   }
 
   .headerRow > *,
@@ -2115,6 +2122,7 @@ body.compactMode .tile .cellArrow {
   }
 
   .boardWrap {
+    margin-top: 0;
     padding-left: 32px;
     padding-right: 32px;
   }
@@ -2132,6 +2140,15 @@ body.compactMode .tile .cellArrow {
 
   .tile .cellArrow {
     font-size: 50px;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 760px) {
+    .controls {
+      position: static;
+      top: auto;
+    }
   }
 }
 

@@ -104,6 +104,13 @@
   </div>
 
   <main class="container">
+    <div id="statsBar" class="statsBar" aria-live="polite">
+      <div id="modeChip" class="statChip">Casual</div>
+      <div id="attemptChip" class="statChip">Guess 1</div>
+      <div id="streakChip" class="statChip streakChip">🔥 0</div>
+    </div>
+
+    <div id="statsDashboard" class="statsDashboard"></div>
     <div class="controls">
       <div class="searchWrap">
         <span class="searchIcon" aria-hidden="true">&#x2693;</span>
@@ -122,20 +129,11 @@
           aria-expanded="false"
           aria-haspopup="listbox"
         />
-
-        <div id="suggestions" class="suggestions hidden" role="listbox" aria-label="Character suggestions"></div>
       </div>
 
       <button id="newBtn" class="secondary">New Game</button>
     </div>
-
-    <div id="statsBar" class="statsBar" aria-live="polite">
-      <div id="modeChip" class="statChip">Casual</div>
-      <div id="attemptChip" class="statChip">Guess 1</div>
-      <div id="streakChip" class="statChip streakChip">🔥 0</div>
-    </div>
-
-    <div id="statsDashboard" class="statsDashboard"></div>
+    <div id="suggestions" class="suggestions hidden" role="listbox" aria-label="Character suggestions"></div>
     <div id="progressPill" class="progressPill hidden"></div>
     <div id="progressBar" class="progressBar hidden" aria-live="polite">
       <div id="progressFill" class="progressFill"></div>
@@ -183,11 +181,16 @@
   <script>
     (function () {
       function syncVh() {
-        document.documentElement.style.setProperty("--app-vh", window.innerHeight + "px");
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        document.documentElement.style.setProperty("--app-vh", viewportHeight + "px");
       }
       syncVh();
       window.addEventListener("resize", syncVh, { passive: true });
       window.addEventListener("orientationchange", syncVh, { passive: true });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", syncVh, { passive: true });
+        window.visualViewport.addEventListener("scroll", syncVh, { passive: true });
+      }
     })();
   </script>
 </body>

@@ -1758,7 +1758,7 @@ guessInput.addEventListener("input", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-  if (!e.target.closest(".searchWrap")) {
+  if (!e.target.closest(".searchWrap") && !e.target.closest(".suggestions")) {
     closeSuggestions();
   }
 
