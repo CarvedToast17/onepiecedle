@@ -159,6 +159,7 @@ textarea {
   display: grid;
   place-items: center;
   padding: clamp(18px, 4vw, 36px) 0;
+  touch-action: pan-y;
 }
 
 .modeLandingInner {
@@ -218,7 +219,7 @@ textarea {
   background:
     linear-gradient(160deg, rgba(108, 176, 236, 0.2), rgba(72, 143, 214, 0.14)),
     linear-gradient(180deg, rgba(7, 20, 39, 0.94), rgba(6, 16, 31, 0.98));
-  touch-action: manipulation;
+  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
 }
 

@@ -2429,6 +2429,13 @@ if (modeCardEls.length) {
 }
 
 if (modeLandingEl) {
+  const blockLandingClick = (event) => {
+    if (Date.now() >= landingIgnoreClickUntil) return;
+    if (!event.target.closest(".modeLandingCard")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  };
   const activateLandingMode = (event) => {
     const card = event.target.closest(".modeLandingCard");
     if (!card) return;
@@ -2451,7 +2458,7 @@ if (modeLandingEl) {
     landingTouchStartX = touch.clientX;
     landingTouchStartY = touch.clientY;
     landingTouchStartScrollY = window.scrollY || window.pageYOffset || 0;
-    landingTouchMoved = false;
+      landingTouchMoved = false;
   }, { passive: true });
   modeLandingEl.addEventListener("touchmove", (event) => {
     const touch = event.changedTouches && event.changedTouches[0];
@@ -2461,8 +2468,10 @@ if (modeLandingEl) {
       Math.abs(touch.clientY - landingTouchStartY) > LANDING_TAP_MOVE_THRESHOLD
     ) {
       landingTouchMoved = true;
+      landingIgnoreClickUntil = Date.now() + LANDING_IGNORE_CLICK_MS;
     }
   }, { passive: true });
+  modeLandingEl.addEventListener("click", blockLandingClick, true);
   modeLandingEl.addEventListener("click", activateLandingMode);
   modeLandingEl.addEventListener("touchend", activateLandingMode, { passive: false });
   modeLandingEl.addEventListener("touchcancel", () => {
