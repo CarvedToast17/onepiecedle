@@ -96,6 +96,8 @@ let bodyLockScrollY = 0;
 let landingTouchStartX = 0;
 let landingTouchStartY = 0;
 let landingTouchMoved = false;
+let landingTouchStartScrollY = 0;
+let landingIgnoreClickUntil = 0;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
@@ -109,7 +111,9 @@ const DUEL_TURN_MS = 60000;
 const DUEL_REVEAL_DELAY_MS = 3000;
 const TILE_REVEAL_MS = 2100;
 const TILE_REVEAL_STAGGER_MS = 280;
-const LANDING_TAP_MOVE_THRESHOLD = 14;
+const LANDING_TAP_MOVE_THRESHOLD = 28;
+const LANDING_TAP_SCROLL_THRESHOLD = 18;
+const LANDING_IGNORE_CLICK_MS = 450;
 const SEARCH_SUGGESTION_LIMIT = 8;
 const MATCH_NO_RESULT_HINT_LEN = 2;
 const PRECISE_MATCH_THRESHOLD = 920;
@@ -2428,7 +2432,15 @@ if (modeLandingEl) {
   const activateLandingMode = (event) => {
     const card = event.target.closest(".modeLandingCard");
     if (!card) return;
-    if (event.type === "touchend" && landingTouchMoved) return;
+    if (event.type === "click" && Date.now() < landingIgnoreClickUntil) return;
+    if (event.type === "touchend") {
+      const scrollDelta = Math.abs((window.scrollY || window.pageYOffset || 0) - landingTouchStartScrollY);
+      if (landingTouchMoved || scrollDelta > LANDING_TAP_SCROLL_THRESHOLD) {
+        landingIgnoreClickUntil = Date.now() + LANDING_IGNORE_CLICK_MS;
+        return;
+      }
+      landingIgnoreClickUntil = Date.now() + LANDING_IGNORE_CLICK_MS;
+    }
     event.preventDefault();
     event.stopPropagation();
     selectMode(card.dataset.mode || "casual");
@@ -2438,6 +2450,7 @@ if (modeLandingEl) {
     if (!touch) return;
     landingTouchStartX = touch.clientX;
     landingTouchStartY = touch.clientY;
+    landingTouchStartScrollY = window.scrollY || window.pageYOffset || 0;
     landingTouchMoved = false;
   }, { passive: true });
   modeLandingEl.addEventListener("touchmove", (event) => {
@@ -2454,6 +2467,7 @@ if (modeLandingEl) {
   modeLandingEl.addEventListener("touchend", activateLandingMode, { passive: false });
   modeLandingEl.addEventListener("touchcancel", () => {
     landingTouchMoved = true;
+    landingIgnoreClickUntil = Date.now() + LANDING_IGNORE_CLICK_MS;
   }, { passive: true });
 }
 
