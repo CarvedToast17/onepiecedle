@@ -1163,7 +1163,7 @@ button:focus-visible,
 .row::before {
   content: "#" attr(data-attempt);
   position: absolute;
-  left: -40px;
+  left: -44px;
   top: 50%;
   transform: translateY(-50%);
   width: 34px;
@@ -1507,19 +1507,34 @@ button:focus-visible,
 }
 
 .pop {
-  will-change: transform, opacity;
-  animation: revealIn 220ms var(--ease-smooth);
+  will-change: transform, opacity, filter;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  animation: tileFlipReveal 2100ms cubic-bezier(.22, .78, .18, 1);
   animation-fill-mode: both;
 }
 
-@keyframes revealIn {
+@keyframes tileFlipReveal {
   0% {
     opacity: 0;
-    transform: translateY(12px) scale(0.92);
+    transform: perspective(900px) rotateX(-88deg) scale(0.94);
+    filter: brightness(0.72);
+  }
+  48% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(-8deg) scale(1.01);
+    filter: brightness(1.06);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: perspective(900px) rotateX(0deg) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop {
+    animation: successFadeIn 180ms ease-out;
   }
 }
 
@@ -1941,7 +1956,7 @@ body.compactMode .tile .cellArrow {
   }
 
   .row::before {
-    left: -34px;
+    left: -37px;
     width: 30px;
     height: 30px;
   }
@@ -2108,7 +2123,7 @@ body.compactMode .tile .cellArrow {
   }
 
   .row::before {
-    left: -28px;
+    left: -31px;
     width: 28px;
     height: 28px;
     font-size: 10px;
@@ -2210,7 +2225,7 @@ body.compactMode .tile .cellArrow {
   }
 
   .row::before {
-    left: -24px;
+    left: -27px;
     width: 24px;
     height: 24px;
     font-size: 9px;

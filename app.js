@@ -63,6 +63,10 @@ let duelOutcomeText = "";
 let duelAwaitingReady = false;
 let duelGuessedNames = [new Set(), new Set()];
 let duelHandoffTimer = null;
+let duelTurnTimer = null;
+let duelTurnDeadline = 0;
+let duelPendingTurn = null;
+let duelTurnLocked = false;
 let lastFocusEl = null;
 
 const HARD_GUESS_LIMIT = 5;
@@ -73,6 +77,8 @@ const PLACEHOLDER_IMAGE = "img/placeholder.jpg";
 const MYSTERY_FIELD_POOL = ["affiliation", "haki", "firstArc", "gender"];
 const DUEL_GUESS_LIMIT = 6;
 const DUEL_PLAYERS = ["Player 1", "Player 2"];
+const DUEL_TURN_MS = 60000;
+const DUEL_REVEAL_DELAY_MS = 3000;
 const SEARCH_SUGGESTION_LIMIT = 8;
 const MATCH_NO_RESULT_HINT_LEN = 2;
 const PRECISE_MATCH_THRESHOLD = 920;
@@ -95,6 +101,18 @@ function normalize(str) {
 
 function normalizeForSearch(str) {
   return normalize(str).replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function isIOSDevice() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function revealBoardAfterKeyboardDismiss() {
+  if (!boardWrap) return;
+  window.setTimeout(() => {
+    boardWrap.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, 60);
 }
 
 function getModeLabel(modeKey = activeModePreset) {
@@ -270,6 +288,8 @@ function persistCurrentGameState() {
     duelAttempts,
     duelOutcomeText,
     duelAwaitingReady,
+    duelTurnLocked,
+    duelPendingTurn,
     dailyDateKey: isDailyMode ? getLocalDateKey() : null
   };
 
@@ -314,6 +334,8 @@ function restoreCurrentGameState() {
     duelCurrentTurn = Number.isInteger(saved.duelCurrentTurn) ? saved.duelCurrentTurn : 0;
     duelOutcomeText = typeof saved.duelOutcomeText === "string" ? saved.duelOutcomeText : "";
     duelAwaitingReady = !!saved.duelAwaitingReady;
+    duelTurnLocked = !!saved.duelTurnLocked;
+    duelPendingTurn = Number.isInteger(saved.duelPendingTurn) ? saved.duelPendingTurn : null;
 
     rows.innerHTML = "";
     hideRecap();
@@ -348,9 +370,10 @@ function restoreCurrentGameState() {
     if (isDuelMode) {
       if (duelAwaitingReady) {
         showDuelReadyGate();
+      } else if (duelTurnLocked && duelPendingTurn !== null) {
+        scheduleDuelTurnTransition(duelPendingTurn, `${DUEL_PLAYERS[duelCurrentTurn]} finished their turn.`, DUEL_REVEAL_DELAY_MS);
       } else {
-        updateDuelRowPrivacy();
-        setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
+        startDuelTurn();
       }
     } else {
       updateDuelRowPrivacy();
@@ -584,6 +607,8 @@ function hideRecap() {
 
 function applyModePreset(modeKey, restart = true) {
   const safeMode = ["casual", "hard", "extreme", "daily", "mystery_tiles", "duel_1v1"].includes(modeKey) ? modeKey : "casual";
+  clearDuelTurnTimer();
+  clearDuelHandoffTimer();
   activeModePreset = safeMode;
   isExtremeMode = safeMode === "extreme";
   isHardMode = safeMode === "hard" || isExtremeMode;
@@ -594,6 +619,8 @@ function applyModePreset(modeKey, restart = true) {
     duelAttempts = [0, 0];
     duelCurrentTurn = 0;
     duelOutcomeText = "";
+    duelPendingTurn = null;
+    duelTurnLocked = false;
   }
   hiddenFieldKeys = isMysteryTilesMode ? pickHiddenFields(2) : [];
 
@@ -637,6 +664,8 @@ function setStatus(text, tone = "info") {
 function updateStats() {
   const best = localStorage.getItem("op_best");
   const currentModeStats = getModeStats();
+  const duelTimeLeftMs = Math.max(duelTurnDeadline - Date.now(), 0);
+  const duelSecondsLeft = Math.ceil(duelTimeLeftMs / 1000);
 
   if (modeChipEl) {
     modeChipEl.textContent = getModeLabel();
@@ -678,7 +707,13 @@ function updateStats() {
   if (progressPillEl) {
     if (isDuelMode) {
       const left = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
-      progressPillEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} turn \u2022 ${left} left`;
+      if (duelAwaitingReady) {
+        progressPillEl.textContent = `Pass device \u2022 ${DUEL_PLAYERS[duelCurrentTurn]} up`;
+      } else if (duelTurnLocked) {
+        progressPillEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} review \u2022 ${left} left`;
+      } else {
+        progressPillEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} turn \u2022 ${duelSecondsLeft}s`;
+      }
     } else if (isHardMode) {
       const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
       progressPillEl.textContent = `Guess ${Math.min(attempts + 1, HARD_GUESS_LIMIT)} / ${HARD_GUESS_LIMIT} \u2022 ${remaining} left`;
@@ -690,7 +725,24 @@ function updateStats() {
   }
 
   if (progressBarEl && progressFillEl && progressLabelEl) {
-    if (isHardMode) {
+    if (isDuelMode) {
+      if (duelAwaitingReady || duelTurnLocked || !duelTurnDeadline) {
+        progressBarEl.classList.add("hidden");
+        progressFillEl.style.width = "0%";
+        progressFillEl.style.background = "linear-gradient(to right,#1a6b3c,#d4af58)";
+        progressLabelEl.textContent = "";
+      } else {
+        const pct = (duelTimeLeftMs / DUEL_TURN_MS) * 100;
+        progressBarEl.classList.remove("hidden");
+        progressFillEl.style.width = `${pct}%`;
+        progressFillEl.style.background = pct <= 25
+          ? "linear-gradient(to right,#8f2d2d,#e74c3c)"
+          : pct <= 50
+            ? "linear-gradient(to right,#8b6914,#d4af58)"
+            : "linear-gradient(to right,#1a6b3c,#d4af58)";
+        progressLabelEl.textContent = `${duelSecondsLeft}s remaining`;
+      }
+    } else if (isHardMode) {
       const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
       const pct = (attempts / HARD_GUESS_LIMIT) * 100;
       progressBarEl.classList.remove("hidden");
@@ -713,7 +765,7 @@ function updateStats() {
 function setSubmitState() {
   const hasInput = guessInput.value.trim().length > 0;
   if (submitBtn) {
-    submitBtn.disabled = isSolved || duelAwaitingReady || !hasInput;
+    submitBtn.disabled = isSolved || duelAwaitingReady || duelTurnLocked || !hasInput;
   }
 }
 
@@ -737,6 +789,114 @@ function clearDuelHandoffTimer() {
   }
 }
 
+function clearDuelTurnTimer() {
+  if (duelTurnTimer) {
+    clearInterval(duelTurnTimer);
+    duelTurnTimer = null;
+  }
+  duelTurnDeadline = 0;
+}
+
+function finishDuelTurnTransition() {
+  const pendingTurn = duelPendingTurn;
+  duelPendingTurn = null;
+  duelTurnLocked = false;
+  if (!isDuelMode || isSolved) return;
+  if (Number.isInteger(pendingTurn) && pendingTurn !== duelCurrentTurn) {
+    duelCurrentTurn = pendingTurn;
+    showDuelReadyGate();
+  } else {
+    startDuelTurn();
+  }
+}
+
+function scheduleDuelTurnTransition(nextTurn, statusText, delayMs = DUEL_REVEAL_DELAY_MS) {
+  clearDuelTurnTimer();
+  clearDuelHandoffTimer();
+  duelTurnLocked = true;
+  duelPendingTurn = nextTurn;
+  guessInput.value = "";
+  guessInput.disabled = true;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+  }
+  closeSuggestions();
+  updateStats();
+  if (statusText) {
+    setStatus(statusText, "info");
+  }
+  persistCurrentGameState();
+  duelHandoffTimer = setTimeout(() => {
+    duelHandoffTimer = null;
+    finishDuelTurnTransition();
+  }, delayMs);
+}
+
+function handleDuelTurnTimeout() {
+  if (!isDuelMode || isSolved || duelAwaitingReady || duelTurnLocked) return;
+  clearDuelTurnTimer();
+  const player = duelCurrentTurn;
+  duelAttempts[player] += 1;
+  attempts++;
+  updateStats();
+
+  const p1Out = duelAttempts[0] >= DUEL_GUESS_LIMIT;
+  const p2Out = duelAttempts[1] >= DUEL_GUESS_LIMIT;
+  if (p1Out && p2Out) {
+    isSolved = true;
+    duelOutcomeText = "Draw";
+    duelTurnLocked = false;
+    duelPendingTurn = null;
+    guessInput.value = "";
+    guessInput.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+    closeSuggestions();
+    hideDuelReadyGate();
+    updateDuelRowPrivacy();
+    setStatus(`Time expired for ${DUEL_PLAYERS[player]}. No one found ${answer.name}.`, "error");
+    recordGameResult(false);
+    renderRecap(false);
+    clearCurrentGameState();
+    return;
+  }
+
+  const other = player === 0 ? 1 : 0;
+  const nextTurn = duelAttempts[other] < DUEL_GUESS_LIMIT ? other : player;
+  const switchedPlayer = nextTurn !== player;
+  scheduleDuelTurnTransition(
+    nextTurn,
+    switchedPlayer
+      ? `${DUEL_PLAYERS[player]} ran out of time. Pass device in 3 seconds.`
+      : `${DUEL_PLAYERS[player]} ran out of time. Next turn starts in 3 seconds.`,
+    DUEL_REVEAL_DELAY_MS
+  );
+}
+
+function startDuelTurnTimer() {
+  clearDuelTurnTimer();
+  if (!isDuelMode || isSolved || duelAwaitingReady || duelTurnLocked) {
+    updateStats();
+    return;
+  }
+  duelTurnDeadline = Date.now() + DUEL_TURN_MS;
+  updateStats();
+  persistCurrentGameState();
+  duelTurnTimer = setInterval(() => {
+    if (!isDuelMode || isSolved || duelAwaitingReady || duelTurnLocked) {
+      clearDuelTurnTimer();
+      updateStats();
+      return;
+    }
+    if (Date.now() >= duelTurnDeadline) {
+      handleDuelTurnTimeout();
+      return;
+    }
+    updateStats();
+  }, 250);
+}
+
 function updateDuelRowPrivacy() {
   if (!rows) return;
   const activePlayer = DUEL_PLAYERS[duelCurrentTurn];
@@ -758,7 +918,10 @@ function showDuelReadyGate() {
   if (!isDuelMode || isSolved) return;
   rememberFocus();
   clearDuelHandoffTimer();
+  clearDuelTurnTimer();
   duelAwaitingReady = true;
+  duelTurnLocked = false;
+  duelPendingTurn = null;
   guessInput.value = "";
   guessInput.disabled = true;
   if (submitBtn) {
@@ -775,6 +938,7 @@ function showDuelReadyGate() {
   }
   document.body.classList.add("duelGateOpen");
   setStatus(`Pass device to ${DUEL_PLAYERS[duelCurrentTurn]}.`, "info");
+  updateStats();
   if (duelReadyBtn) {
     duelReadyBtn.focus();
   }
@@ -794,12 +958,14 @@ function hideDuelReadyGate() {
 function startDuelTurn() {
   hideDuelReadyGate();
   if (!isDuelMode || isSolved) return;
+  duelTurnLocked = false;
+  duelPendingTurn = null;
   guessInput.disabled = false;
   setSubmitState();
   updateDuelRowPrivacy();
   setStatus(`${DUEL_PLAYERS[duelCurrentTurn]}'s turn`, "info");
   guessInput.focus();
-  persistCurrentGameState();
+  startDuelTurnTimer();
 }
 
 function renderRecentGuesses() {
@@ -948,6 +1114,8 @@ function pickRandomAnswer() {
     duelOutcomeText = "";
     duelAwaitingReady = false;
     duelGuessedNames = [new Set(), new Set()];
+    duelPendingTurn = null;
+    duelTurnLocked = false;
   }
   if (isMysteryTilesMode) {
     hiddenFieldKeys = pickHiddenFields(2);
@@ -975,6 +1143,7 @@ function pickRandomAnswer() {
     boardWrap.classList.remove("victory-glow");
   }
 
+  clearDuelTurnTimer();
   hideDuelReadyGate();
   guessInput.disabled = false;
   setSubmitState();
@@ -1390,7 +1559,7 @@ function renderRow(guess, options = {}) {
   }
 
   d.classList.add("pop");
-  d.style.animationDelay = `${i * 70}ms`;
+  d.style.animationDelay = `${i * 280}ms`;
   const matchTone = ["green", "yellow", "red"].find((tone) => d.classList.contains(tone));
   if (matchTone) {
     d.dataset.matchLabel = getMatchLabel(matchTone);
@@ -1454,13 +1623,14 @@ if (matched) {
   return matched;
 }
 
-function onGuess() {
-  if (isSolved || duelAwaitingReady) return;
+function onGuess(options = {}) {
+  const { keepFocus = true } = options;
+  if (isSolved || duelAwaitingReady || duelTurnLocked) return false;
 
   const guessName = guessInput.value.trim();
   if (!guessName) {
     setStatus("Type a character name first.", "error");
-    return;
+    return false;
   }
 
   const guess = findCharacterByName(guessName);
@@ -1474,7 +1644,7 @@ function onGuess() {
     } else {
       setStatus("Pick a name from the list.", "error");
     }
-    return;
+    return false;
   }
 
   const normalizedGuess = normalize(guess.name);
@@ -1482,11 +1652,11 @@ function onGuess() {
     const playerSet = duelGuessedNames[duelCurrentTurn];
     if (playerSet.has(normalizedGuess)) {
       setStatus("You already guessed that character.", "error");
-      return;
+      return false;
     }
   } else if (guessedNames.has(normalizedGuess)) {
     setStatus("You already guessed that character.", "error");
-    return;
+    return false;
   }
 
   if (isDuelMode) {
@@ -1503,11 +1673,12 @@ function onGuess() {
 
   if (isDuelMode) {
     const player = duelCurrentTurn;
+    clearDuelTurnTimer();
     duelAttempts[player] += 1;
     attempts++;
     const didMatch = renderRow(guess, { playerIndex: player, suppressEndHandling: true });
 
-    if (didMatch) {
+      if (didMatch) {
       isSolved = true;
       duelOutcomeText = `${DUEL_PLAYERS[player]} Wins`;
       launchConfetti();
@@ -1524,14 +1695,20 @@ function onGuess() {
       recordGameResult(true);
       renderRecap(true);
       clearDuelHandoffTimer();
+      duelTurnLocked = false;
+      duelPendingTurn = null;
       guessInput.value = "";
       guessInput.disabled = true;
       hideDuelReadyGate();
       updateDuelRowPrivacy();
-      closeSuggestions();
-      clearCurrentGameState();
-      return;
-    }
+        closeSuggestions();
+        clearCurrentGameState();
+        if (!keepFocus) {
+          guessInput.blur();
+          revealBoardAfterKeyboardDismiss();
+        }
+        return true;
+      }
 
     const p1Out = duelAttempts[0] >= DUEL_GUESS_LIMIT;
     const p2Out = duelAttempts[1] >= DUEL_GUESS_LIMIT;
@@ -1542,39 +1719,37 @@ function onGuess() {
       recordGameResult(false);
       renderRecap(false);
       clearDuelHandoffTimer();
+      duelTurnLocked = false;
+      duelPendingTurn = null;
       guessInput.value = "";
       guessInput.disabled = true;
       hideDuelReadyGate();
       updateDuelRowPrivacy();
       closeSuggestions();
       clearCurrentGameState();
-      return;
+      if (!keepFocus) {
+        guessInput.blur();
+        revealBoardAfterKeyboardDismiss();
+      }
+      return true;
     }
 
     const other = player === 0 ? 1 : 0;
     const nextTurn = duelAttempts[other] < DUEL_GUESS_LIMIT ? other : player;
     const switchedPlayer = nextTurn !== player;
-    duelCurrentTurn = nextTurn;
     updateStats();
-    guessInput.value = "";
-    guessInput.disabled = true;
-    if (submitBtn) {
-      submitBtn.disabled = true;
+    scheduleDuelTurnTransition(
+      nextTurn,
+      switchedPlayer
+        ? `${DUEL_PLAYERS[player]} locked in. Pass device in 3 seconds.`
+        : `${DUEL_PLAYERS[player]} locked in. Next turn starts in 3 seconds.`,
+      DUEL_REVEAL_DELAY_MS
+    );
+    if (!keepFocus) {
+      guessInput.blur();
+      revealBoardAfterKeyboardDismiss();
     }
-    closeSuggestions();
-    if (switchedPlayer) {
-      setStatus(`${DUEL_PLAYERS[player]} locked in. Pass device.`, "info");
-      clearDuelHandoffTimer();
-      duelHandoffTimer = setTimeout(() => {
-        duelHandoffTimer = null;
-        if (!isDuelMode || isSolved) return;
-        showDuelReadyGate();
-      }, 1000);
-    } else {
-      startDuelTurn();
-    }
-    persistCurrentGameState();
-    return;
+    return true;
   }
 
   attempts++;
@@ -1591,14 +1766,24 @@ function onGuess() {
     }
     closeSuggestions();
     clearCurrentGameState();
-    return;
+    if (!keepFocus) {
+      guessInput.blur();
+      revealBoardAfterKeyboardDismiss();
+    }
+    return true;
   }
 
   guessInput.value = "";
   setSubmitState();
   closeSuggestions();
-  guessInput.focus();
+  if (keepFocus) {
+    guessInput.focus();
+  } else {
+    guessInput.blur();
+    revealBoardAfterKeyboardDismiss();
+  }
   persistCurrentGameState();
+  return true;
 }
 
 async function init() {
@@ -1652,14 +1837,18 @@ function setActiveSuggestion(index) {
   }
 }
 
-function selectSuggestionByIndex(index) {
-  if (index < 0 || index >= suggestionItems.length) return;
+function selectSuggestionByIndex(index, options = {}) {
+  const { keepFocus = true } = options;
+  if (index < 0 || index >= suggestionItems.length) return false;
   const selected = suggestionItems[index];
   guessInput.value = selected.dataset.name || "";
-  onGuess();
+  const didGuess = onGuess({ keepFocus });
   setSubmitState();
   closeSuggestions();
-  guessInput.focus();
+  if (keepFocus) {
+    guessInput.focus();
+  }
+  return didGuess;
 }
 
 function showSuggestions(items, query = "") {
@@ -1830,11 +2019,12 @@ guessInput.addEventListener("keydown", (e) => {
 
   if (e.key === "Enter") {
     e.preventDefault();
+    const dismissKeyboard = isIOSDevice();
     if (activeSuggestionIndex >= 0) {
-      selectSuggestionByIndex(activeSuggestionIndex);
+      selectSuggestionByIndex(activeSuggestionIndex, { keepFocus: !dismissKeyboard });
       return;
     }
-    onGuess();
+    onGuess({ keepFocus: !dismissKeyboard });
   }
 });
 
