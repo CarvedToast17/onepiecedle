@@ -218,6 +218,8 @@ textarea {
   background:
     linear-gradient(160deg, rgba(108, 176, 236, 0.2), rgba(72, 143, 214, 0.14)),
     linear-gradient(180deg, rgba(7, 20, 39, 0.94), rgba(6, 16, 31, 0.98));
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (max-width: 980px) {
@@ -246,7 +248,7 @@ textarea {
   }
 }
 
-@media (max-width: 430px) {
+@media (max-width: 340px) {
   .modeLandingGrid {
     grid-template-columns: 1fr;
   }

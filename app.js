@@ -27,7 +27,6 @@ const settingsClose = document.getElementById("settingsClose");
 const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
 const modeCardEls = Array.from(document.querySelectorAll("#menuPanel .modeCard"));
-const landingModeCardEls = Array.from(document.querySelectorAll(".modeLandingCard"));
 const modeLandingEl = document.getElementById("modeLanding");
 const gameShellEl = document.getElementById("gameShell");
 const progressPillEl = document.getElementById("progressPill");
@@ -2421,16 +2420,16 @@ if (modeCardEls.length) {
   });
 }
 
-if (landingModeCardEls.length) {
-  landingModeCardEls.forEach((card) => {
-    const activate = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      selectMode(card.dataset.mode || "casual");
-    };
-    card.addEventListener("click", activate);
-    card.addEventListener("touchend", activate, { passive: false });
-  });
+if (modeLandingEl) {
+  const activateLandingMode = (event) => {
+    const card = event.target.closest(".modeLandingCard");
+    if (!card) return;
+    event.preventDefault();
+    event.stopPropagation();
+    selectMode(card.dataset.mode || "casual");
+  };
+  modeLandingEl.addEventListener("click", activateLandingMode);
+  modeLandingEl.addEventListener("touchend", activateLandingMode, { passive: false });
 }
 
 if (menuBtn && menuPanel) {
