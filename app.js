@@ -93,6 +93,9 @@ let audioContext = null;
 let revealNoiseBuffer = null;
 let lastFocusEl = null;
 let bodyLockScrollY = 0;
+let landingTouchStartX = 0;
+let landingTouchStartY = 0;
+let landingTouchMoved = false;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
@@ -106,6 +109,7 @@ const DUEL_TURN_MS = 60000;
 const DUEL_REVEAL_DELAY_MS = 3000;
 const TILE_REVEAL_MS = 2100;
 const TILE_REVEAL_STAGGER_MS = 280;
+const LANDING_TAP_MOVE_THRESHOLD = 14;
 const SEARCH_SUGGESTION_LIMIT = 8;
 const MATCH_NO_RESULT_HINT_LEN = 2;
 const PRECISE_MATCH_THRESHOLD = 920;
@@ -2424,12 +2428,33 @@ if (modeLandingEl) {
   const activateLandingMode = (event) => {
     const card = event.target.closest(".modeLandingCard");
     if (!card) return;
+    if (event.type === "touchend" && landingTouchMoved) return;
     event.preventDefault();
     event.stopPropagation();
     selectMode(card.dataset.mode || "casual");
   };
+  modeLandingEl.addEventListener("touchstart", (event) => {
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    landingTouchStartX = touch.clientX;
+    landingTouchStartY = touch.clientY;
+    landingTouchMoved = false;
+  }, { passive: true });
+  modeLandingEl.addEventListener("touchmove", (event) => {
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    if (
+      Math.abs(touch.clientX - landingTouchStartX) > LANDING_TAP_MOVE_THRESHOLD ||
+      Math.abs(touch.clientY - landingTouchStartY) > LANDING_TAP_MOVE_THRESHOLD
+    ) {
+      landingTouchMoved = true;
+    }
+  }, { passive: true });
   modeLandingEl.addEventListener("click", activateLandingMode);
   modeLandingEl.addEventListener("touchend", activateLandingMode, { passive: false });
+  modeLandingEl.addEventListener("touchcancel", () => {
+    landingTouchMoved = true;
+  }, { passive: true });
 }
 
 if (menuBtn && menuPanel) {
