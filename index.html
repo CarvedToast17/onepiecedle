@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <title>OnePiece-dle Infinite</title>
+  <meta name="theme-color" content="#081528" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>OnePieceWho</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -37,28 +41,28 @@
         </div>
 
         <aside class="sideMenu" aria-label="Game options">
-          <button id="menuBtn" class="navActionBtn navIconBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Settings" title="Settings">&#9881;</button>
+          <button id="menuBtn" class="navActionBtn navIconBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Switch game mode" title="Switch game mode">&#127918;</button>
         </aside>
       </div>
     </div>
   </header>
 
   <div id="settingsOverlay" class="settingsOverlay hidden" aria-hidden="true"></div>
-  <div id="menuPanel" class="settingsPanel hidden" role="dialog" aria-modal="true" aria-label="Settings">
+  <div id="menuPanel" class="settingsPanel hidden" role="dialog" aria-modal="true" aria-label="Game modes">
     <div class="settingsPanelHeader">
-      <span>Settings</span>
-      <button id="settingsClose" class="settingsCloseBtn" type="button" aria-label="Close settings">&times;</button>
+      <span>Game Modes</span>
+      <button id="settingsClose" class="settingsCloseBtn" type="button" aria-label="Close game modes">&times;</button>
     </div>
 
     <div class="settingsPanelBody">
       <label class="settingsSectionLabel" for="modePreset">Game Mode</label>
       <select id="modePreset" class="menuSelect srOnly" aria-hidden="true" tabindex="-1">
         <option value="casual">Casual</option>
-        <option value="hard">Hard (5 guesses)</option>
         <option value="extreme">Extreme (5 + 2 hidden)</option>
         <option value="daily">Daily</option>
         <option value="mystery_tiles">Mystery Tiles</option>
         <option value="duel_1v1">1v1 Duel</option>
+        <option value="impostor">Impostor</option>
       </select>
 
       <div class="modeGrid" id="modeGrid" role="group" aria-label="Game mode">
@@ -66,11 +70,6 @@
           <span class="modeCardIcon">&infin;</span>
           <span class="modeCardName">Casual</span>
           <span class="modeCardDesc">Unlimited guesses</span>
-        </button>
-        <button class="modeCard" type="button" data-mode="hard">
-          <span class="modeCardIcon">5</span>
-          <span class="modeCardName">Hard</span>
-          <span class="modeCardDesc">5 guesses only</span>
         </button>
         <button class="modeCard" type="button" data-mode="extreme">
           <span class="modeCardIcon">&#9889;</span>
@@ -92,6 +91,11 @@
           <span class="modeCardName">1v1 Duel</span>
           <span class="modeCardDesc">Pass &amp; play</span>
         </button>
+        <button class="modeCard" type="button" data-mode="impostor">
+          <span class="modeCardIcon">&#128373;</span>
+          <span class="modeCardName">Impostor</span>
+          <span class="modeCardDesc">Secret role handoff</span>
+        </button>
       </div>
 
       <label class="settingsSectionLabel settingsSectionLabelDisplay" for="compactMode">Display</label>
@@ -104,6 +108,47 @@
   </div>
 
   <main class="container">
+    <section id="modeLanding" class="modeLanding" aria-labelledby="modeLandingTitle">
+      <div class="modeLandingInner">
+        <p class="modeLandingEyebrow">Select Your Voyage</p>
+        <h2 id="modeLandingTitle" class="modeLandingTitle">Choose a game mode before you set sail.</h2>
+        <p class="modeLandingCopy">Pick the kind of round you want to play. You can switch modes any time with the controller button in the top-right.</p>
+        <div class="modeLandingGrid" role="group" aria-label="Choose game mode">
+          <button class="modeCard modeLandingCard" type="button" data-mode="casual">
+            <span class="modeCardIcon">&infin;</span>
+            <span class="modeCardName">Casual</span>
+            <span class="modeCardDesc">Unlimited guesses</span>
+          </button>
+          <button class="modeCard modeLandingCard" type="button" data-mode="extreme">
+            <span class="modeCardIcon">&#9889;</span>
+            <span class="modeCardName">Extreme</span>
+            <span class="modeCardDesc">5 guesses + hidden cols</span>
+          </button>
+          <button class="modeCard modeLandingCard" type="button" data-mode="daily">
+            <span class="modeCardIcon">&#128197;</span>
+            <span class="modeCardName">Daily</span>
+            <span class="modeCardDesc">Same for everyone</span>
+          </button>
+          <button class="modeCard modeLandingCard" type="button" data-mode="mystery_tiles">
+            <span class="modeCardIcon">&#128065;</span>
+            <span class="modeCardName">Mystery</span>
+            <span class="modeCardDesc">Hidden tile columns</span>
+          </button>
+          <button class="modeCard modeLandingCard" type="button" data-mode="duel_1v1">
+            <span class="modeCardIcon">&#9876;</span>
+            <span class="modeCardName">1v1 Duel</span>
+            <span class="modeCardDesc">Pass &amp; play</span>
+          </button>
+          <button class="modeCard modeLandingCard" type="button" data-mode="impostor">
+            <span class="modeCardIcon">&#128373;</span>
+            <span class="modeCardName">Impostor</span>
+            <span class="modeCardDesc">Secret role handoff</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameShell" class="gameShell hidden" aria-label="Game board area">
     <div id="statsBar" class="statsBar" aria-live="polite">
       <div id="modeChip" class="statChip">Casual</div>
       <div id="attemptChip" class="statChip">Guess 1</div>
@@ -123,6 +168,7 @@
           autocorrect="off"
           autocapitalize="none"
           spellcheck="false"
+          inputmode="search"
           enterkeyhint="search"
           aria-autocomplete="list"
           aria-controls="suggestions"
@@ -160,6 +206,7 @@
       <div id="rows"></div>
     </div>
     <div class="boardHint" aria-hidden="true">Swipe the board to view all columns</div>
+    </section>
   </main>
 
   <div id="imageModal" class="imageModal hidden" role="dialog" aria-modal="true" aria-label="Character image preview" aria-hidden="true" tabindex="-1">
@@ -173,6 +220,50 @@
       <h2 id="duelReadyTitle">Player 1 ready?</h2>
       <p>Pass the device, then continue.</p>
       <button id="duelReadyBtn" class="primary" type="button">Ready</button>
+    </div>
+  </div>
+
+  <div id="impostorSetupModal" class="duelPassModal hidden" role="dialog" aria-modal="true" aria-labelledby="impostorSetupTitle" aria-hidden="true" tabindex="-1">
+    <div class="duelPassCard impostorCard">
+      <div class="duelPassIcon" aria-hidden="true">&#128373;</div>
+      <h2 id="impostorSetupTitle">Set Up Impostor Round</h2>
+      <p>Enter 1 to 4 player names. One player will be the impostor.</p>
+      <div class="impostorSetupGrid">
+        <label class="impostorField" for="impostorPlayerCount">
+          <span>Players</span>
+          <select id="impostorPlayerCount">
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+          </select>
+        </label>
+        <label class="impostorField" for="impostorPlayer1">
+          <span>Player 1</span>
+          <input id="impostorPlayer1" type="text" maxlength="24" autocomplete="off" />
+        </label>
+        <label class="impostorField" for="impostorPlayer2">
+          <span>Player 2</span>
+          <input id="impostorPlayer2" type="text" maxlength="24" autocomplete="off" />
+        </label>
+        <label class="impostorField" for="impostorPlayer3">
+          <span>Player 3</span>
+          <input id="impostorPlayer3" type="text" maxlength="24" autocomplete="off" />
+        </label>
+        <label class="impostorField" for="impostorPlayer4">
+          <span>Player 4</span>
+          <input id="impostorPlayer4" type="text" maxlength="24" autocomplete="off" />
+        </label>
+      </div>
+      <button id="impostorStartBtn" class="primary" type="button">Start Round</button>
+    </div>
+  </div>
+
+  <div id="impostorRevealModal" class="duelPassModal hidden" role="dialog" aria-modal="true" aria-labelledby="impostorRevealTitle" aria-hidden="true" tabindex="-1">
+    <div class="duelPassCard impostorCard">
+      <div class="duelPassIcon" aria-hidden="true">&#9876;</div>
+      <h2 id="impostorRevealTitle">Pass the Device</h2>
+      <p id="impostorRevealBody">Only the next player should look at the screen.</p>
+      <div id="impostorSecret" class="impostorSecret hidden" aria-live="polite"></div>
+      <button id="impostorRevealBtn" class="primary" type="button">Reveal Role</button>
     </div>
   </div>
 

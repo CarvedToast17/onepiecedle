@@ -27,6 +27,8 @@ const settingsClose = document.getElementById("settingsClose");
 const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
 const modeCardEls = Array.from(document.querySelectorAll(".modeCard"));
+const modeLandingEl = document.getElementById("modeLanding");
+const gameShellEl = document.getElementById("gameShell");
 const progressPillEl = document.getElementById("progressPill");
 const progressBarEl = document.getElementById("progressBar");
 const progressFillEl = document.getElementById("progressFill");
@@ -40,6 +42,20 @@ const imageModalClose = document.getElementById("imageModalClose");
 const duelPassModalEl = document.getElementById("duelPassModal");
 const duelReadyTitleEl = document.getElementById("duelReadyTitle");
 const duelReadyBtn = document.getElementById("duelReadyBtn");
+const impostorSetupModalEl = document.getElementById("impostorSetupModal");
+const impostorPlayerCountEl = document.getElementById("impostorPlayerCount");
+const impostorStartBtn = document.getElementById("impostorStartBtn");
+const impostorRevealModalEl = document.getElementById("impostorRevealModal");
+const impostorRevealTitleEl = document.getElementById("impostorRevealTitle");
+const impostorRevealBodyEl = document.getElementById("impostorRevealBody");
+const impostorRevealBtn = document.getElementById("impostorRevealBtn");
+const impostorSecretEl = document.getElementById("impostorSecret");
+const impostorPlayerInputEls = [
+  document.getElementById("impostorPlayer1"),
+  document.getElementById("impostorPlayer2"),
+  document.getElementById("impostorPlayer3"),
+  document.getElementById("impostorPlayer4")
+].filter(Boolean);
 const srAnnouncer = document.getElementById("srAnnouncer");
 const srStatusAnnouncer = document.getElementById("srStatusAnnouncer");
 
@@ -54,6 +70,7 @@ let isDailyMode = false;
 let isMysteryTilesMode = false;
 let isExtremeMode = false;
 let isDuelMode = false;
+let isImpostorMode = false;
 let activeModePreset = "casual";
 let playerStats = null;
 let hiddenFieldKeys = [];
@@ -67,7 +84,15 @@ let duelTurnTimer = null;
 let duelTurnDeadline = 0;
 let duelPendingTurn = null;
 let duelTurnLocked = false;
+let impostorPlayers = [];
+let impostorIndex = -1;
+let impostorRevealIndex = 0;
+let impostorRevealPhase = "prompt";
+let impostorHint = "";
+let audioContext = null;
+let revealNoiseBuffer = null;
 let lastFocusEl = null;
+let bodyLockScrollY = 0;
 
 const HARD_GUESS_LIMIT = 5;
 const PLAYER_STATS_KEY = "op_player_stats_v1";
@@ -79,6 +104,8 @@ const DUEL_GUESS_LIMIT = 6;
 const DUEL_PLAYERS = ["Player 1", "Player 2"];
 const DUEL_TURN_MS = 60000;
 const DUEL_REVEAL_DELAY_MS = 3000;
+const TILE_REVEAL_MS = 2100;
+const TILE_REVEAL_STAGGER_MS = 280;
 const SEARCH_SUGGESTION_LIMIT = 8;
 const MATCH_NO_RESULT_HINT_LEN = 2;
 const PRECISE_MATCH_THRESHOLD = 920;
@@ -115,15 +142,150 @@ function revealBoardAfterKeyboardDismiss() {
   }, 60);
 }
 
+function getAudioContext() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+  if (!audioContext) {
+    audioContext = new AudioCtx();
+  }
+  if (audioContext.state === "suspended") {
+    audioContext.resume().catch(() => {});
+  }
+  return audioContext;
+}
+
+function primeAudio() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime + 0.01;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.connect(ctx.destination);
+
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(220, now);
+  osc.connect(gain);
+  osc.start(now);
+  osc.stop(now + 0.01);
+}
+
+function updateBodyScrollLock() {
+  const shouldLock =
+    (!!imageModal && !imageModal.classList.contains("hidden")) ||
+    (!!duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) ||
+    (!!impostorSetupModalEl && !impostorSetupModalEl.classList.contains("hidden")) ||
+    (!!impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden"));
+
+  if (shouldLock) {
+    if (!document.body.classList.contains("modalLocked")) {
+      bodyLockScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.classList.add("modalLocked");
+      document.body.style.top = `-${bodyLockScrollY}px`;
+    }
+    return;
+  }
+
+  if (!document.body.classList.contains("modalLocked")) return;
+  document.body.classList.remove("modalLocked");
+  document.body.style.top = "";
+  window.scrollTo(0, bodyLockScrollY);
+  bodyLockScrollY = 0;
+}
+
+function getRevealNoiseBuffer(ctx) {
+  if (!ctx) return null;
+  if (revealNoiseBuffer && revealNoiseBuffer.sampleRate === ctx.sampleRate) {
+    return revealNoiseBuffer;
+  }
+  const length = Math.max(1, Math.floor(ctx.sampleRate * 0.75));
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const channel = buffer.getChannelData(0);
+  for (let i = 0; i < length; i += 1) {
+    channel[i] = (Math.random() * 2 - 1) * 0.55;
+  }
+  revealNoiseBuffer = buffer;
+  return revealNoiseBuffer;
+}
+
+function playTileRevealSwoosh(delayMs = 0, tone = "") {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const startTime = Math.max(ctx.currentTime + 0.01, ctx.currentTime + (delayMs / 1000));
+  const duration = Math.min(0.72, Math.max(0.46, (TILE_REVEAL_MS / 1000) * 0.26));
+  const endTime = startTime + duration;
+  const noiseBuffer = getRevealNoiseBuffer(ctx);
+  if (!noiseBuffer) return;
+
+  const colorGain = tone === "green" ? 1.08 : tone === "yellow" ? 0.96 : tone === "red" ? 0.9 : 1;
+  const output = ctx.createGain();
+  output.gain.setValueAtTime(0.0001, startTime);
+  output.gain.exponentialRampToValueAtTime(0.028 * colorGain, startTime + duration * 0.18);
+  output.gain.exponentialRampToValueAtTime(0.0001, endTime);
+  output.connect(ctx.destination);
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+
+  const bandpass = ctx.createBiquadFilter();
+  bandpass.type = "bandpass";
+  bandpass.Q.value = 0.85;
+  bandpass.frequency.setValueAtTime(1250, startTime);
+  bandpass.frequency.exponentialRampToValueAtTime(260, endTime);
+
+  const highpass = ctx.createBiquadFilter();
+  highpass.type = "highpass";
+  highpass.frequency.setValueAtTime(160, startTime);
+  highpass.frequency.exponentialRampToValueAtTime(80, endTime);
+
+  const toneOsc = ctx.createOscillator();
+  toneOsc.type = "triangle";
+  toneOsc.frequency.setValueAtTime(420, startTime);
+  toneOsc.frequency.exponentialRampToValueAtTime(180, endTime);
+
+  const toneGain = ctx.createGain();
+  toneGain.gain.setValueAtTime(0.0001, startTime);
+  toneGain.gain.exponentialRampToValueAtTime(0.012 * colorGain, startTime + duration * 0.14);
+  toneGain.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+  noise.connect(bandpass);
+  bandpass.connect(highpass);
+  highpass.connect(output);
+
+  toneOsc.connect(toneGain);
+  toneGain.connect(output);
+
+  noise.start(startTime, 0, duration);
+  toneOsc.start(startTime);
+  toneOsc.stop(endTime);
+ }
+
 function getModeLabel(modeKey = activeModePreset) {
   switch (modeKey) {
-    case "hard": return "Hard";
     case "extreme": return "Extreme";
     case "daily": return "Daily";
     case "mystery_tiles": return "Mystery Tiles";
     case "duel_1v1": return "1v1 Duel";
+    case "impostor": return "Impostor";
     default: return "Casual";
   }
+}
+
+function openModeLanding() {
+  if (modeLandingEl) modeLandingEl.classList.remove("hidden");
+  if (gameShellEl) gameShellEl.classList.add("hidden");
+}
+
+function closeModeLanding() {
+  if (modeLandingEl) modeLandingEl.classList.add("hidden");
+  if (gameShellEl) gameShellEl.classList.remove("hidden");
+}
+
+function getCharacterHint(character) {
+  const hints = Array.isArray(character?.hints) ? character.hints.filter(Boolean) : [];
+  if (!hints.length) return "Pirate";
+  return hints[Math.floor(Math.random() * hints.length)];
 }
 
 function rememberFocus() {
@@ -184,6 +346,8 @@ function trapFocus(container, event) {
 }
 
 function getOpenTrapContainer() {
+  if (impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden")) return impostorRevealModalEl;
+  if (impostorSetupModalEl && !impostorSetupModalEl.classList.contains("hidden")) return impostorSetupModalEl;
   if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) return duelPassModalEl;
   if (imageModal && !imageModal.classList.contains("hidden")) return imageModal;
   if (helpPanel && !helpPanel.classList.contains("hidden")) return helpPanel;
@@ -242,6 +406,138 @@ function closeMenuPanel(restore = false) {
   }
   menuBtn.setAttribute("aria-expanded", "false");
   if (restore) restoreFocus(menuBtn);
+}
+
+function resetImpostorState() {
+  impostorPlayers = [];
+  impostorIndex = -1;
+  impostorRevealIndex = 0;
+  impostorRevealPhase = "prompt";
+  impostorHint = "";
+}
+
+function closeImpostorSetupModal() {
+  if (!impostorSetupModalEl) return;
+  impostorSetupModalEl.classList.add("hidden");
+  impostorSetupModalEl.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("impostorGateOpen");
+  updateBodyScrollLock();
+}
+
+function closeImpostorRevealModal() {
+  if (!impostorRevealModalEl) return;
+  impostorRevealModalEl.classList.add("hidden");
+  impostorRevealModalEl.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("impostorGateOpen");
+  updateBodyScrollLock();
+}
+
+function updateImpostorPlayerInputs() {
+  const playerCount = Math.max(3, Math.min(4, Number(impostorPlayerCountEl?.value || 4)));
+  impostorPlayerInputEls.forEach((input, index) => {
+    const enabled = index < playerCount;
+    const wrapper = input?.closest(".impostorField");
+    if (input) {
+      input.disabled = !enabled;
+      if (!enabled) input.value = "";
+    }
+    if (wrapper) {
+      wrapper.classList.toggle("hidden", !enabled);
+    }
+  });
+}
+
+function openImpostorSetupModal() {
+  if (!impostorSetupModalEl) return;
+  closeImpostorRevealModal();
+  updateImpostorPlayerInputs();
+  impostorSetupModalEl.classList.remove("hidden");
+  impostorSetupModalEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("impostorGateOpen");
+  updateBodyScrollLock();
+  if (impostorPlayerInputEls[0]) {
+    impostorPlayerInputEls[0].focus();
+  }
+}
+
+function showImpostorRevealStep() {
+  if (!impostorRevealModalEl || !impostorRevealTitleEl || !impostorRevealBodyEl || !impostorRevealBtn || !impostorSecretEl) return;
+  const currentName = impostorPlayers[impostorRevealIndex] || `Player ${impostorRevealIndex + 1}`;
+  impostorRevealModalEl.classList.remove("hidden");
+  impostorRevealModalEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("impostorGateOpen");
+  updateBodyScrollLock();
+
+  if (impostorRevealPhase === "complete") {
+    impostorRevealTitleEl.textContent = "Roles Assigned";
+    impostorRevealBodyEl.textContent = "Pass the device back and start discussing. Use New Game when you want another round.";
+    impostorSecretEl.className = "impostorSecret hidden";
+    impostorSecretEl.textContent = "";
+    impostorRevealBtn.textContent = "Close";
+    return;
+  }
+
+  if (impostorRevealPhase === "prompt") {
+    impostorRevealTitleEl.textContent = `Pass to ${currentName}`;
+    impostorRevealBodyEl.textContent = `Only ${currentName} should look at the screen.`;
+    impostorSecretEl.className = "impostorSecret hidden";
+    impostorSecretEl.textContent = "";
+    impostorRevealBtn.textContent = "Reveal Role";
+    return;
+  }
+
+  const isImpostor = impostorRevealIndex === impostorIndex;
+  impostorRevealTitleEl.textContent = currentName;
+  impostorRevealBodyEl.textContent = isImpostor
+    ? "You do not know the character. Blend in."
+    : "You know the secret character. Do not say it out loud.";
+  impostorSecretEl.className = `impostorSecret ${isImpostor ? "impostorRole" : "crewmateRole"}`;
+  impostorSecretEl.textContent = isImpostor
+    ? `You are the Impostor.\nHint: ${impostorHint || getCharacterHint(answer)}`
+    : `Character: ${answer ? answer.name : "Unknown"}`;
+  impostorRevealBtn.textContent = impostorRevealIndex < impostorPlayers.length - 1 ? "Hide and Pass" : "Finish";
+}
+
+function advanceImpostorReveal() {
+  if (impostorRevealPhase === "complete") {
+    closeImpostorRevealModal();
+    setStatus("Impostor roles assigned. Use New Game to start another round.", "info");
+    return;
+  }
+
+  if (impostorRevealPhase === "prompt") {
+    impostorRevealPhase = "reveal";
+    showImpostorRevealStep();
+    return;
+  }
+
+  if (impostorRevealIndex < impostorPlayers.length - 1) {
+    impostorRevealIndex += 1;
+    impostorRevealPhase = "prompt";
+  } else {
+    impostorRevealPhase = "complete";
+  }
+  showImpostorRevealStep();
+}
+
+function beginImpostorRound() {
+  if (!answer) {
+    answer = pickAnswerByCurrentMode();
+  }
+  const playerCount = Math.max(3, Math.min(4, Number(impostorPlayerCountEl?.value || 4)));
+  const players = impostorPlayerInputEls.slice(0, playerCount).map((input, index) => {
+    const value = (input?.value || "").trim();
+    return value || `Player ${index + 1}`;
+  });
+  impostorPlayers = players;
+  impostorIndex = Math.floor(Math.random() * players.length);
+  impostorRevealIndex = 0;
+  impostorRevealPhase = "prompt";
+  impostorHint = getCharacterHint(answer);
+  closeImpostorSetupModal();
+  showImpostorRevealStep();
+  updateStats();
+  setStatus("Pass the device and reveal each role in order.", "info");
 }
 
 function getMatchLabel(color) {
@@ -501,12 +797,10 @@ function savePlayerStats() {
 function renderStatsDashboard() {
   if (!statsDashboardEl || !playerStats) return;
   const modeStats = getModeStats();
-  const isWrMode = activeModePreset === "hard" || activeModePreset === "extreme";
-
-  const hardStats = getModeStats("hard");
+  const isWrMode = activeModePreset === "extreme";
   const extremeStats = getModeStats("extreme");
-  const rankedGames = hardStats.gamesPlayed + extremeStats.gamesPlayed;
-  const rankedWins = hardStats.wins + extremeStats.wins;
+  const rankedGames = extremeStats.gamesPlayed;
+  const rankedWins = extremeStats.wins;
   const rankedWinRate = rankedGames ? Math.round((rankedWins / rankedGames) * 100) : 0;
   const modeWinRate = modeStats.gamesPlayed ? Math.round((modeStats.wins / modeStats.gamesPlayed) * 100) : 0;
 
@@ -606,15 +900,20 @@ function hideRecap() {
 }
 
 function applyModePreset(modeKey, restart = true) {
-  const safeMode = ["casual", "hard", "extreme", "daily", "mystery_tiles", "duel_1v1"].includes(modeKey) ? modeKey : "casual";
+  const normalizedMode = modeKey === "hard" ? "extreme" : modeKey;
+  const safeMode = ["casual", "extreme", "daily", "mystery_tiles", "duel_1v1", "impostor"].includes(normalizedMode) ? normalizedMode : "casual";
   clearDuelTurnTimer();
   clearDuelHandoffTimer();
   activeModePreset = safeMode;
   isExtremeMode = safeMode === "extreme";
-  isHardMode = safeMode === "hard" || isExtremeMode;
+  isHardMode = isExtremeMode;
   isDailyMode = safeMode === "daily";
   isMysteryTilesMode = safeMode === "mystery_tiles" || isExtremeMode;
   isDuelMode = safeMode === "duel_1v1";
+  isImpostorMode = safeMode === "impostor";
+  resetImpostorState();
+  closeImpostorSetupModal();
+  closeImpostorRevealModal();
   if (isDuelMode) {
     duelAttempts = [0, 0];
     duelCurrentTurn = 0;
@@ -631,8 +930,9 @@ function applyModePreset(modeKey, restart = true) {
     newBtn.classList.toggle("hidden", isDailyMode);
   }
   if (controlsEl) {
-    controlsEl.classList.toggle("dailyOnly", isDailyMode);
+    controlsEl.classList.toggle("dailyOnly", isDailyMode || isImpostorMode);
   }
+  document.body.classList.toggle("impostorMode", isImpostorMode);
   updateHiddenHeaders();
 
   updateStats();
@@ -672,7 +972,9 @@ function updateStats() {
   }
 
   if (attemptChipEl) {
-    if (isDuelMode) {
+    if (isImpostorMode) {
+      attemptChipEl.textContent = `${Math.max(impostorPlayers.length, 1)} players`;
+    } else if (isDuelMode) {
       const remaining = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
       attemptChipEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} • ${remaining} left`;
     } else if (isHardMode) {
@@ -694,7 +996,9 @@ function updateStats() {
   }
 
   if (stats) {
-    if (isDuelMode) {
+    if (isImpostorMode) {
+      stats.textContent = `Mode: ${getModeLabel()} • Players: ${impostorPlayers.length || "Setup"} • Secret role pass-and-play`;
+    } else if (isDuelMode) {
       stats.textContent = `Mode: ${getModeLabel()} \u2022 P1: ${duelAttempts[0]}/${DUEL_GUESS_LIMIT} \u2022 P2: ${duelAttempts[1]}/${DUEL_GUESS_LIMIT}`;
     } else {
       stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
@@ -705,7 +1009,11 @@ function updateStats() {
     boardWrap.classList.toggle("extremeMode", isExtremeMode);
   }
   if (progressPillEl) {
-    if (isDuelMode) {
+    if (isImpostorMode) {
+      progressPillEl.textContent = impostorPlayers.length
+        ? `Impostor ready \u2022 ${impostorPlayers.length} players`
+        : "Set player names";
+    } else if (isDuelMode) {
       const left = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
       if (duelAwaitingReady) {
         progressPillEl.textContent = `Pass device \u2022 ${DUEL_PLAYERS[duelCurrentTurn]} up`;
@@ -725,7 +1033,12 @@ function updateStats() {
   }
 
   if (progressBarEl && progressFillEl && progressLabelEl) {
-    if (isDuelMode) {
+    if (isImpostorMode) {
+      progressBarEl.classList.add("hidden");
+      progressFillEl.style.width = "0%";
+      progressFillEl.style.background = "linear-gradient(to right,#1a6b3c,#d4af58)";
+      progressLabelEl.textContent = "";
+    } else if (isDuelMode) {
       if (duelAwaitingReady || duelTurnLocked || !duelTurnDeadline) {
         progressBarEl.classList.add("hidden");
         progressFillEl.style.width = "0%";
@@ -763,6 +1076,10 @@ function updateStats() {
 }
 
 function setSubmitState() {
+  if (isImpostorMode) {
+    if (submitBtn) submitBtn.disabled = true;
+    return;
+  }
   const hasInput = guessInput.value.trim().length > 0;
   if (submitBtn) {
     submitBtn.disabled = isSolved || duelAwaitingReady || duelTurnLocked || !hasInput;
@@ -937,6 +1254,7 @@ function showDuelReadyGate() {
     duelPassModalEl.setAttribute("aria-hidden", "false");
   }
   document.body.classList.add("duelGateOpen");
+  updateBodyScrollLock();
   setStatus(`Pass device to ${DUEL_PLAYERS[duelCurrentTurn]}.`, "info");
   updateStats();
   if (duelReadyBtn) {
@@ -953,6 +1271,7 @@ function hideDuelReadyGate() {
     duelPassModalEl.setAttribute("aria-hidden", "true");
   }
   document.body.classList.remove("duelGateOpen");
+  updateBodyScrollLock();
 }
 
 function startDuelTurn() {
@@ -970,7 +1289,7 @@ function startDuelTurn() {
 
 function renderRecentGuesses() {
   if (!recentGuessesEl) return;
-  if (isDuelMode) {
+  if (isDuelMode || isImpostorMode) {
     recentGuessesEl.classList.add("hidden");
     recentGuessesEl.innerHTML = "";
     return;
@@ -1025,15 +1344,26 @@ function getFactionTag(affiliation, name = "") {
   if (!a) return { label: "Unknown", className: "faction-unknown" };
   if (a.includes("marine")) return { label: "Marines", className: "faction-marines" };
   if (a.includes("straw hat")) return { label: "Straw Hat", className: "faction-strawhat" };
-  if (a.includes("cross guild") || a.includes("warlord")) return { label: "Warlord", className: "faction-warlord" };
-  if (a.includes("beasts pirates") && (n.includes("ulti") || n.includes("page one"))) {
-    return { label: "Pirate", className: "faction-pirate" };
-  }
-  if (a.includes("yonko") || a.includes("beasts pirates") || a.includes("big mom pirates") || a.includes("red hair pirates") || a.includes("blackbeard pirates") || a.includes("whitebeard pirates")) {
+  if (a.includes("cross guild")) return { label: "Cross Guild", className: "faction-warlord" };
+  if (a.includes("warlord")) return { label: "Warlord", className: "faction-warlord" };
+  if (a.includes("revolutionary")) return { label: "Revolutionary", className: "faction-revo" };
+  if (a.includes("cipher pol")) return { label: "Cipher Pol", className: "faction-marines" };
+  if (a.includes("impel down")) return { label: "Impel Down", className: "faction-marines" };
+  if (a.includes("baroque works")) return { label: "Baroque Works", className: "faction-warlord" };
+  if (a.includes("germa 66")) return { label: "Germa", className: "faction-marines" };
+  if (a.includes("kozuki") || a.includes("akazaya") || a.includes("kurozumi") || a.includes("samurai")) return { label: "Wano", className: "faction-wano" };
+  if (a.includes("kingdom") || a.includes("dukedom") || a.includes("skypiea")) return { label: "Kingdom", className: "faction-wano" };
+  if (
+    (a.includes("red hair pirates") && n === "shanks") ||
+    (a.includes("blackbeard pirates") && n === "marshall d teach") ||
+    (a.includes("whitebeard pirates") && n === "edward newgate") ||
+    (a.includes("beasts pirates") && n === "kaido") ||
+    (a.includes("big mom pirates") && n === "charlotte linlin") ||
+    a.includes("yonko")
+  ) {
     return { label: "Yonko", className: "faction-yonko" };
   }
-  if (a.includes("revolutionary")) return { label: "Revolutionary", className: "faction-revo" };
-  if (a.includes("kozuki") || a.includes("akazaya") || a.includes("samurai")) return { label: "Wano", className: "faction-wano" };
+  if (a.includes("pirates") || a.includes("club")) return { label: "Pirate", className: "faction-pirate" };
   return { label: "Pirate", className: "faction-pirate" };
 }
 
@@ -1126,7 +1456,7 @@ function pickRandomAnswer() {
   setStatus("");
   hideRecap();
   guessInput.value = "";
-  if (!isDuelMode) {
+  if (!isDuelMode && !isImpostorMode) {
     guessInput.focus();
   }
 
@@ -1391,19 +1721,33 @@ const ARC_ORDER = [
   "Zou","Whole Cake Island","Reverie","Wano Country","Egghead"
 ];
 
+const ARC_ALIASES = {
+  alabasta: "arabasta"
+};
+
 function normArc(s) {
-  return (s || "").trim().toLowerCase();
+  return String(s || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+arc$/i, "")
+    .replace(/[.'’]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function canonicalArcName(arc) {
+  const normalized = normArc(arc);
+  return ARC_ALIASES[normalized] || normalized;
 }
 
 // case-insensitive index lookup
 function arcIndex(arc) {
-  const a = normArc(arc);
-  return ARC_ORDER.findIndex(x => normArc(x) === a);
+  const a = canonicalArcName(arc);
+  return ARC_ORDER.findIndex((x) => canonicalArcName(x) === a);
 }
 
 function compareArc(answerArc, guessArc) {
-  const a = (answerArc || "").trim().toLowerCase();
-  const g = (guessArc || "").trim().toLowerCase();
+  const a = canonicalArcName(answerArc);
+  const g = canonicalArcName(guessArc);
 
   // if either is missing, treat as incorrect
   if (!a || !g) return "red";
@@ -1453,7 +1797,7 @@ function openImageModal(src) {
   imageModalImg.src = src;
   imageModal.classList.remove("hidden");
   imageModal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  updateBodyScrollLock();
   if (imageModalClose) {
     imageModalClose.focus();
   }
@@ -1464,7 +1808,7 @@ function closeImageModal(restore = true) {
   imageModal.classList.add("hidden");
   imageModal.setAttribute("aria-hidden", "true");
   imageModalImg.src = "";
-  document.body.style.overflow = "";
+  updateBodyScrollLock();
   if (restore) {
     restoreFocus(guessInput);
   }
@@ -1559,11 +1903,13 @@ function renderRow(guess, options = {}) {
   }
 
   d.classList.add("pop");
-  d.style.animationDelay = `${i * 280}ms`;
+  const revealDelayMs = i * TILE_REVEAL_STAGGER_MS;
+  d.style.animationDelay = `${revealDelayMs}ms`;
   const matchTone = ["green", "yellow", "red"].find((tone) => d.classList.contains(tone));
   if (matchTone) {
     d.dataset.matchLabel = getMatchLabel(matchTone);
   }
+  playTileRevealSwoosh(revealDelayMs, matchTone);
 
   r.appendChild(d);
 });
@@ -1799,10 +2145,9 @@ async function init() {
     }
     buildCharacterSearchIndex();
 
+    applyModePreset(localStorage.getItem(MODE_PRESET_KEY) || "casual", false);
     renderStatsDashboard();
-    if (!restoreCurrentGameState()) {
-      startNewGame();
-    }
+    openModeLanding();
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     setStatus(`Failed to load game data. ${detail}`, "error");
@@ -1936,6 +2281,11 @@ function startNewGame() {
   renderRecentGuesses();
   pickRandomAnswer();
   updateStats();
+  if (isImpostorMode) {
+    clearCurrentGameState();
+    openImpostorSetupModal();
+    return;
+  }
   persistCurrentGameState();
 }
 
@@ -2049,6 +2399,8 @@ if (compactModeEl) {
 if (modePresetEl) {
   modePresetEl.addEventListener("change", () => {
     applyModePreset(modePresetEl.value, true);
+    closeModeLanding();
+    closeMenuPanel(false);
   });
 }
 
@@ -2058,6 +2410,8 @@ if (modeCardEls.length) {
       const mode = card.dataset.mode || "casual";
       if (modePresetEl) modePresetEl.value = mode;
       applyModePreset(mode, true);
+      closeModeLanding();
+      closeMenuPanel(false);
     });
   });
 }
@@ -2113,6 +2467,24 @@ if (duelReadyBtn) {
   });
 }
 
+if (impostorPlayerCountEl) {
+  impostorPlayerCountEl.addEventListener("change", () => {
+    updateImpostorPlayerInputs();
+  });
+}
+
+if (impostorStartBtn) {
+  impostorStartBtn.addEventListener("click", () => {
+    beginImpostorRound();
+  });
+}
+
+if (impostorRevealBtn) {
+  impostorRevealBtn.addEventListener("click", () => {
+    advanceImpostorReveal();
+  });
+}
+
 document.addEventListener("keydown", (e) => {
   const trapContainer = getOpenTrapContainer();
   if (trapContainer && e.key === "Tab") {
@@ -2120,6 +2492,14 @@ document.addEventListener("keydown", (e) => {
   }
 
   if (e.key === "Escape") {
+    if (impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden")) {
+      closeImpostorRevealModal();
+      return;
+    }
+    if (impostorSetupModalEl && !impostorSetupModalEl.classList.contains("hidden")) {
+      closeImpostorSetupModal();
+      return;
+    }
     if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) {
       startDuelTurn();
       return;
@@ -2140,6 +2520,10 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+document.addEventListener("touchstart", primeAudio, { passive: true, once: true });
+document.addEventListener("pointerdown", primeAudio, { passive: true, once: true });
+document.addEventListener("click", primeAudio, { passive: true, once: true });
+
 
 init();
 
@@ -2148,8 +2532,6 @@ if (compactModeEl) {
   compactModeEl.checked = savedCompact;
   document.body.classList.toggle("compactMode", savedCompact);
 }
-
-applyModePreset(localStorage.getItem(MODE_PRESET_KEY) || "casual", false);
 
 if (guessInput) {
   guessInput.setAttribute("aria-autocomplete", "list");
@@ -2171,6 +2553,16 @@ if (helpPanel) {
 if (duelPassModalEl) {
   duelPassModalEl.tabIndex = -1;
   duelPassModalEl.setAttribute("aria-hidden", "true");
+}
+
+if (impostorSetupModalEl) {
+  impostorSetupModalEl.tabIndex = -1;
+  impostorSetupModalEl.setAttribute("aria-hidden", "true");
+}
+
+if (impostorRevealModalEl) {
+  impostorRevealModalEl.tabIndex = -1;
+  impostorRevealModalEl.setAttribute("aria-hidden", "true");
 }
 
 

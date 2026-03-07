@@ -21,7 +21,12 @@
                         "Strawhat Luffy",
                         "Monkey Luffy",
                         "Lucy"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Captain",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Roronoa Zoro",
@@ -43,7 +48,12 @@
                         "Zorojuro",
                         "Roronoa",
                         "Mr Bushido"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Swordsman",
+                      "Honor"
+                  ]
     },
     {
         "name":  "Nami",
@@ -61,7 +71,12 @@
                         "Cat Burglar Nami",
                         "Nami-swan",
                         "Navigator Nami"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Navigator",
+                      "East Blue"
+                  ]
     },
     {
         "name":  "Usopp",
@@ -80,7 +95,12 @@
                         "Sogeking",
                         "Usohachi",
                         "Sniper King"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Sniper",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Sanji",
@@ -101,7 +121,12 @@
                         "Sanji-kun",
                         "Sangoro",
                         "Mr Prince"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Cook",
+                      "Honor"
+                  ]
     },
     {
         "name":  "Tony Tony Chopper",
@@ -121,7 +146,12 @@
                         "Tony Chopper",
                         "Chopa-emon",
                         "Emergency Food"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Doctor",
+                      "Kindness"
+                  ]
     },
     {
         "name":  "Nico Robin",
@@ -132,7 +162,7 @@
                  ],
         "origin":  "West Blue",
         "bounty":  930000000,
-        "firstArc":  "Arabasta",
+        "firstArc":  "Whisky Peak",
         "gender":  "Female",
         "image":  "img/strawhats/robin.jpg",
         "aliases":  [
@@ -142,7 +172,12 @@
                         "Robin-chwan",
                         "O-Robi",
                         "Demon Child"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Archaeologist",
+                      "Ohara"
+                  ]
     },
     {
         "name":  "Franky",
@@ -161,7 +196,12 @@
                         "Cutty Flam",
                         "Franosuke",
                         "Iron Man Franky"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Shipwright",
+                      "Cyborg"
+                  ]
     },
     {
         "name":  "Brook",
@@ -179,7 +219,12 @@
                         "Soul King Brook",
                         "Bonekichi",
                         "Humming Brook"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Musician",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Jinbe",
@@ -199,7 +244,12 @@
                         "First Son of the Sea",
                         "Knight of the Sea",
                         "Boss Jinbe"
-                    ]
+                    ],
+        "hints":  [
+                      "Straw Hat",
+                      "Captain",
+                      "Fishman"
+                  ]
     },
     {
         "name":  "Shanks",
@@ -220,7 +270,12 @@
                         "Red Hair Shanks",
                         "Yonko Shanks",
                         "Red Hair"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Mentor"
+                  ]
     },
     {
         "name":  "Marshall D. Teach",
@@ -240,7 +295,12 @@
                         "Teach",
                         "Marshall Teach",
                         "Kurohige"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Buggy",
@@ -259,7 +319,12 @@
                         "Emperor Buggy",
                         "Buggy-sama",
                         "Star Clown"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Chaos"
+                  ]
     },
     {
         "name":  "Edward Newgate",
@@ -280,7 +345,12 @@
                         "Pops",
                         "Shirohige",
                         "Oyaji"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Honor"
+                  ]
     },
     {
         "name":  "Kaido",
@@ -301,7 +371,12 @@
                         "Hundred Beasts Kaido",
                         "Kaidou",
                         "Strongest Creature"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Wano"
+                  ]
     },
     {
         "name":  "Charlotte Linlin",
@@ -322,7 +397,12 @@
                         "Linlin",
                         "Big Momma",
                         "Olin"
-                    ]
+                    ],
+        "hints":  [
+                      "Yonko",
+                      "Captain",
+                      "Chaos"
+                  ]
     },
     {
         "name":  "Dracule Mihawk",
@@ -343,7 +423,12 @@
                         "Hawkeye Mihawk",
                         "Hawk Eye Mihawk",
                         "Greatest Swordsman"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Swordsman",
+                      "Rival"
+                  ]
     },
     {
         "name":  "Crocodile",
@@ -355,7 +440,7 @@
                  ],
         "origin":  "Grand Line",
         "bounty":  1965000000,
-        "firstArc":  "Arabasta",
+        "firstArc":  "Little Garden",
         "gender":  "Male",
         "image":  "img/warlords/crocodile.jpg",
         "aliases":  [
@@ -363,7 +448,12 @@
                         "Mr. 0",
                         "Croc",
                         "Desert King"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Captain",
+                      "Alabasta"
+                  ]
     },
     {
         "name":  "Donquixote Doflamingo",
@@ -384,7 +474,12 @@
                         "Joker",
                         "Doffy",
                         "Heavenly Yaksha"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Captain",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Boa Hancock",
@@ -395,7 +490,7 @@
                      "Armament",
                      "Conqueror"
                  ],
-        "origin":  "Amazon Lily",
+        "origin":  "Grand Line",
         "bounty":  1659000000,
         "firstArc":  "Amazon Lily",
         "gender":  "Female",
@@ -405,7 +500,12 @@
                         "Pirate Empress",
                         "Snake Princess",
                         "Hebihime"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Captain",
+                      "Grand Line"
+                  ]
     },
     {
         "name":  "Bartholomew Kuma",
@@ -416,7 +516,7 @@
                  ],
         "origin":  "South Blue",
         "bounty":  296000000,
-        "firstArc":  "Thriller Bark",
+        "firstArc":  "Jaya",
         "gender":  "Male",
         "image":  "img/warlords/kuma.jpg",
         "aliases":  [
@@ -424,7 +524,12 @@
                         "Tyrant Kuma",
                         "Pacifista Kuma",
                         "PX-0"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Commander",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Gecko Moria",
@@ -441,7 +546,12 @@
         "aliases":  [
                         "Moria",
                         "Moriah"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Captain",
+                      "Revenge"
+                  ]
     },
     {
         "name":  "Monkey D. Garp",
@@ -454,7 +564,7 @@
                  ],
         "origin":  "East Blue",
         "bounty":  3000000000,
-        "firstArc":  "Water 7",
+        "firstArc":  "Loguetown",
         "gender":  "Male",
         "image":  "img/marines/garp.jpg",
         "aliases":  [
@@ -462,7 +572,12 @@
                         "Hero of the Marines",
                         "Vice Admiral Garp",
                         "Garp the Fist"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Sengoku",
@@ -473,7 +588,7 @@
                      "Armament"
                  ],
         "origin":  "Grand Line",
-        "bounty":  0,
+        "bounty":  602000000,
         "firstArc":  "Jaya",
         "gender":  "Male",
         "image":  "img/marines/sengoku.jpg",
@@ -481,7 +596,12 @@
                         "Sengoku the Buddha",
                         "Buddha Sengoku",
                         "Fleet Admiral Sengoku"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Sakazuki (Akainu)",
@@ -493,7 +613,7 @@
                  ],
         "origin":  "North Blue",
         "bounty":  5000000000,
-        "firstArc":  "Marineford",
+        "firstArc":  "Enies Lobby",
         "gender":  "Male",
         "image":  "img/marines/akainu.jpg",
         "aliases":  [
@@ -502,7 +622,12 @@
                         "Red Dog",
                         "Fleet Admiral Akainu",
                         "Sakazuki Akainu"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Kuzan (Aokiji)",
@@ -523,7 +648,12 @@
                         "Blue Pheasant",
                         "Kuzan Aokiji",
                         "Former Admiral Aokiji"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Borsalino (Kizaru)",
@@ -544,7 +674,12 @@
                         "Yellow Monkey",
                         "Borsalino Kizaru",
                         "Uncle Kizaru"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Smoker",
@@ -563,7 +698,12 @@
                         "White Hunter Smoker",
                         "Smoker the White Hunter",
                         "Vice Admiral Smoker"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Captain",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Tashigi",
@@ -581,7 +721,12 @@
         "aliases":  [
                         "Captain Tashigi",
                         "Tashigi-chan"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Swordsman",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Koby",
@@ -601,7 +746,12 @@
                         "Hero Koby",
                         "Captain Koby",
                         "Pink-Haired Koby"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Captain",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Issho (Fujitora)",
@@ -622,7 +772,12 @@
                         "Purple Tiger",
                         "Issho Fujitora",
                         "Blind Swordsman"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Swordsman",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Aramaki (Ryokugyu)",
@@ -643,7 +798,12 @@
                         "Green Bull",
                         "Greenbull",
                         "Ryokugyuu"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "New World"
+                  ]
     },
     {
         "name":  "Helmeppo",
@@ -661,16 +821,19 @@
         "aliases":  [
                         "Captain Helmeppo",
                         "Lieutenant Commander Helmeppo"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Swordsman",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Kozuki Oden",
         "affiliation":  "Kozuki Clan",
         "devilFruit":  "None",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
@@ -681,7 +844,12 @@
                         "Oden",
                         "Oden-sama",
                         "Kozuki Sukiyaki Son"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Wano"
+                  ]
     },
     {
         "name":  "Yamato",
@@ -701,7 +869,12 @@
                         "Oni Princess Yamato",
                         "Oni Princess",
                         "Kozuki Oden Yamato"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Kozuki Momonosuke",
@@ -713,7 +886,7 @@
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
-        "firstArc":  "Punk Hazard",
+        "firstArc":  "Dressrosa",
         "gender":  "Male",
         "image":  "img/wano/momo.jpg",
         "aliases":  [
@@ -721,7 +894,12 @@
                         "Momo",
                         "Momonosuke Kozuki",
                         "Shogun Momo"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Royalty",
+                      "Wano"
+                  ]
     },
     {
         "name":  "Kin\u0027emon",
@@ -742,7 +920,12 @@
                         "Foxfire Kin\u0027emon",
                         "Kin emon",
                         "Foxfire"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Wano"
+                  ]
     },
     {
         "name":  "Kanjuro",
@@ -753,7 +936,7 @@
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
-        "firstArc":  "Punk Hazard",
+        "firstArc":  "Dressrosa",
         "gender":  "Male",
         "image":  "img/wano/kanjuro.jpg",
         "aliases":  [
@@ -761,12 +944,17 @@
                         "Evening Shower Kanjuro",
                         "Kanjurou",
                         "Traitor Kanjuro"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Assassin",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Raizo",
         "affiliation":  "Akazaya Nine",
-        "devilFruit":  "None",
+        "devilFruit":  "Paramecia",
         "haki":  [
 
                  ],
@@ -778,7 +966,12 @@
         "aliases":  [
                         "Raizo of the Mist",
                         "Raizou"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Assassin",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Denjiro",
@@ -796,7 +989,12 @@
                         "Kyoshiro",
                         "Denjirou",
                         "Yakuza Boss Kyoshiro"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Ashura Doji",
@@ -814,7 +1012,12 @@
                         "Shutenmaru",
                         "Ashura Douji",
                         "Asura Doji"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Wano"
+                  ]
     },
     {
         "name":  "King",
@@ -834,7 +1037,12 @@
                         "Wildfire",
                         "King the Conflagration",
                         "Alber"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Assassin",
+                      "New World"
+                  ]
     },
     {
         "name":  "Queen",
@@ -854,7 +1062,12 @@
                         "Plague",
                         "Queen the Funk",
                         "Plague Queen"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Scientist",
+                      "Chaos"
+                  ]
     },
     {
         "name":  "Jack",
@@ -874,7 +1087,12 @@
                         "Drought",
                         "Jack the Mammoth",
                         "Drought Jack"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Fighter",
+                      "New World"
+                  ]
     },
     {
         "name":  "Ulti",
@@ -892,7 +1110,12 @@
         "aliases":  [
                         "Ulti-chan",
                         "Ulti sama"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Page One",
@@ -911,7 +1134,12 @@
                         "Page-One",
                         "Pay-tan",
                         "Page 1"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "New World"
+                  ]
     },
     {
         "name":  "Portgas D. Ace",
@@ -924,7 +1152,7 @@
                  ],
         "origin":  "South Blue",
         "bounty":  550000000,
-        "firstArc":  "Alabasta",
+        "firstArc":  "Drum Island",
         "gender":  "Male",
         "image":  "img/acetocarrot/ace.jpg",
         "aliases":  [
@@ -933,7 +1161,12 @@
                         "Portgas Ace",
                         "Ace-san",
                         "Hiken no Ace"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Captain",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Sabo",
@@ -943,9 +1176,9 @@
                      "Observation",
                      "Armament"
                  ],
-        "origin":  "Goa Kingdom",
+        "origin":  "East Blue",
         "bounty":  0,
-        "firstArc":  "Dressrosa",
+        "firstArc":  "Post-War",
         "gender":  "Male",
         "image":  "img/acetocarrot/sabo.jpg",
         "aliases":  [
@@ -953,7 +1186,12 @@
                         "Sabo-kun",
                         "Chief of Staff Sabo",
                         "Flame-Flame Sabo"
-                    ]
+                    ],
+        "hints":  [
+                      "Revolutionary",
+                      "Commander",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Trafalgar D. Water Law",
@@ -975,7 +1213,12 @@
                         "Trafalgar Law",
                         "Tra-guy",
                         "Surgeon Law"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Doctor",
+                      "Rival"
+                  ]
     },
     {
         "name":  "Eustass Kid",
@@ -996,7 +1239,12 @@
                         "Captain Kid",
                         "Eustass Captain Kid",
                         "Captain Eustass Kid"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Rival"
+                  ]
     },
     {
         "name":  "Killer",
@@ -1015,7 +1263,12 @@
                         "Massacre Soldier",
                         "Kamazo",
                         "Kamazo the Manslayer"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Assassin",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Rob Lucci",
@@ -1034,7 +1287,12 @@
                         "Lucci",
                         "CP0 Lucci",
                         "Cipher Pol Lucci"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Assassin",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Enel",
@@ -1043,7 +1301,7 @@
         "haki":  [
                      "Observation"
                  ],
-        "origin":  "Sky Island",
+        "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Skypiea",
         "gender":  "Male",
@@ -1053,7 +1311,12 @@
                         "God Enel",
                         "God Eneru",
                         "Kami Enel"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Logia",
+                      "Grand Line"
+                  ]
     },
     {
         "name":  "Arlong",
@@ -1071,7 +1334,12 @@
                         "Saw Arlong",
                         "Arlong the Saw",
                         "Sawtooth Arlong"
-                    ]
+                    ],
+        "hints":  [
+                      "Pirate",
+                      "Captain",
+                      "East Blue"
+                  ]
     },
     {
         "name":  "Nefertari Vivi",
@@ -1082,7 +1350,7 @@
                  ],
         "origin":  "Grand Line",
         "bounty":  0,
-        "firstArc":  "Whisky Peak",
+        "firstArc":  "Reverse Mountain",
         "gender":  "Female",
         "image":  "img/acetocarrot/vivi.jpg",
         "aliases":  [
@@ -1091,7 +1359,12 @@
                         "Princess Vivi",
                         "Princess Nefertari Vivi",
                         "Vivi Nefertari"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Royalty",
+                      "Alabasta"
+                  ]
     },
     {
         "name":  "Marco",
@@ -1103,14 +1376,19 @@
                  ],
         "origin":  "Grand Line",
         "bounty":  1374000000,
-        "firstArc":  "Marineford",
+        "firstArc":  "Jaya",
         "gender":  "Male",
         "image":  "img/acetocarrot/marco.jpg",
         "aliases":  [
                         "Marco the Phoenix",
                         "Phoenix Marco",
                         "Marco-san"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Doctor",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Gol D. Roger",
@@ -1133,7 +1411,12 @@
                         "Gold D Roger",
                         "Gol Roger",
                         "Roger the Pirate King"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Silvers Rayleigh",
@@ -1154,7 +1437,12 @@
                         "Dark King Rayleigh",
                         "Dark King",
                         "Ray-san"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Swordsman",
+                      "Mentor"
+                  ]
     },
     {
         "name":  "Benn Beckman",
@@ -1173,7 +1461,12 @@
                         "Beckman",
                         "Ben Beckman",
                         "Benn"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Sniper",
+                      "Mentor"
+                  ]
     },
     {
         "name":  "Charlotte Katakuri",
@@ -1193,7 +1486,12 @@
                         "Katakuri",
                         "Dogtooth",
                         "Charlotte Dogtooth"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Captain",
+                      "Honor"
+                  ]
     },
     {
         "name":  "Caesar Clown",
@@ -1212,7 +1510,12 @@
                         "Master Caesar",
                         "Gangster Gastino",
                         "Gastino"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Scientist",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Perona",
@@ -1230,7 +1533,12 @@
                         "Ghost Princess",
                         "Negative Ghost Princess",
                         "Horo Horo Princess"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Assassin",
+                      "Chaos"
+                  ]
     },
     {
         "name":  "Bartolomeo",
@@ -1248,7 +1556,12 @@
                         "Barto",
                         "Cannibal Bartolomeo",
                         "Bartolomeo the Cannibal"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Jewelry Bonney",
@@ -1267,7 +1580,12 @@
                         "Big Eater",
                         "Jewellery Bonney",
                         "Big Eater Bonney"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Shirahoshi",
@@ -1286,7 +1604,12 @@
                         "Mermaid Princess",
                         "Poseidon",
                         "Shirahoshi-hime"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Royalty",
+                      "Fishman"
+                  ]
     },
     {
         "name":  "Vinsmoke Reiju",
@@ -1305,7 +1628,12 @@
                         "Poison Pink",
                         "Reiju Vinsmoke",
                         "Poison Pink Reiju"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Scientist",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Bentham",
@@ -1324,7 +1652,12 @@
                         "Mr. 2 Bon Clay",
                         "Bentham of the Wild",
                         "Mr 2"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Assassin",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Cavendish",
@@ -1344,7 +1677,12 @@
                         "White Horse",
                         "Cavendish of the White Horse",
                         "Hakuba"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Swordsman",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Edward Weevil",
@@ -1362,7 +1700,12 @@
                         "Weevil",
                         "Whitebeard Jr",
                         "Whitebeard Junior"
-                    ]
+                    ],
+        "hints":  [
+                      "Warlord",
+                      "Fighter",
+                      "Revenge"
+                  ]
     },
     {
         "name":  "Shiryu",
@@ -1380,7 +1723,12 @@
         "aliases":  [
                         "Shiryu of the Rain",
                         "Shiliew"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Swordsman",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Magellan",
@@ -1398,7 +1746,12 @@
                         "Chief Warden Magellan",
                         "Vice Warden Magellan",
                         "Venom Man"
-                    ]
+                    ],
+        "hints":  [
+                      "Marine",
+                      "Commander",
+                      "Justice"
+                  ]
     },
     {
         "name":  "Emporio Ivankov",
@@ -1408,7 +1761,7 @@
 
                  ],
         "origin":  "Grand Line",
-        "bounty":  0,
+        "bounty":  100000000,
         "firstArc":  "Impel Down",
         "gender":  "Male",
         "image":  "img/acetocarrot/ivankov.jpg",
@@ -1418,7 +1771,12 @@
                         "Miracle Person",
                         "Emporio Iva",
                         "Okama King"
-                    ]
+                    ],
+        "hints":  [
+                      "Revolutionary",
+                      "Commander",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Karasu",
@@ -1429,15 +1787,20 @@
                      "Armament"
                  ],
         "origin":  "North Blue",
-        "bounty":  0,
-        "firstArc":  "Reverie",
+        "bounty":  400000000,
+        "firstArc":  "Post-War",
         "gender":  "Male",
         "image":  "img/acetocarrot/karasu.jpg",
         "aliases":  [
                         "Crow Man",
                         "Crow-Crow Karasu",
                         "North Army Commander"
-                    ]
+                    ],
+        "hints":  [
+                      "Revolutionary",
+                      "Commander",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Koala",
@@ -1448,23 +1811,26 @@
                  ],
         "origin":  "East Blue",
         "bounty":  0,
-        "firstArc":  "Dressrosa",
+        "firstArc":  "Fish-Man Island",
         "gender":  "Female",
         "image":  "img/acetocarrot/koala.jpg",
         "aliases":  [
                         "Revolutionary Koala",
                         "Koala-chan",
                         "Fish-Man Karate Koala"
-                    ]
+                    ],
+        "hints":  [
+                      "Revolutionary",
+                      "Fighter",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "Monkey D. Dragon",
         "affiliation":  "Revolutionary Army",
         "devilFruit":  "Unknown",
         "haki":  [
-                     "Observation",
-                     "Armament",
-                     "Conqueror"
+
                  ],
         "origin":  "East Blue",
         "bounty":  0,
@@ -1476,7 +1842,12 @@
                         "Worlds Worst Criminal",
                         "Dragon the Revolutionary",
                         "Most Wanted Man"
-                    ]
+                    ],
+        "hints":  [
+                      "Revolutionary",
+                      "Commander",
+                      "Freedom"
+                  ]
     },
     {
         "name":  "Bepo",
@@ -1494,7 +1865,12 @@
                         "Polar Bear Mink",
                         "Navigator Bepo",
                         "Sulong Bepo"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Navigator",
+                      "Loyalty"
+                  ]
     },
     {
         "name":  "X Drake",
@@ -1513,7 +1889,12 @@
                         "Drake",
                         "Diez Drake",
                         "Drake X"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Commander",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Basil Hawkins",
@@ -1532,7 +1913,12 @@
                         "Magician",
                         "Magician Hawkins",
                         "Basil Hawkin"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Scientist",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Urouge",
@@ -1541,7 +1927,7 @@
         "haki":  [
                      "Armament"
                  ],
-        "origin":  "Sky Island",
+        "origin":  "Grand Line",
         "bounty":  108000000,
         "firstArc":  "Sabaody Archipelago",
         "gender":  "Male",
@@ -1550,7 +1936,12 @@
                         "Mad Monk Urouge",
                         "Mad Monk",
                         "Fallen Monk"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Capone Bege",
@@ -1570,7 +1961,12 @@
                         "Gang Bege",
                         "Capone Gang Bege",
                         "Gangster Bege"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Commander",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Scratchmen Apoo",
@@ -1589,7 +1985,12 @@
                         "Roar of the Sea",
                         "Scratchman Apoo",
                         "Apoo Scratchmen"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Musician",
+                      "Chaos"
+                  ]
     },
     {
         "name":  "Vinsmoke Judge",
@@ -1608,7 +2009,12 @@
                         "Garuda",
                         "Judge Vinsmoke",
                         "Garuda Judge"
-                    ]
+                    ],
+        "hints":  [
+                      "Commander",
+                      "Scientist",
+                      "Ambition"
+                  ]
     },
     {
         "name":  "Pudding",
@@ -1626,7 +2032,12 @@
                         "Charlotte Pudding",
                         "Purin",
                         "Three-Eyed Pudding"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Royalty",
+                      "Deception"
+                  ]
     },
     {
         "name":  "Carrot",
@@ -1635,7 +2046,7 @@
         "haki":  [
 
                  ],
-        "origin":  "Zou",
+        "origin":  "Grand Line",
         "bounty":  0,
         "firstArc":  "Zou",
         "gender":  "Female",
@@ -1645,6 +2056,11 @@
                         "Rabbit Mink",
                         "Sulong Carrot",
                         "Carrot-chan"
-                    ]
+                    ],
+        "hints":  [
+                      "Captain",
+                      "Fighter",
+                      "Loyalty"
+                  ]
     }
 ]

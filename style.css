@@ -96,6 +96,14 @@ body {
   touch-action: manipulation;
 }
 
+body.modalLocked {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 button,
 input,
 select,
@@ -139,6 +147,101 @@ textarea {
 .container > * {
   margin-left: auto;
   margin-right: auto;
+}
+
+.gameShell {
+  width: 100%;
+}
+
+.modeLanding {
+  width: min(1080px, 100%);
+  min-height: calc(var(--app-vh) - 140px - env(safe-area-inset-top));
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 36px) 0;
+}
+
+.modeLandingInner {
+  width: min(960px, 100%);
+  padding: clamp(22px, 4vw, 40px);
+  border-radius: 28px;
+  border: 1px solid rgba(173, 221, 255, 0.3);
+  background:
+    radial-gradient(circle at top right, rgba(108, 176, 236, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(7, 18, 35, 0.96), rgba(7, 16, 31, 0.92));
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  text-align: left;
+}
+
+.modeLandingEyebrow {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+}
+
+.modeLandingTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.04;
+  text-align: left;
+}
+
+.modeLandingCopy {
+  width: min(680px, 100%);
+  margin: 16px 0 0;
+  color: rgba(235, 242, 250, 0.86);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.modeLandingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.modeLandingCard {
+  min-height: 130px;
+  justify-content: flex-end;
+  padding: 16px;
+  border-radius: 18px;
+  background:
+    linear-gradient(160deg, rgba(108, 176, 236, 0.2), rgba(72, 143, 214, 0.14)),
+    linear-gradient(180deg, rgba(7, 20, 39, 0.94), rgba(6, 16, 31, 0.98));
+}
+
+@media (max-width: 980px) {
+  .modeLandingGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .modeLanding {
+    min-height: auto;
+    padding-top: 10px;
+  }
+
+  .modeLandingInner {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .modeLandingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modeLandingCard {
+    min-height: 110px;
+  }
 }
 
 h1 {
@@ -399,6 +502,9 @@ body.keyboardOpen .controls {
   right: 0;
   width: min(370px, 92vw);
   height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--app-vh));
   z-index: 200;
   background: rgba(3, 9, 18, 0.98);
   border-left: 1px solid rgba(173, 221, 255, 0.3);
@@ -562,6 +668,13 @@ body.keyboardOpen .controls {
   border-color: rgba(198, 231, 255, 0.82);
   background: linear-gradient(to bottom, rgba(108, 176, 236, 0.3), rgba(72, 143, 214, 0.32));
   box-shadow: 0 0 16px rgba(120, 185, 245, 0.2);
+}
+
+.modeLandingCard.active {
+  border-color: rgba(240, 224, 169, 0.82);
+  box-shadow:
+    0 0 0 1px rgba(240, 224, 169, 0.32),
+    0 16px 28px rgba(0, 0, 0, 0.24);
 }
 
 .modeCard::before {
@@ -1101,7 +1214,7 @@ button:focus-visible,
 }
 
 .boardWrap.hardMode::after {
-  content: "HARD MODE";
+  content: "EXTREME";
   position: absolute;
   top: 12px;
   right: 18px;
@@ -1292,14 +1405,16 @@ button:focus-visible,
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 58px;
+  font-size: 64px;
   line-height: 1;
-  color: rgba(0, 0, 0, 0.56);
+  color: rgba(242, 247, 255, 0.72);
   text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.18),
-    0 5px 14px rgba(0, 0, 0, 0.5);
+    0 0 6px rgba(255, 255, 255, 0.35),
+    0 0 16px rgba(16, 28, 48, 0.3),
+    0 8px 18px rgba(0, 0, 0, 0.55);
   pointer-events: none;
-  font-weight: 1000;
+  font-weight: 1200;
+  -webkit-text-stroke: 1.1px rgba(0, 0, 0, 0.18);
   z-index: 0;
 }
 
@@ -1467,11 +1582,20 @@ button:focus-visible,
   line-height: 1;
 }
 
-.tile.yellow .cellArrow {
-  color: rgba(52, 33, 0, 0.34);
+.bountyCell .cellArrow,
+.arcCell .cellArrow {
+  color: rgba(26, 30, 36, 0.82);
+  opacity: 0.98;
   text-shadow:
-    0 0 2px rgba(255, 248, 220, 0.28),
-    0 5px 14px rgba(56, 38, 0, 0.25);
+    0 0 6px rgba(255, 255, 255, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.48);
+}
+
+.tile.yellow .cellArrow {
+  color: rgba(66, 40, 0, 0.6);
+  text-shadow:
+    0 0 8px rgba(255, 248, 220, 0.34),
+    0 6px 16px rgba(56, 38, 0, 0.35);
 }
 
 .tile.yellow .cellText {
@@ -1480,7 +1604,11 @@ button:focus-visible,
 
 .tile.red .cellArrow,
 .tile.green .cellArrow {
-  color: rgba(0, 0, 0, 0.38);
+  color: rgba(18, 43, 24, 0.82);
+}
+
+.tile.red .cellArrow {
+  color: rgba(74, 16, 16, 0.84);
 }
 
 .arcCell,
@@ -1810,6 +1938,8 @@ button:focus-visible,
   inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100svh;
+  height: calc(var(--app-vh));
   pointer-events: none;
   z-index: 9999;
 }
@@ -1825,11 +1955,14 @@ button:focus-visible,
   padding: 24px;
   padding-top: calc(24px + env(safe-area-inset-top));
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--app-vh));
 }
 
 .imageModal img {
   max-width: min(92vw, 720px);
-  max-height: 84vh;
+  max-height: min(84vh, calc(var(--app-vh) - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
@@ -1857,10 +1990,20 @@ button:focus-visible,
   background: rgba(5, 12, 25, 0.94);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--app-vh));
 }
 
 body.duelGateOpen .container,
 body.duelGateOpen .sideMenu {
+  filter: blur(16px);
+  pointer-events: none;
+  user-select: none;
+}
+
+body.impostorGateOpen .container,
+body.impostorGateOpen .sideMenu {
   filter: blur(16px);
   pointer-events: none;
   user-select: none;
@@ -1892,6 +2035,77 @@ body.duelGateOpen .sideMenu {
   margin: 0 0 14px;
   color: rgba(216, 227, 244, 0.92);
   font-size: 0.92rem;
+}
+
+.impostorCard {
+  width: min(460px, 92vw);
+}
+
+.impostorSetupGrid {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 16px;
+}
+
+.impostorField {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+}
+
+.impostorField span {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(216, 227, 244, 0.8);
+}
+
+.impostorField input,
+.impostorField select {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(173, 221, 255, 0.3);
+  background: rgba(4, 13, 27, 0.96);
+  color: var(--ink);
+  padding: 10px 12px;
+}
+
+.impostorSecret {
+  margin: 10px 0 16px;
+  padding: 16px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(2, 9, 21, 0.88);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+.impostorSecret.impostorRole {
+  border-color: rgba(220, 90, 90, 0.42);
+  background: rgba(50, 12, 16, 0.9);
+}
+
+.impostorSecret.crewmateRole {
+  border-color: rgba(173, 221, 255, 0.34);
+  background: rgba(8, 24, 48, 0.92);
+}
+
+body.impostorMode .searchWrap,
+body.impostorMode .suggestions,
+body.impostorMode .statsDashboard,
+body.impostorMode .boardWrap,
+body.impostorMode .boardHint,
+body.impostorMode .recentGuesses,
+body.impostorMode .progressBar {
+  display: none !important;
+}
+
+body.impostorMode .controls {
+  justify-content: center;
 }
 
 body.compactMode {
