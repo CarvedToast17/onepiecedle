@@ -18,20 +18,27 @@
 
   --tileSize: 108px;
   --tileRadius: 16px;
+  --content-width: min(1120px, 96vw);
 
   --ink: #f4eddc;
-  --ink-muted: #c9d3e6;
-  --panel: rgba(9, 22, 43, 0.74);
-  --panel-strong: rgba(6, 18, 36, 0.86);
-  --gold: #f2cf74;
+  --ink-muted: #917e5e;
+  --ink-faint: #4e5c6e;
+  --panel: rgba(7, 17, 32, 0.9);
+  --panel-strong: rgba(10, 24, 46, 0.94);
+  --gold: #c8991e;
+  --gold-lt: #e8b82e;
+  --gold-pale: #f4d878;
+  --ui-blue-top: rgba(108, 176, 236, 0.95);
+  --ui-blue-bottom: rgba(72, 143, 214, 0.95);
+  --ui-blue-border: rgba(173, 221, 255, 0.65);
   --accent: #d74b3f;
 
   --green: #1f7a3b;
   --yellow: #b2871a;
   --red: #b83a3a;
   --grey: #3a3f4a;
-  --border-soft: rgba(170, 202, 242, 0.22);
-  --surface-soft: rgba(10, 22, 40, 0.72);
+  --border-soft: rgba(148, 122, 70, 0.2);
+  --surface-soft: rgba(4, 12, 26, 0.9);
   --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.28);
   --shadow-panel: 0 14px 34px rgba(0, 0, 0, 0.38);
   --app-vh: 100vh;
@@ -100,9 +107,9 @@ textarea {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(1200px 600px at 10% 0%, rgba(230, 180, 84, 0.23), transparent 65%),
-    radial-gradient(1000px 500px at 90% 100%, rgba(63, 126, 196, 0.22), transparent 68%),
-    linear-gradient(to bottom, rgba(7, 15, 30, 0.78), rgba(7, 15, 30, 0.92)),
+    radial-gradient(1200px 600px at 10% 0%, rgba(230, 180, 84, 0.16), transparent 62%),
+    radial-gradient(1000px 500px at 90% 100%, rgba(63, 126, 196, 0.14), transparent 66%),
+    linear-gradient(to bottom, rgba(5, 12, 24, 0.88), rgba(5, 12, 24, 0.97)),
     url("bg.jpg") center/cover no-repeat;
   z-index: -1;
   overflow: hidden;
@@ -113,9 +120,10 @@ textarea {
   position: absolute;
   inset: -20%;
   background:
-    radial-gradient(circle at 20% 20%, rgba(245, 230, 184, 0.08), transparent 34%),
-    radial-gradient(circle at 78% 68%, rgba(120, 168, 223, 0.09), transparent 36%);
-  filter: blur(18px);
+    radial-gradient(circle at 20% 20%, rgba(245, 230, 184, 0.05), transparent 32%),
+    radial-gradient(circle at 78% 68%, rgba(120, 168, 223, 0.06), transparent 34%);
+  filter: blur(24px);
+  opacity: 0.68;
   animation: ambientDrift 18s ease-in-out infinite alternate;
 }
 
@@ -149,9 +157,9 @@ h1 {
 
 .topBarInner {
   width: 100%;
-  max-width: none;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: calc(10px + env(safe-area-inset-top)) 14px 10px 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 22px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,8 +169,8 @@ h1 {
 .brandLockup {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  align-items: flex-start;
+  gap: 1px;
   min-width: 0;
 }
 
@@ -176,24 +184,14 @@ h1 {
   flex-shrink: 0;
   font-size: 2rem;
   line-height: 1;
-  color: var(--gold-pale);
-  filter: drop-shadow(0 0 10px rgba(200, 153, 30, 0.6));
+  color: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.28));
   animation: skullFloat 4.5s ease-in-out infinite;
 }
 
 @keyframes skullFloat {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50% { transform: translateY(-4px) rotate(4deg); }
-}
-
-.subtitle {
-  align-self: center;
-  text-align: center;
-}
-
-.brandLockup .subtitle::after {
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .topBarActions {
@@ -206,57 +204,75 @@ h1 {
 
 .logo-title {
   font-family: "OnePiece", "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: clamp(2.1rem, 5vw, 3.2rem);
+  font-size: clamp(1.95rem, 3.6vw, 2.45rem);
   letter-spacing: 0.02em;
   text-transform: none;
-  margin-bottom: 4px;
+  margin-bottom: 1px;
   position: relative;
   display: inline-block;
   text-shadow:
-    2px 2px 0 #000,
-    4px 4px 0 rgba(0, 0, 0, 0.55);
+    -1.5px -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    1.5px 1.5px 0 #000,
+    0 3px 0 rgba(0, 0, 0, 0.62);
 }
 
 .logo-title .logo-one,
 .logo-title .logo-piece,
+.logo-title .logo-piece-main,
+.logo-title .logo-piece-tail,
 .logo-title .logo-dle {
   display: inline-block;
   line-height: 1;
 }
 
 .logo-title .logo-one {
-  color: #d84c3d;
+  color: #5fa6d8;
   text-shadow:
-    0 0 0 #000,
-    0 0 12px rgba(216, 76, 61, 0.28),
-    2px 2px 0 #000;
+    -1.5px -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    1.5px 1.5px 0 #000,
+    0 3px 0 rgba(0, 0, 0, 0.68);
 }
 
 .logo-title .logo-piece {
   margin-left: 0;
   margin-right: 0;
-  background: linear-gradient(to bottom, #9ad3ff 0%, #54aef2 45%, #2d79c7 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-stroke: 1.2px #f5e6b8;
-  text-shadow:
-    0 0 10px rgba(84, 174, 242, 0.28),
-    2px 2px 0 rgba(0, 0, 0, 0.6);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
 }
 
+.logo-title .logo-piece-main,
+.logo-title .logo-piece-tail,
 .logo-title .logo-dle {
-  color: #f0cd74;
+  color: #5fa6d8;
   text-shadow:
-    0 0 10px rgba(240, 205, 116, 0.24),
-    2px 2px 0 rgba(0, 0, 0, 0.6);
+    -1.5px -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    1.5px 1.5px 0 #000,
+    0 3px 0 rgba(0, 0, 0, 0.68);
+}
+
+.logo-title .logo-piece-i {
+  display: inline-block;
+  color: #cf3028;
+  text-shadow:
+    -1.5px -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    1.5px 1.5px 0 #000,
+    0 3px 0 rgba(0, 0, 0, 0.68);
 }
 
 .subtitle {
   font-family: "OnePiece", "Georgia", serif;
-  font-size: clamp(0.98rem, 2.2vw, 1.28rem);
-  letter-spacing: 0.14em;
-  opacity: 0.95;
+  font-size: clamp(0.72rem, 1.35vw, 0.82rem);
+  letter-spacing: 0.1em;
+  opacity: 0.88;
   margin: 0;
   align-self: center;
   text-align: center;
@@ -265,10 +281,10 @@ h1 {
 .subtitle::after {
   content: "";
   display: block;
-  width: 124px;
+  width: 98px;
   height: 2px;
-  margin: 12px auto 0;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 8px auto 0;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.92), transparent);
 }
 
 .controls {
@@ -278,7 +294,7 @@ h1 {
   align-items: stretch;
   justify-content: stretch;
   gap: 8px;
-  width: min(1120px, 96vw);
+  width: var(--content-width);
   margin: 18px auto var(--space-2);
   padding: 7px;
   border-radius: 14px;
@@ -315,10 +331,10 @@ body.keyboardOpen .controls {
   min-height: 40px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(242, 207, 116, 0.34);
-  background: rgba(242, 207, 116, 0.06);
+  border: 1px solid var(--ui-blue-border);
+  background: linear-gradient(to bottom, var(--ui-blue-top), var(--ui-blue-bottom));
   box-shadow: none;
-  color: var(--gold);
+  color: rgba(245, 250, 255, 0.98);
   font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
@@ -333,11 +349,25 @@ body.keyboardOpen .controls {
 
 .navActionBtn:hover:not(:disabled),
 .navActionBtn[aria-expanded="true"] {
-  background: rgba(242, 207, 116, 0.14);
-  border-color: rgba(242, 207, 116, 0.58);
-  box-shadow: 0 0 14px rgba(242, 207, 116, 0.14);
+  background: linear-gradient(to bottom, rgba(124, 191, 246, 0.98), rgba(84, 156, 226, 0.98));
+  border-color: rgba(198, 231, 255, 0.82);
+  box-shadow: 0 0 14px rgba(120, 185, 245, 0.22);
   transform: translateY(-1px);
   filter: none;
+}
+
+.navIconBtn {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .floatingPanel {
@@ -383,7 +413,7 @@ body.keyboardOpen .controls {
 .settingsPanel:focus-visible,
 .imageModal:focus-visible,
 .duelPassModal:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.95);
+  outline: 3px solid rgba(173, 221, 255, 0.9);
   outline-offset: 4px;
 }
 
@@ -511,9 +541,9 @@ body.keyboardOpen .controls {
   gap: 2px;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid rgba(148, 122, 70, 0.17);
-  background: rgba(255, 255, 255, 0.025);
-  color: var(--ink);
+  border: 1px solid rgba(150, 207, 247, 0.42);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.16), rgba(72, 143, 214, 0.18));
+  color: rgba(245, 250, 255, 0.98);
   box-shadow: none;
   text-align: left;
   text-transform: none;
@@ -521,17 +551,17 @@ body.keyboardOpen .controls {
 }
 
 .modeCard:hover:not(:disabled) {
-  border-color: rgba(200, 160, 50, 0.48);
-  background: rgba(200, 153, 30, 0.08);
-  box-shadow: none;
+  border-color: rgba(198, 231, 255, 0.82);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.24), rgba(72, 143, 214, 0.26));
+  box-shadow: 0 0 14px rgba(120, 185, 245, 0.16);
   transform: translateY(-1px);
   filter: none;
 }
 
 .modeCard.active {
-  border-color: var(--gold);
-  background: rgba(200, 153, 30, 0.14);
-  box-shadow: 0 0 14px rgba(200, 153, 30, 0.16);
+  border-color: rgba(198, 231, 255, 0.82);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.3), rgba(72, 143, 214, 0.32));
+  box-shadow: 0 0 16px rgba(120, 185, 245, 0.2);
 }
 
 .modeCard::before {
@@ -554,7 +584,7 @@ body.keyboardOpen .controls {
 
 .modeCardDesc {
   font-size: 0.69rem;
-  color: var(--ink-muted);
+  color: rgba(227, 240, 252, 0.82);
   font-style: italic;
 }
 
@@ -563,7 +593,10 @@ body.keyboardOpen .controls {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(150, 207, 247, 0.32);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.12), rgba(72, 143, 214, 0.14));
   font-size: 0.95rem;
   cursor: pointer;
   user-select: none;
@@ -578,8 +611,8 @@ body.keyboardOpen .controls {
   width: 42px;
   height: 24px;
   border-radius: 999px;
-  background: rgba(28, 34, 50, 0.8);
-  border: 1px solid rgba(148, 122, 70, 0.2);
+  background: rgba(56, 104, 154, 0.9);
+  border: 1px solid rgba(173, 221, 255, 0.45);
   position: relative;
   transition: background 200ms;
   flex-shrink: 0;
@@ -598,8 +631,8 @@ body.keyboardOpen .controls {
 }
 
 .displayToggleRow input:checked + .displayToggleSwitch {
-  background: var(--green);
-  border-color: var(--green);
+  background: linear-gradient(to bottom, rgba(124, 191, 246, 0.98), rgba(84, 156, 226, 0.98));
+  border-color: rgba(198, 231, 255, 0.82);
 }
 
 .displayToggleRow input:checked + .displayToggleSwitch::after {
@@ -640,8 +673,8 @@ body.keyboardOpen .controls {
 }
 
 .controls:focus-within {
-  border-color: rgba(242, 207, 116, 0.56);
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.44), 0 0 22px rgba(242, 207, 116, 0.08);
+  border-color: rgba(173, 221, 255, 0.72);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.44), 0 0 22px rgba(120, 185, 245, 0.2);
 }
 
 #guessInput:focus {
@@ -659,16 +692,16 @@ button {
   touch-action: manipulation;
   padding: 12px 20px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 198, 116, 0.56);
-  background: linear-gradient(to bottom, #e45f4a, #c53f36);
-  color: #fff8e8;
+  border: 1px solid var(--ui-blue-border);
+  background: linear-gradient(to bottom, var(--ui-blue-top), var(--ui-blue-bottom));
+  color: rgba(245, 250, 255, 0.98);
   font-weight: 800;
   text-transform: uppercase;
   font-size: 1rem;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: transform 130ms var(--ease-smooth), box-shadow 150ms var(--ease-smooth), filter 130ms var(--ease-smooth), opacity 130ms var(--ease-smooth);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(186, 228, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 button::before {
@@ -703,17 +736,17 @@ button:disabled {
 }
 
 button.secondary {
-  background: rgba(242, 207, 116, 0.12);
-  color: var(--gold-pale);
-  border: 1px solid rgba(242, 207, 116, 0.42);
-  box-shadow: none;
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.88), rgba(72, 143, 214, 0.9));
+  color: rgba(245, 250, 255, 0.98);
+  border: 1px solid var(--ui-blue-border);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(186, 228, 255, 0.1);
 }
 
 button.secondary:hover:not(:disabled) {
   filter: none;
-  background: rgba(242, 207, 116, 0.22);
-  border-color: rgba(242, 207, 116, 0.62);
-  box-shadow: 0 4px 14px rgba(242, 207, 116, 0.18);
+  background: linear-gradient(to bottom, rgba(124, 191, 246, 0.98), rgba(84, 156, 226, 0.98));
+  border-color: rgba(198, 231, 255, 0.82);
+  box-shadow: 0 6px 16px rgba(83, 149, 212, 0.24);
 }
 
 #newBtn {
@@ -735,24 +768,29 @@ button.secondary:hover:not(:disabled) {
 button:focus,
 button:focus-visible,
 #guessInput:focus-visible {
-  outline: 3px solid #ffffff;
+  outline: 3px solid rgba(173, 221, 255, 0.9);
   outline-offset: 3px;
 }
 
+#guessInput:focus-visible {
+  outline: none;
+}
+
 .msg {
-  max-width: 1100px;
+  width: var(--content-width);
+  max-width: var(--content-width);
   margin: var(--space-2) auto;
   min-height: 26px;
-  padding: 8px 10px;
+  padding: 10px 14px;
   border-radius: 12px;
-  font-size: 0.98rem;
-  letter-spacing: 0.02em;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.14);
+  font-size: 1rem;
+  letter-spacing: 0.025em;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
 }
 
 .statusCard {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 122, 70, 0.16);
+  background: rgba(255, 255, 255, 0.016);
 }
 
 .progressPill {
@@ -760,13 +798,13 @@ button:focus-visible,
   top: 12px;
   z-index: 35;
   width: fit-content;
-  max-width: min(1120px, 96vw);
+  max-width: var(--content-width);
   margin: 0 auto 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(10, 14, 20, 0.8);
-  color: rgba(238, 243, 252, 0.94);
+  border: 1px solid rgba(148, 122, 70, 0.18);
+  background: rgba(255, 255, 255, 0.028);
+  color: var(--ink-muted);
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -774,10 +812,46 @@ button:focus-visible,
   backdrop-filter: blur(7px);
 }
 
-.recentGuesses {
-  width: min(1120px, 96vw);
+.progressBar {
+  position: relative;
+  width: var(--content-width);
+  height: 26px;
   margin: 0 auto 10px;
-  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 122, 70, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(to right, #1a6b3c, var(--gold-lt));
+  transition: width 280ms var(--ease-smooth), background 180ms var(--ease-smooth);
+}
+
+.progressLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.recentGuesses {
+  width: var(--content-width);
+  margin: 0 auto 10px;
+  padding: 11px 14px;
   border-radius: 12px;
   border: 1px solid var(--border-soft);
   background: var(--surface-soft);
@@ -787,6 +861,7 @@ button:focus-visible,
   overflow-x: auto;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
 }
 
 .recentLabel {
@@ -795,16 +870,16 @@ button:focus-visible,
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(228, 236, 249, 0.94);
+  color: var(--ink-faint);
 }
 
 .recentChip {
   flex: 0 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(12, 18, 29, 0.84);
-  color: rgba(246, 250, 255, 0.98);
+  border: 1px solid rgba(200, 160, 50, 0.22);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--ink);
   border-radius: 999px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -814,57 +889,92 @@ button:focus-visible,
 }
 
 .recentChip:hover {
-  background: rgba(245, 230, 184, 0.26);
-  border-color: rgba(245, 230, 184, 0.56);
-  color: #fff;
+  background: rgba(200, 153, 30, 0.08);
+  border-color: rgba(200, 160, 50, 0.48);
+  color: var(--gold-pale);
   transform: translateY(-1px);
 }
 
 #stats {
-  color: rgba(230, 235, 242, 0.95);
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  background: rgba(255, 255, 255, 0.028);
+  border-color: rgba(200, 160, 50, 0.22);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+}
+
+.statsBar {
+  width: var(--content-width);
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.statChip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ui-blue-border);
+  background: linear-gradient(to bottom, var(--ui-blue-top), var(--ui-blue-bottom));
+  color: rgba(245, 250, 255, 0.98);
+  font-family: var(--font-display);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 18px rgba(39, 97, 158, 0.18);
+}
+
+.streakChip {
+  color: rgba(245, 250, 255, 0.98);
+  border-color: rgba(198, 231, 255, 0.82);
 }
 
 .statsDashboard {
-  width: min(1120px, 96vw);
+  width: var(--content-width);
   margin: 0 auto 10px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--border-soft);
   background: var(--surface-soft);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }
 
 .statTile {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.2), rgba(72, 143, 214, 0.24));
+  border: 1px solid rgba(173, 221, 255, 0.42);
   border-radius: 10px;
-  padding: 8px 6px;
+  padding: 10px 8px;
   text-align: center;
   transition: transform 120ms var(--ease-smooth), border-color 140ms var(--ease-smooth), background 140ms var(--ease-smooth);
+  box-shadow: 0 8px 18px rgba(39, 97, 158, 0.14);
 }
 
 .statTile:hover {
   transform: translateY(-1px);
-  border-color: rgba(245, 230, 184, 0.34);
-  background: rgba(245, 230, 184, 0.06);
+  border-color: rgba(198, 231, 255, 0.82);
+  background: linear-gradient(to bottom, rgba(124, 191, 246, 0.26), rgba(84, 156, 226, 0.3));
 }
 
 .statLabel {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(204, 217, 236, 0.88);
+  color: rgba(223, 239, 252, 0.84);
 }
 
 .statValue {
-  margin-top: 3px;
-  font-size: 15px;
+  margin-top: 5px;
+  font-size: 18px;
   font-weight: 800;
-  color: rgba(244, 232, 186, 0.96);
+  color: rgba(245, 250, 255, 0.98);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
 }
 
 .status-info {
@@ -874,9 +984,11 @@ button:focus-visible,
 }
 
 .status-success {
-  color: #ddffe8;
-  background: rgba(37, 128, 67, 0.26);
-  border: 1px solid rgba(103, 218, 136, 0.35);
+  background: rgba(20, 100, 56, 0.2);
+  border: 1px solid rgba(90, 190, 132, 0.42);
+  color: #8be4ad;
+  box-shadow: 0 0 0 1px rgba(112, 214, 153, 0.06), 0 10px 22px rgba(6, 26, 13, 0.28);
+  animation: successFadeIn 220ms var(--ease-smooth);
 }
 
 .status-error {
@@ -886,13 +998,13 @@ button:focus-visible,
 }
 
 .recapCard {
-  width: min(1120px, 96vw);
+  width: var(--content-width);
   margin: 8px auto 12px;
   border-radius: 14px;
-  border: 1px solid rgba(242, 207, 116, 0.24);
-  background: rgba(8, 16, 30, 0.78);
-  padding: 12px;
-  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(242, 207, 116, 0.3);
+  background: rgba(8, 16, 30, 0.84);
+  padding: 14px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
 .recapTitle {
@@ -900,7 +1012,7 @@ button:focus-visible,
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(243, 225, 168, 0.96);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .recapBody {
@@ -944,7 +1056,7 @@ button:focus-visible,
 
 .boardWrap {
   position: relative;
-  width: min(1120px, 96vw);
+  width: var(--content-width);
   margin: var(--space-3) auto 0;
   padding: var(--space-2) 52px;
   border-radius: 18px;
@@ -1024,7 +1136,7 @@ button:focus-visible,
 .headers,
 .row {
   display: grid;
-  grid-template-columns: repeat(9, var(--tileSize));
+  grid-template-columns: repeat(8, var(--tileSize));
   gap: 10px;
   justify-content: start;
   width: max-content;
@@ -1038,7 +1150,7 @@ button:focus-visible,
   z-index: 4;
   padding-top: 4px;
   padding-bottom: 4px;
-  background: linear-gradient(to bottom, rgba(7, 16, 30, 0.9), rgba(7, 16, 30, 0));
+  background: transparent;
 }
 
 .row {
@@ -1088,37 +1200,50 @@ button:focus-visible,
 .headers > * {
   width: var(--tileSize);
   height: 44px;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--tileRadius);
-  background: linear-gradient(to bottom, #2f7fd3, #1f5da0);
-  border: 1px solid rgba(163, 213, 255, 0.5);
+  background: linear-gradient(to bottom, rgba(108, 176, 236, 0.95), rgba(72, 143, 214, 0.95));
+  border: 1px solid rgba(173, 221, 255, 0.65);
+  box-shadow: none;
+  filter: none;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 0.76rem;
-  color: rgba(248, 244, 234, 0.98);
+  color: rgba(245, 250, 255, 0.98);
 }
 
 .headerRow > *.hiddenHeader {
-  background: rgba(85, 88, 96, 0.7);
-  border-color: rgba(220, 225, 238, 0.26);
-  color: rgba(236, 241, 249, 0.92);
+  background: rgba(18, 22, 34, 0.94);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: var(--ink-faint);
 }
 
 #rows:empty::before {
-  content: "Try a name to start your hunt.";
+  content: "☠";
   display: block;
-  margin: var(--space-4) auto var(--space-3);
+  margin: 52px auto 12px;
+  width: max-content;
+  color: var(--ink-faint);
+  font-size: 3.4rem;
+  line-height: 1;
+  opacity: 0.2;
+  animation: skullFloat 6s ease-in-out infinite;
+}
+
+#rows:empty::after {
+  content: "Search for a character to begin your hunt";
+  display: block;
+  margin: 0 auto var(--space-3);
   width: max-content;
   max-width: 95%;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px dashed rgba(245, 230, 184, 0.35);
-  color: var(--ink-muted);
-  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink-faint);
   font-size: 0.92rem;
+  font-style: italic;
 }
 
 .tile {
@@ -1198,6 +1323,8 @@ button:focus-visible,
 
 .tile.imageCell {
   padding: 0;
+  overflow: hidden;
+  position: relative;
 }
 
 .tile.imageCell .gridAvatar {
@@ -1211,6 +1338,34 @@ button:focus-visible,
     inset 0 0 0 1px rgba(255, 244, 214, 0.2),
     0 0 0 1px rgba(10, 20, 36, 0.9);
   cursor: zoom-in;
+}
+
+.tile.imageCell.imageCell-green {
+  background: #145a2f;
+  border-color: rgba(98, 168, 122, 0.78);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(7, 29, 15, 1),
+    0 10px 20px rgba(0, 0, 0, 0.28),
+    0 0 22px rgba(90, 204, 122, 0.16);
+}
+
+.tile.imageCell.imageCell-yellow {
+  background: #b98e1d;
+  border-color: rgba(146, 112, 23, 0.86);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(63, 45, 3, 1),
+    0 10px 20px rgba(0, 0, 0, 0.24);
+}
+
+.tile.imageCell.imageCell-red {
+  background: #8f2d2d;
+  border-color: rgba(126, 54, 54, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(46, 10, 10, 1),
+    0 10px 20px rgba(0, 0, 0, 0.26);
 }
 
 .gridAvatar.is-fallback,
@@ -1285,7 +1440,8 @@ button:focus-visible,
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.1),
     0 0 0 3px rgba(7, 29, 15, 1),
-    0 10px 20px rgba(0, 0, 0, 0.28);
+    0 10px 20px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(90, 204, 122, 0.14);
 }
 
 .tile.yellow {
@@ -1348,24 +1504,31 @@ button:focus-visible,
   line-clamp: unset;
 }
 
-.nameCell {
-  text-align: center;
-}
-
 .pop {
   will-change: transform, opacity;
-  animation: revealIn 180ms var(--ease-smooth);
+  animation: revealIn 220ms var(--ease-smooth);
   animation-fill-mode: both;
 }
 
 @keyframes revealIn {
   0% {
     opacity: 0;
-    transform: translateY(6px) scale(0.96);
+    transform: translateY(12px) scale(0.92);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes successFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -1457,13 +1620,13 @@ button:focus-visible,
 
 .suggestionItem:hover,
 .suggestionItem.active {
-  background: rgba(245, 230, 184, 0.42);
+  background: rgba(173, 221, 255, 0.26);
 }
 
 .suggestionItem.active {
-  outline: 2px solid rgba(224, 173, 54, 0.6);
+  outline: 2px solid rgba(173, 221, 255, 0.8);
   outline-offset: -2px;
-  border-left-color: #ba7716;
+  border-left-color: #6cb0ec;
 }
 
 .suggestionItem.no-match {
@@ -1570,10 +1733,14 @@ button:focus-visible,
 
 .boardHint {
   display: none;
+  width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 8px;
   font-size: 0.82rem;
   color: rgba(215, 224, 237, 0.85);
   letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .boardHint::before {
@@ -1690,6 +1857,13 @@ body.duelGateOpen .sideMenu {
   text-align: center;
 }
 
+.duelPassIcon {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: 14px;
+  color: var(--gold-pale);
+}
+
 .duelPassCard h2 {
   margin: 0 0 8px;
   font-size: 1.1rem;
@@ -1753,11 +1927,8 @@ body.compactMode .tile .cellArrow {
     padding-right: 14px;
   }
 
-  .controls,
-  .boardWrap,
-  .recentGuesses,
-  .progressPill {
-    width: min(980px, 95vw);
+  :root {
+    --content-width: min(980px, 95vw);
   }
 
   .boardWrap {
@@ -1781,11 +1952,8 @@ body.compactMode .tile .cellArrow {
     --tileSize: 90px;
   }
 
-  .controls,
-  .boardWrap,
-  .recentGuesses,
-  .progressPill {
-    width: 97vw;
+  :root {
+    --content-width: 97vw;
   }
 
   .boardWrap {
@@ -1795,12 +1963,8 @@ body.compactMode .tile .cellArrow {
 }
 
 @media (min-width: 768px) and (max-width: 1180px) and (orientation: landscape) {
-  .controls,
-  .boardWrap,
-  .recentGuesses,
-  .statsDashboard,
-  .recapCard {
-    width: min(1060px, 94vw);
+  :root {
+    --content-width: min(1060px, 94vw);
   }
 
 }
@@ -1811,8 +1975,8 @@ body.compactMode .tile .cellArrow {
   }
 
   .topBarInner {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -1830,6 +1994,16 @@ body.compactMode .tile .cellArrow {
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
+  }
+
+  .subtitle {
+    align-self: center;
+    text-align: center;
+  }
+
+  .subtitle::after {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .controls {
@@ -1983,11 +2157,11 @@ body.compactMode .tile .cellArrow {
   }
 
   .logo-title {
-    font-size: clamp(1.84rem, 8.2vw, 2.3rem);
+    font-size: clamp(1.7rem, 8vw, 2rem);
   }
 
   .subtitle {
-    font-size: 1.02rem;
+    font-size: 0.72rem;
     letter-spacing: 0.08em;
   }
 

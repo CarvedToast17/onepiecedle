@@ -11,6 +11,10 @@ const msg = document.getElementById("msg");
 const guessInput = document.getElementById("guessInput");
 const newBtn = document.getElementById("newBtn");
 const controlsEl = document.querySelector(".controls");
+const statsBarEl = document.getElementById("statsBar");
+const modeChipEl = document.getElementById("modeChip");
+const attemptChipEl = document.getElementById("attemptChip");
+const streakChipEl = document.getElementById("streakChip");
 const suggestionsEl = document.getElementById("suggestions");
 const boardWrap = document.querySelector(".boardWrap");
 const helpBtn = document.getElementById("helpBtn");
@@ -24,6 +28,9 @@ const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
 const modeCardEls = Array.from(document.querySelectorAll(".modeCard"));
 const progressPillEl = document.getElementById("progressPill");
+const progressBarEl = document.getElementById("progressBar");
+const progressFillEl = document.getElementById("progressFill");
+const progressLabelEl = document.getElementById("progressLabel");
 const recentGuessesEl = document.getElementById("recentGuesses");
 const statsDashboardEl = document.getElementById("statsDashboard");
 const recapCardEl = document.getElementById("recapCard");
@@ -391,10 +398,10 @@ function updateHiddenHeaders() {
   if (!header) return;
   const cells = Array.from(header.children);
   const mapping = {
-    affiliation: { index: 2, label: "Affiliation" },
-    haki: { index: 4, label: "Haki" },
-    firstArc: { index: 7, label: "First Arc" },
-    gender: { index: 8, label: "Gender" }
+    affiliation: { index: 1, label: "Affiliation" },
+    haki: { index: 3, label: "Haki" },
+    firstArc: { index: 6, label: "First Arc" },
+    gender: { index: 7, label: "Gender" }
   };
 
   Object.values(mapping).forEach(({ index, label }) => {
@@ -481,9 +488,9 @@ function renderStatsDashboard() {
   const modeWinRate = modeStats.gamesPlayed ? Math.round((modeStats.wins / modeStats.gamesPlayed) * 100) : 0;
 
   const statTiles = [
-    { label: "Games", value: playerStats.gamesPlayed },
-    { label: "Streak", value: playerStats.currentStreak },
-    { label: "Best Guess", value: modeStats.bestAttempts == null ? "--" : modeStats.bestAttempts }
+    { label: "🎮 Games", value: playerStats.gamesPlayed },
+    { label: "🔥 Streak", value: playerStats.currentStreak },
+    { label: "🏆 Best Guess", value: modeStats.bestAttempts == null ? "--" : modeStats.bestAttempts }
   ];
 
   if (isWrMode) {
@@ -629,10 +636,40 @@ function setStatus(text, tone = "info") {
 
 function updateStats() {
   const best = localStorage.getItem("op_best");
-  if (isDuelMode) {
-    stats.textContent = `Mode: ${getModeLabel()} \u2022 P1: ${duelAttempts[0]}/${DUEL_GUESS_LIMIT} \u2022 P2: ${duelAttempts[1]}/${DUEL_GUESS_LIMIT}`;
-  } else {
-    stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+  const currentModeStats = getModeStats();
+
+  if (modeChipEl) {
+    modeChipEl.textContent = getModeLabel();
+  }
+
+  if (attemptChipEl) {
+    if (isDuelMode) {
+      const remaining = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
+      attemptChipEl.textContent = `${DUEL_PLAYERS[duelCurrentTurn]} • ${remaining} left`;
+    } else if (isHardMode) {
+      const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
+      attemptChipEl.textContent = `${Math.min(attempts + 1, HARD_GUESS_LIMIT)} / ${HARD_GUESS_LIMIT} • ${remaining} left`;
+    } else if (isDailyMode) {
+      attemptChipEl.textContent = `Daily • #${attempts + 1}`;
+    } else {
+      attemptChipEl.textContent = `Guess ${attempts + 1}`;
+    }
+  }
+
+  if (streakChipEl) {
+    streakChipEl.textContent = `🔥 ${currentModeStats.currentStreak}`;
+  }
+
+  if (statsBarEl) {
+    statsBarEl.classList.remove("hidden");
+  }
+
+  if (stats) {
+    if (isDuelMode) {
+      stats.textContent = `Mode: ${getModeLabel()} \u2022 P1: ${duelAttempts[0]}/${DUEL_GUESS_LIMIT} \u2022 P2: ${duelAttempts[1]}/${DUEL_GUESS_LIMIT}`;
+    } else {
+      stats.textContent = `Mode: ${getModeLabel()} \u2022 Attempts: ${attempts} \u2022 Best: ${best ? best : "\u2014"}`;
+    }
   }
   if (boardWrap) {
     boardWrap.classList.toggle("hardMode", isHardMode);
@@ -649,6 +686,26 @@ function updateStats() {
       progressPillEl.textContent = `Daily ${getLocalDateKey()} \u2022 Guess ${attempts + 1}`;
     } else {
       progressPillEl.textContent = `Guess ${attempts + 1}`;
+    }
+  }
+
+  if (progressBarEl && progressFillEl && progressLabelEl) {
+    if (isHardMode) {
+      const remaining = Math.max(HARD_GUESS_LIMIT - attempts, 0);
+      const pct = (attempts / HARD_GUESS_LIMIT) * 100;
+      progressBarEl.classList.remove("hidden");
+      progressFillEl.style.width = `${pct}%`;
+      progressFillEl.style.background = pct >= 80
+        ? "linear-gradient(to right,#c0392b,#e74c3c)"
+        : pct >= 60
+          ? "linear-gradient(to right,#8b6914,#d4af58)"
+          : "linear-gradient(to right,#1a6b3c,#d4af58)";
+      progressLabelEl.textContent = `${remaining} guess${remaining !== 1 ? "es" : ""} remaining`;
+    } else {
+      progressBarEl.classList.add("hidden");
+      progressFillEl.style.width = "0%";
+      progressFillEl.style.background = "linear-gradient(to right,#1a6b3c,#d4af58)";
+      progressLabelEl.textContent = "";
     }
   }
 }
@@ -1268,8 +1325,7 @@ function renderRow(guess, options = {}) {
   const hiddenSet = new Set(hiddenFieldKeys);
 
  const cells = [
-  { kind: "image", src: getVisibleImageSrc(guess.image), cls: "tile imageCell", fieldKey: "image" },
-  { text: guess.name, cls: `tile ${results.name} nameCell` },
+  { kind: "image", src: getVisibleImageSrc(guess.image), cls: `tile imageCell imageCell-${results.name}`, fieldKey: "image" },
   { text: guess.affiliation, cls: `tile ${results.affiliation} affiliationCell`, fieldKey: "affiliation" },
   { text: guess.devilFruit, cls: `tile ${results.devilFruit} devilFruitCell`, fieldKey: "devilFruit" },
   { text: formatHaki(guess.haki), cls: `tile ${results.haki} hakiCell`, fieldKey: "haki" },
@@ -1377,7 +1433,7 @@ if (matched) {
 
   updateStats();
 
-  setStatus(`You got it: ${answer.name} (in ${attempts} guesses)`, "success");
+  setStatus(`You found ${answer.name}! ✓`, "success");
   recordGameResult(true);
   renderRecap(true);
   clearCurrentGameState();
@@ -1651,7 +1707,7 @@ function showSuggestions(items, query = "") {
 
   attachImageFallback(suggestionsEl);
   suggestionItems = Array.from(suggestionsEl.querySelectorAll(".suggestionItem"));
-  setActiveSuggestion(-1);
+  setActiveSuggestion(suggestionItems.length ? 0 : -1);
 
   suggestionItems.forEach((el, i) => {
     el.addEventListener("mouseenter", () => {

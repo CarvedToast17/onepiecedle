@@ -14,7 +14,7 @@
         <div class="brandTitleRow">
           <span class="logoEmblem" aria-hidden="true">&#9760;</span>
           <h1 class="logo-title">
-            <span class="logo-one">One</span><span class="logo-piece">Piece</span><span class="logo-dle">Who</span>
+            <span class="logo-one">One</span><span class="logo-piece"><span class="logo-piece-main">P</span><span class="logo-piece-i">i</span><span class="logo-piece-tail">ece</span></span><span class="logo-dle">Who</span>
           </h1>
         </div>
         <p class="subtitle">Guess the Character</p>
@@ -22,7 +22,7 @@
 
       <div class="topBarActions">
         <div class="navMenu helpMenu">
-          <button id="helpBtn" class="navActionBtn" type="button" aria-expanded="false" aria-controls="helpPanel">How to Play</button>
+          <button id="helpBtn" class="navActionBtn navIconBtn" type="button" aria-expanded="false" aria-controls="helpPanel" aria-label="How to play" title="How to play">?</button>
           <div id="helpPanel" class="floatingPanel helpPanel hidden" role="dialog" aria-modal="false" aria-label="How to play">
             <div class="panelHeader">
               <span>How to Play</span>
@@ -37,7 +37,7 @@
         </div>
 
         <aside class="sideMenu" aria-label="Game options">
-          <button id="menuBtn" class="navActionBtn" type="button" aria-expanded="false" aria-controls="menuPanel">Settings</button>
+          <button id="menuBtn" class="navActionBtn navIconBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Settings" title="Settings">&#9881;</button>
         </aside>
       </div>
     </div>
@@ -129,9 +129,18 @@
       <button id="newBtn" class="secondary">New Game</button>
     </div>
 
-    <div id="stats" class="msg"></div>
+    <div id="statsBar" class="statsBar" aria-live="polite">
+      <div id="modeChip" class="statChip">Casual</div>
+      <div id="attemptChip" class="statChip">Guess 1</div>
+      <div id="streakChip" class="statChip streakChip">🔥 0</div>
+    </div>
+
     <div id="statsDashboard" class="statsDashboard"></div>
-    <div id="progressPill" class="progressPill"></div>
+    <div id="progressPill" class="progressPill hidden"></div>
+    <div id="progressBar" class="progressBar hidden" aria-live="polite">
+      <div id="progressFill" class="progressFill"></div>
+      <span id="progressLabel" class="progressLabel"></span>
+    </div>
     <div id="recentGuesses" class="recentGuesses hidden" aria-live="polite"></div>
     <div id="msg" class="msg statusCard"></div>
     <section id="recapCard" class="recapCard hidden" aria-live="polite"></section>
@@ -141,7 +150,6 @@
     <div class="boardWrap" role="region" aria-label="Guess board">
       <div class="headerRow">
         <div title="Character portrait">Character</div>
-        <div title="Character name">Name</div>
         <div title="Crew, organization, or faction">Affiliation</div>
         <div title="Devil fruit type or none">Devil Fruit</div>
         <div title="Known haki types">Haki</div>
@@ -163,6 +171,7 @@
 
   <div id="duelPassModal" class="duelPassModal hidden" role="dialog" aria-modal="true" aria-labelledby="duelReadyTitle" aria-hidden="true" tabindex="-1">
     <div class="duelPassCard">
+      <div class="duelPassIcon" aria-hidden="true">&#9876;</div>
       <h2 id="duelReadyTitle">Player 1 ready?</h2>
       <p>Pass the device, then continue.</p>
       <button id="duelReadyBtn" class="primary" type="button">Ready</button>
