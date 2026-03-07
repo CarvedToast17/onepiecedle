@@ -8,11 +8,51 @@
 </head>
 <body>
   <div class="bg"></div>
-  <aside class="sideMenu" aria-label="Game options">
-    <button id="menuBtn" class="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">Menu</button>
-    <div id="menuPanel" class="menuPanel hidden">
-      <label class="menuFieldLabel" for="modePreset">Mode Preset</label>
-      <select id="modePreset" class="menuSelect">
+  <header class="topBar">
+    <div class="topBarInner">
+      <div class="brandLockup">
+        <div class="brandTitleRow">
+          <span class="logoEmblem" aria-hidden="true">&#9760;</span>
+          <h1 class="logo-title">
+            <span class="logo-one">One</span><span class="logo-piece">Piece</span><span class="logo-dle">Who</span>
+          </h1>
+        </div>
+        <p class="subtitle">Guess the Character</p>
+      </div>
+
+      <div class="topBarActions">
+        <div class="navMenu helpMenu">
+          <button id="helpBtn" class="navActionBtn" type="button" aria-expanded="false" aria-controls="helpPanel">How to Play</button>
+          <div id="helpPanel" class="floatingPanel helpPanel hidden" role="dialog" aria-modal="false" aria-label="How to play">
+            <div class="panelHeader">
+              <span>How to Play</span>
+              <button id="helpClose" class="panelCloseBtn" type="button" aria-label="Close how to play">&times;</button>
+            </div>
+            <div class="panelBody helpBody">
+              <p>Guess the secret One Piece character. Each guess reveals clue matches across the board.</p>
+              <p>Green means exact, yellow means partial or close, and red means no match.</p>
+              <p>Bounty and First Arc arrows show whether the answer is higher or lower than your guess.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="sideMenu" aria-label="Game options">
+          <button id="menuBtn" class="navActionBtn" type="button" aria-expanded="false" aria-controls="menuPanel">Settings</button>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <div id="settingsOverlay" class="settingsOverlay hidden" aria-hidden="true"></div>
+  <div id="menuPanel" class="settingsPanel hidden" role="dialog" aria-modal="true" aria-label="Settings">
+    <div class="settingsPanelHeader">
+      <span>Settings</span>
+      <button id="settingsClose" class="settingsCloseBtn" type="button" aria-label="Close settings">&times;</button>
+    </div>
+
+    <div class="settingsPanelBody">
+      <label class="settingsSectionLabel" for="modePreset">Game Mode</label>
+      <select id="modePreset" class="menuSelect srOnly" aria-hidden="true" tabindex="-1">
         <option value="casual">Casual</option>
         <option value="hard">Hard (5 guesses)</option>
         <option value="extreme">Extreme (5 + 2 hidden)</option>
@@ -20,22 +60,53 @@
         <option value="mystery_tiles">Mystery Tiles</option>
         <option value="duel_1v1">1v1 Duel</option>
       </select>
-      <label class="menuToggle" for="compactMode">
+
+      <div class="modeGrid" id="modeGrid" role="group" aria-label="Game mode">
+        <button class="modeCard" type="button" data-mode="casual">
+          <span class="modeCardIcon">&infin;</span>
+          <span class="modeCardName">Casual</span>
+          <span class="modeCardDesc">Unlimited guesses</span>
+        </button>
+        <button class="modeCard" type="button" data-mode="hard">
+          <span class="modeCardIcon">5</span>
+          <span class="modeCardName">Hard</span>
+          <span class="modeCardDesc">5 guesses only</span>
+        </button>
+        <button class="modeCard" type="button" data-mode="extreme">
+          <span class="modeCardIcon">&#9889;</span>
+          <span class="modeCardName">Extreme</span>
+          <span class="modeCardDesc">5 guesses + hidden cols</span>
+        </button>
+        <button class="modeCard" type="button" data-mode="daily">
+          <span class="modeCardIcon">&#128197;</span>
+          <span class="modeCardName">Daily</span>
+          <span class="modeCardDesc">Same for everyone</span>
+        </button>
+        <button class="modeCard" type="button" data-mode="mystery_tiles">
+          <span class="modeCardIcon">&#128065;</span>
+          <span class="modeCardName">Mystery</span>
+          <span class="modeCardDesc">Hidden tile columns</span>
+        </button>
+        <button class="modeCard" type="button" data-mode="duel_1v1">
+          <span class="modeCardIcon">&#9876;</span>
+          <span class="modeCardName">1v1 Duel</span>
+          <span class="modeCardDesc">Pass &amp; play</span>
+        </button>
+      </div>
+
+      <label class="settingsSectionLabel settingsSectionLabelDisplay" for="compactMode">Display</label>
+      <label class="displayToggleRow" for="compactMode">
+        <span>Compact tiles</span>
         <input id="compactMode" type="checkbox" />
-        Compact Tiles
+        <span class="displayToggleSwitch" aria-hidden="true"></span>
       </label>
     </div>
-  </aside>
+  </div>
 
   <main class="container">
-    <h1 class="logo-title">
-      <span class="logo-one">One</span><span class="logo-piece">Piece</span><span class="logo-dle">dle</span>
-    </h1>
-    <p class="subtitle">Infinite</p>
-
     <div class="controls">
       <div class="searchWrap">
-        <span class="searchIcon">&#x1F50D;</span>
+        <span class="searchIcon" aria-hidden="true">&#x2693;</span>
 
         <input
           id="guessInput"

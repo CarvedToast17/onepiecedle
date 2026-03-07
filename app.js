@@ -13,10 +13,16 @@ const newBtn = document.getElementById("newBtn");
 const controlsEl = document.querySelector(".controls");
 const suggestionsEl = document.getElementById("suggestions");
 const boardWrap = document.querySelector(".boardWrap");
+const helpBtn = document.getElementById("helpBtn");
+const helpPanel = document.getElementById("helpPanel");
+const helpClose = document.getElementById("helpClose");
 const menuBtn = document.getElementById("menuBtn");
 const menuPanel = document.getElementById("menuPanel");
+const settingsOverlay = document.getElementById("settingsOverlay");
+const settingsClose = document.getElementById("settingsClose");
 const modePresetEl = document.getElementById("modePreset");
 const compactModeEl = document.getElementById("compactMode");
+const modeCardEls = Array.from(document.querySelectorAll(".modeCard"));
 const progressPillEl = document.getElementById("progressPill");
 const recentGuessesEl = document.getElementById("recentGuesses");
 const statsDashboardEl = document.getElementById("statsDashboard");
@@ -155,8 +161,36 @@ function trapFocus(container, event) {
 function getOpenTrapContainer() {
   if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) return duelPassModalEl;
   if (imageModal && !imageModal.classList.contains("hidden")) return imageModal;
+  if (helpPanel && !helpPanel.classList.contains("hidden")) return helpPanel;
   if (menuPanel && !menuPanel.classList.contains("hidden")) return menuPanel;
   return null;
+}
+
+function syncModeCardState() {
+  if (!modeCardEls.length) return;
+  modeCardEls.forEach((card) => {
+    const isActive = card.dataset.mode === activeModePreset;
+    card.classList.toggle("active", isActive);
+    card.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+function openHelpPanel() {
+  if (!helpPanel || !helpBtn) return;
+  rememberFocus();
+  helpPanel.classList.remove("hidden");
+  helpPanel.setAttribute("aria-hidden", "false");
+  helpBtn.setAttribute("aria-expanded", "true");
+  const focusable = getFocusableElements(helpPanel);
+  (focusable[0] || helpPanel).focus();
+}
+
+function closeHelpPanel(restore = false) {
+  if (!helpPanel || !helpBtn) return;
+  helpPanel.classList.add("hidden");
+  helpPanel.setAttribute("aria-hidden", "true");
+  helpBtn.setAttribute("aria-expanded", "false");
+  if (restore) restoreFocus(helpBtn);
 }
 
 function openMenuPanel() {
@@ -164,6 +198,10 @@ function openMenuPanel() {
   rememberFocus();
   menuPanel.classList.remove("hidden");
   menuPanel.setAttribute("aria-hidden", "false");
+  if (settingsOverlay) {
+    settingsOverlay.classList.remove("hidden");
+    settingsOverlay.setAttribute("aria-hidden", "false");
+  }
   menuBtn.setAttribute("aria-expanded", "true");
   const focusable = getFocusableElements(menuPanel);
   (focusable[0] || menuPanel).focus();
@@ -173,6 +211,10 @@ function closeMenuPanel(restore = false) {
   if (!menuPanel || !menuBtn) return;
   menuPanel.classList.add("hidden");
   menuPanel.setAttribute("aria-hidden", "true");
+  if (settingsOverlay) {
+    settingsOverlay.classList.add("hidden");
+    settingsOverlay.setAttribute("aria-hidden", "true");
+  }
   menuBtn.setAttribute("aria-expanded", "false");
   if (restore) restoreFocus(menuBtn);
 }
@@ -550,6 +592,7 @@ function applyModePreset(modeKey, restart = true) {
 
   localStorage.setItem(MODE_PRESET_KEY, safeMode);
   if (modePresetEl) modePresetEl.value = safeMode;
+  syncModeCardState();
   if (newBtn) {
     newBtn.classList.toggle("hidden", isDailyMode);
   }
@@ -1663,7 +1706,11 @@ document.addEventListener("click", (e) => {
     closeSuggestions();
   }
 
-  if (menuPanel && menuBtn && !e.target.closest(".sideMenu")) {
+  if (helpPanel && helpBtn && !e.target.closest(".helpMenu")) {
+    closeHelpPanel(false);
+  }
+
+  if (menuPanel && menuBtn && !e.target.closest(".sideMenu") && e.target !== settingsOverlay) {
     closeMenuPanel(false);
   }
 
@@ -1716,6 +1763,7 @@ guessInput.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeImageModal(false);
     closeSuggestions();
+    closeHelpPanel(false);
     closeMenuPanel(false);
     return;
   }
@@ -1758,10 +1806,21 @@ if (modePresetEl) {
   });
 }
 
+if (modeCardEls.length) {
+  modeCardEls.forEach((card) => {
+    card.addEventListener("click", () => {
+      const mode = card.dataset.mode || "casual";
+      if (modePresetEl) modePresetEl.value = mode;
+      applyModePreset(mode, true);
+    });
+  });
+}
+
 if (menuBtn && menuPanel) {
   menuPanel.tabIndex = -1;
   menuPanel.setAttribute("aria-hidden", "true");
   menuBtn.addEventListener("click", () => {
+    closeHelpPanel(false);
     const isOpen = !menuPanel.classList.contains("hidden");
     if (isOpen) {
       closeMenuPanel(true);
@@ -1769,6 +1828,33 @@ if (menuBtn && menuPanel) {
       openMenuPanel();
     }
   });
+}
+
+if (settingsOverlay) {
+  settingsOverlay.setAttribute("aria-hidden", "true");
+  settingsOverlay.addEventListener("click", () => closeMenuPanel(true));
+}
+
+if (settingsClose) {
+  settingsClose.addEventListener("click", () => closeMenuPanel(true));
+}
+
+if (helpBtn && helpPanel) {
+  helpPanel.tabIndex = -1;
+  helpPanel.setAttribute("aria-hidden", "true");
+  helpBtn.addEventListener("click", () => {
+    closeMenuPanel(false);
+    const isOpen = !helpPanel.classList.contains("hidden");
+    if (isOpen) {
+      closeHelpPanel(true);
+    } else {
+      openHelpPanel();
+    }
+  });
+}
+
+if (helpClose) {
+  helpClose.addEventListener("click", () => closeHelpPanel(true));
 }
 
 if (imageModalClose) {
@@ -1794,6 +1880,10 @@ document.addEventListener("keydown", (e) => {
     }
     if (imageModal && !imageModal.classList.contains("hidden")) {
       closeImageModal(true);
+      return;
+    }
+    if (helpPanel && !helpPanel.classList.contains("hidden")) {
+      closeHelpPanel(true);
       return;
     }
     if (menuPanel && !menuPanel.classList.contains("hidden")) {
@@ -1825,6 +1915,11 @@ if (guessInput) {
 if (imageModal) {
   imageModal.tabIndex = -1;
   imageModal.setAttribute("aria-hidden", "true");
+}
+
+if (helpPanel) {
+  helpPanel.tabIndex = -1;
+  helpPanel.setAttribute("aria-hidden", "true");
 }
 
 if (duelPassModalEl) {
