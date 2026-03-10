@@ -89,6 +89,7 @@ let impostorIndex = -1;
 let impostorRevealIndex = 0;
 let impostorRevealPhase = "prompt";
 let impostorHint = "";
+let dailyCountdownTimer = null;
 let audioContext = null;
 let revealNoiseBuffer = null;
 let lastFocusEl = null;
@@ -109,8 +110,8 @@ const DUEL_GUESS_LIMIT = 6;
 const DUEL_PLAYERS = ["Player 1", "Player 2"];
 const DUEL_TURN_MS = 60000;
 const DUEL_REVEAL_DELAY_MS = 3000;
-const TILE_REVEAL_MS = 2100;
-const TILE_REVEAL_STAGGER_MS = 280;
+const TILE_REVEAL_MS = 900;
+const TILE_REVEAL_STAGGER_MS = 120;
 const LANDING_TAP_MOVE_THRESHOLD = 28;
 const LANDING_TAP_SCROLL_THRESHOLD = 18;
 const LANDING_IGNORE_CLICK_MS = 450;
@@ -762,6 +763,34 @@ function getLocalDateKey() {
   return `${y}-${m}-${d}`;
 }
 
+function getMsUntilMidnight() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+  return midnight - now;
+}
+
+function formatCountdown(ms) {
+  const totalSecs = Math.max(0, Math.ceil(ms / 1000));
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function startDailyCountdown() {
+  if (dailyCountdownTimer) clearInterval(dailyCountdownTimer);
+  function tick() {
+    if (!modeChipEl || !isDailyMode) {
+      clearInterval(dailyCountdownTimer);
+      dailyCountdownTimer = null;
+      return;
+    }
+    modeChipEl.textContent = `Next in ${formatCountdown(getMsUntilMidnight())}`;
+  }
+  tick();
+  dailyCountdownTimer = setInterval(tick, 1000);
+}
+
 function hashString(input) {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
@@ -869,6 +898,22 @@ function recordGameResult(didWin) {
 
   savePlayerStats();
   renderStatsDashboard();
+  if (isDailyMode) startDailyCountdown();
+
+  if (didWin) {
+    const streak = playerStats.currentStreak;
+    if (streak === 5 || streak === 10 || streak === 25) {
+      setTimeout(() => {
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#c8991e", "#e8b82e", "#f4d878", "#ffffff"] });
+        }
+      }, 400);
+      if (streakChipEl) {
+        streakChipEl.classList.add("streakMilestone");
+        setTimeout(() => streakChipEl.classList.remove("streakMilestone"), 3000);
+      }
+    }
+  }
 }
 
 function getVisibleImageSrc(rawSrc) {
@@ -889,6 +934,7 @@ function renderRecap(didWin) {
     : `Answer was ${answer.name} after ${attempts} guesses`);
 
   recapCardEl.classList.remove("hidden");
+  recapCardEl.classList.toggle("recapWin", !!didWin);
   const replayMarkup = isDailyMode ? "" : `<button id="recapPlayAgain" class="recapBtn secondary" type="button">Play Again</button>`;
 
   recapCardEl.innerHTML = `
@@ -921,6 +967,7 @@ function applyModePreset(modeKey, restart = true) {
   const safeMode = ["casual", "extreme", "daily", "mystery_tiles", "duel_1v1", "impostor"].includes(normalizedMode) ? normalizedMode : "casual";
   clearDuelTurnTimer();
   clearDuelHandoffTimer();
+  if (dailyCountdownTimer) { clearInterval(dailyCountdownTimer); dailyCountdownTimer = null; }
   activeModePreset = safeMode;
   isExtremeMode = safeMode === "extreme";
   isHardMode = isExtremeMode;
@@ -1934,6 +1981,9 @@ function renderRow(guess, options = {}) {
   attachImageFallback(r);
 
   rows.prepend(r);
+  requestAnimationFrame(() => {
+    safeScrollIntoView(r, { behavior: "smooth", block: "nearest" });
+  });
   if (!suppressAnnouncement) {
     announceRowResult(guess, results, playerIndex);
   }
@@ -1942,6 +1992,9 @@ function renderRow(guess, options = {}) {
   updateStats();
 
   const matched = results.name === "green";
+  if (navigator.vibrate) {
+    navigator.vibrate(matched ? [30, 20, 60] : 18);
+  }
   if (suppressEndHandling) {
     return matched;
   }

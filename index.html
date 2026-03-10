@@ -165,7 +165,7 @@
         <input
           id="guessInput"
           type="text"
-          placeholder="Search a character..."
+          placeholder="Search a character… ↵ to guess"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
@@ -206,6 +206,11 @@
       </div>
 
       <div id="rows"></div>
+    </div>
+    <div class="colorLegend" aria-label="Color key">
+      <span class="legendDot legendGreen"></span><span class="legendLabel">Match</span>
+      <span class="legendDot legendYellow"></span><span class="legendLabel">Close</span>
+      <span class="legendDot legendRed"></span><span class="legendLabel">No match</span>
     </div>
     <div class="boardHint" aria-hidden="true">Swipe the board to view all columns</div>
     </section>
