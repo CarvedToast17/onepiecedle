@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://carvedtoast17.github.io/OnePieceWho/sitemap.xml
+Sitemap: https://carvedtoast17.github.io/onepiecewho/sitemap.xml
