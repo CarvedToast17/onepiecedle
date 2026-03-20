@@ -10,6 +10,7 @@ const rows = document.getElementById("rows");
 const msg = document.getElementById("msg");
 const guessInput = document.getElementById("guessInput");
 const newBtn = document.getElementById("newBtn");
+const impostorIdentityBtn = document.getElementById("impostorIdentityBtn");
 const controlsEl = document.querySelector(".controls");
 const statsBarEl = document.getElementById("statsBar");
 const modeChipEl = document.getElementById("modeChip");
@@ -89,6 +90,7 @@ let impostorIndex = -1;
 let impostorRevealIndex = 0;
 let impostorRevealPhase = "prompt";
 let impostorHint = "";
+let impostorIdentityRevealed = false;
 let dailyCountdownTimer = null;
 let audioContext = null;
 let revealNoiseBuffer = null;
@@ -122,8 +124,11 @@ const FUZZY_MATCH_THRESHOLD = 700;
 const MIN_SUGGESTION_SCORE = 240;
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const SEARCH_DEBOUNCE_MS = 90;
+const IMPOSTOR_HINT_TARGET_COUNT = 5;
+const IMPOSTOR_HINT_BLACKLIST = new Set(["captain", "straw hat", "marine", "yonko", "warlord"]);
 
 let characterSearchIndex = [];
+let hintUsageCounts = new Map();
 let suggestionDebounceTimer = null;
 
 playerStats = loadPlayerStats();
@@ -300,10 +305,54 @@ function selectMode(mode) {
   window.scrollTo(0, 0);
 }
 
-function getCharacterHint(character) {
-  const hints = Array.isArray(character?.hints) ? character.hints.filter(Boolean) : [];
+function getCharacterHint(character, options = {}) {
+  const hints = Array.isArray(character?.hints)
+    ? [...new Set(character.hints.map((hint) => String(hint || "").trim()).filter(Boolean))]
+    : [];
   if (!hints.length) return "Pirate";
-  return hints[Math.floor(Math.random() * hints.length)];
+  if (!options.forImpostor) {
+    return hints[Math.floor(Math.random() * hints.length)];
+  }
+
+  const rankedHints = hints
+    .map((hint) => {
+      const normalizedHint = normalize(hint);
+      const count = hintUsageCounts.get(normalizedHint) || 0;
+      const distance = Math.abs(count - IMPOSTOR_HINT_TARGET_COUNT);
+      const isAllowedHint = !IMPOSTOR_HINT_BLACKLIST.has(normalizedHint);
+      const isPreferred = isAllowedHint && count >= 4 && count <= 6;
+      const isFallbackSafe = isAllowedHint && count >= 2;
+      if (!isPreferred && !isFallbackSafe) return null;
+      return { hint, count, distance, isPreferred };
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (a.isPreferred !== b.isPreferred) return a.isPreferred ? -1 : 1;
+      if (a.distance !== b.distance) return a.distance - b.distance;
+      if (a.count !== b.count) return b.count - a.count;
+      return a.hint.localeCompare(b.hint);
+    });
+
+  if (rankedHints.length) {
+    const bestDistance = rankedHints[0].distance;
+    const bestTier = rankedHints[0].isPreferred;
+    const bestHints = rankedHints.filter((entry) => entry.distance === bestDistance && entry.isPreferred === bestTier);
+    return bestHints[Math.floor(Math.random() * bestHints.length)].hint;
+  }
+
+  return "Pirate";
+}
+
+function buildHintUsageIndex() {
+  hintUsageCounts = new Map();
+  CHARACTERS.forEach((character) => {
+    const hints = Array.isArray(character?.hints) ? character.hints : [];
+    hints.forEach((hint) => {
+      const normalizedHint = normalize(hint);
+      if (!normalizedHint) return;
+      hintUsageCounts.set(normalizedHint, (hintUsageCounts.get(normalizedHint) || 0) + 1);
+    });
+  });
 }
 
 function rememberFocus() {
@@ -432,6 +481,31 @@ function resetImpostorState() {
   impostorRevealIndex = 0;
   impostorRevealPhase = "prompt";
   impostorHint = "";
+  impostorIdentityRevealed = false;
+  updateImpostorIdentityButton();
+}
+
+function getImpostorName() {
+  if (impostorIndex < 0 || impostorIndex >= impostorPlayers.length) return "Unknown";
+  return impostorPlayers[impostorIndex] || `Player ${impostorIndex + 1}`;
+}
+
+function updateImpostorIdentityButton() {
+  if (!impostorIdentityBtn) return;
+  const shouldShow = isImpostorMode && impostorPlayers.length > 0 && impostorRevealPhase === "complete";
+  impostorIdentityBtn.classList.toggle("hidden", !shouldShow);
+  impostorIdentityBtn.disabled = !shouldShow;
+  impostorIdentityBtn.textContent = impostorIdentityRevealed
+    ? `Impostor: ${getImpostorName()}`
+    : "Reveal Impostor";
+}
+
+function revealImpostorIdentity() {
+  if (!isImpostorMode || !impostorPlayers.length || impostorRevealPhase !== "complete") return;
+  impostorIdentityRevealed = true;
+  updateImpostorIdentityButton();
+  updateStats();
+  setStatus(`${getImpostorName()} was the impostor.`, "info");
 }
 
 function closeImpostorSetupModal() {
@@ -519,6 +593,8 @@ function showImpostorRevealStep() {
 function advanceImpostorReveal() {
   if (impostorRevealPhase === "complete") {
     closeImpostorRevealModal();
+    updateImpostorIdentityButton();
+    updateStats();
     setStatus("Impostor roles assigned. Use New Game to start another round.", "info");
     return;
   }
@@ -535,6 +611,7 @@ function advanceImpostorReveal() {
   } else {
     impostorRevealPhase = "complete";
   }
+  updateImpostorIdentityButton();
   showImpostorRevealStep();
 }
 
@@ -551,8 +628,10 @@ function beginImpostorRound() {
   impostorIndex = Math.floor(Math.random() * players.length);
   impostorRevealIndex = 0;
   impostorRevealPhase = "prompt";
-  impostorHint = getCharacterHint(answer);
+  impostorIdentityRevealed = false;
+  impostorHint = getCharacterHint(answer, { forImpostor: true });
   closeImpostorSetupModal();
+  updateImpostorIdentityButton();
   showImpostorRevealStep();
   updateStats();
   setStatus("Pass the device and reveal each role in order.", "info");
@@ -1075,7 +1154,9 @@ function updateStats() {
   if (progressPillEl) {
     if (isImpostorMode) {
       progressPillEl.textContent = impostorPlayers.length
-        ? `Impostor ready \u2022 ${impostorPlayers.length} players`
+        ? (impostorIdentityRevealed
+          ? `Impostor revealed \u2022 ${getImpostorName()}`
+          : `Impostor ready \u2022 ${impostorPlayers.length} players`)
         : "Set player names";
     } else if (isDuelMode) {
       const left = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
@@ -2213,6 +2294,7 @@ async function init() {
     if (!Array.isArray(CHARACTERS) || CHARACTERS.length === 0) {
       throw new Error("characters.json did not contain a character list");
     }
+    buildHintUsageIndex();
     buildCharacterSearchIndex();
 
     applyModePreset(localStorage.getItem(MODE_PRESET_KEY) || "casual", false);
@@ -2353,7 +2435,9 @@ function startNewGame() {
   updateStats();
   if (isImpostorMode) {
     clearCurrentGameState();
+    resetImpostorState();
     openImpostorSetupModal();
+    updateImpostorIdentityButton();
     return;
   }
   persistCurrentGameState();
@@ -2602,6 +2686,12 @@ if (impostorRevealBtn) {
   });
 }
 
+if (impostorIdentityBtn) {
+  impostorIdentityBtn.addEventListener("click", () => {
+    revealImpostorIdentity();
+  });
+}
+
 document.addEventListener("keydown", (e) => {
   const trapContainer = getOpenTrapContainer();
   if (trapContainer && e.key === "Tab") {
@@ -2681,5 +2771,3 @@ if (impostorRevealModalEl) {
   impostorRevealModalEl.tabIndex = -1;
   impostorRevealModalEl.setAttribute("aria-hidden", "true");
 }
-
-
