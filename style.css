@@ -2689,6 +2689,50 @@ body.compactMode .tile .cellArrow {
   }
 }
 
+.impostorVoteBallot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: 4px 0 14px;
+}
+
+.impostorVoteOption {
+  width: 100%;
+  padding: 11px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(173, 221, 255, 0.2);
+  border-radius: 10px;
+  color: #ebf2fa;
+  font-size: 0.98rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.impostorVoteOption:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(173, 221, 255, 0.4);
+}
+
+.impostorVoteOption.selected {
+  background: rgba(200, 153, 30, 0.22);
+  border-color: var(--gold-pale);
+  color: #f4d878;
+  font-weight: 600;
+}
+
+.duelPassCard.impostorCardWin {
+  border-color: rgba(39, 174, 96, 0.55);
+  box-shadow: 0 0 0 1px rgba(39, 174, 96, 0.25);
+}
+
+.duelPassCard.impostorCardLoss {
+  border-color: rgba(192, 57, 43, 0.55);
+  box-shadow: 0 0 0 1px rgba(192, 57, 43, 0.25);
+}
+
 .seoBlurb {
   width: min(680px, 100%);
   margin: 32px 0 0;

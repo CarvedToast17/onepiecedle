@@ -51,6 +51,18 @@ const impostorRevealTitleEl = document.getElementById("impostorRevealTitle");
 const impostorRevealBodyEl = document.getElementById("impostorRevealBody");
 const impostorRevealBtn = document.getElementById("impostorRevealBtn");
 const impostorSecretEl = document.getElementById("impostorSecret");
+const impostorVoteModalEl = document.getElementById("impostorVoteModal");
+const impostorVoteTitleEl = document.getElementById("impostorVoteTitle");
+const impostorVoteBodyEl = document.getElementById("impostorVoteBody");
+const impostorVoteBallotEl = document.getElementById("impostorVoteBallot");
+const impostorVoteBtn = document.getElementById("impostorVoteBtn");
+const impostorResultModalEl = document.getElementById("impostorResultModal");
+const impostorResultCardEl = document.getElementById("impostorResultCard");
+const impostorResultIconEl = document.getElementById("impostorResultIcon");
+const impostorResultTitleEl = document.getElementById("impostorResultTitle");
+const impostorResultBodyEl = document.getElementById("impostorResultBody");
+const impostorResultSecretEl = document.getElementById("impostorResultSecret");
+const impostorResultBtn = document.getElementById("impostorResultBtn");
 const impostorPlayerInputEls = [
   document.getElementById("impostorPlayer1"),
   document.getElementById("impostorPlayer2"),
@@ -91,6 +103,11 @@ let impostorRevealIndex = 0;
 let impostorRevealPhase = "prompt";
 let impostorHint = "";
 let impostorIdentityRevealed = false;
+let impostorStarterIndex = -1;
+let impostorVotes = {};
+let impostorVoteIndex = 0;
+let impostorVotePhase = "prompt";
+let impostorCurrentVoteChoice = -1;
 let dailyCountdownTimer = null;
 let audioContext = null;
 let revealNoiseBuffer = null;
@@ -189,7 +206,9 @@ function updateBodyScrollLock() {
     (!!imageModal && !imageModal.classList.contains("hidden")) ||
     (!!duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) ||
     (!!impostorSetupModalEl && !impostorSetupModalEl.classList.contains("hidden")) ||
-    (!!impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden"));
+    (!!impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden")) ||
+    (!!impostorVoteModalEl && !impostorVoteModalEl.classList.contains("hidden")) ||
+    (!!impostorResultModalEl && !impostorResultModalEl.classList.contains("hidden"));
 
   if (shouldLock) {
     if (!document.body.classList.contains("modalLocked")) {
@@ -413,6 +432,8 @@ function trapFocus(container, event) {
 }
 
 function getOpenTrapContainer() {
+  if (impostorResultModalEl && !impostorResultModalEl.classList.contains("hidden")) return impostorResultModalEl;
+  if (impostorVoteModalEl && !impostorVoteModalEl.classList.contains("hidden")) return impostorVoteModalEl;
   if (impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden")) return impostorRevealModalEl;
   if (impostorSetupModalEl && !impostorSetupModalEl.classList.contains("hidden")) return impostorSetupModalEl;
   if (duelPassModalEl && !duelPassModalEl.classList.contains("hidden")) return duelPassModalEl;
@@ -482,6 +503,13 @@ function resetImpostorState() {
   impostorRevealPhase = "prompt";
   impostorHint = "";
   impostorIdentityRevealed = false;
+  impostorStarterIndex = -1;
+  impostorVotes = {};
+  impostorVoteIndex = 0;
+  impostorVotePhase = "prompt";
+  impostorCurrentVoteChoice = -1;
+  closeImpostorVoteModal();
+  closeImpostorResultModal();
   updateImpostorIdentityButton();
 }
 
@@ -495,17 +523,7 @@ function updateImpostorIdentityButton() {
   const shouldShow = isImpostorMode && impostorPlayers.length > 0 && impostorRevealPhase === "complete";
   impostorIdentityBtn.classList.toggle("hidden", !shouldShow);
   impostorIdentityBtn.disabled = !shouldShow;
-  impostorIdentityBtn.textContent = impostorIdentityRevealed
-    ? `Impostor: ${getImpostorName()}`
-    : "Reveal Impostor";
-}
-
-function revealImpostorIdentity() {
-  if (!isImpostorMode || !impostorPlayers.length || impostorRevealPhase !== "complete") return;
-  impostorIdentityRevealed = true;
-  updateImpostorIdentityButton();
-  updateStats();
-  setStatus(`${getImpostorName()} was the impostor.`, "info");
+  impostorIdentityBtn.textContent = "Start Vote";
 }
 
 function closeImpostorSetupModal() {
@@ -522,6 +540,157 @@ function closeImpostorRevealModal() {
   impostorRevealModalEl.setAttribute("aria-hidden", "true");
   document.body.classList.remove("impostorGateOpen");
   updateBodyScrollLock();
+}
+
+function closeImpostorVoteModal() {
+  if (!impostorVoteModalEl) return;
+  impostorVoteModalEl.classList.add("hidden");
+  impostorVoteModalEl.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("impostorGateOpen");
+  updateBodyScrollLock();
+}
+
+function closeImpostorResultModal() {
+  if (!impostorResultModalEl) return;
+  impostorResultModalEl.classList.add("hidden");
+  impostorResultModalEl.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("impostorGateOpen");
+  updateBodyScrollLock();
+}
+
+function openImpostorVoting() {
+  if (!isImpostorMode || !impostorPlayers.length) return;
+  impostorVotes = {};
+  impostorVoteIndex = 0;
+  impostorVotePhase = "prompt";
+  impostorCurrentVoteChoice = -1;
+  // Hide the Start Vote button while voting is in progress
+  if (impostorIdentityBtn) impostorIdentityBtn.classList.add("hidden");
+  showImpostorVoteStep();
+}
+
+function showImpostorVoteStep() {
+  if (!impostorVoteModalEl || !impostorVoteTitleEl || !impostorVoteBodyEl || !impostorVoteBallotEl || !impostorVoteBtn) return;
+  const voterName = impostorPlayers[impostorVoteIndex] || `Player ${impostorVoteIndex + 1}`;
+  impostorVoteModalEl.classList.remove("hidden");
+  impostorVoteModalEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("impostorGateOpen");
+  updateBodyScrollLock();
+
+  if (impostorVotePhase === "prompt") {
+    impostorVoteTitleEl.textContent = `Pass to ${voterName}`;
+    impostorVoteBodyEl.textContent = `Only ${voterName} should look at the screen.`;
+    impostorVoteBallotEl.classList.add("hidden");
+    impostorVoteBallotEl.innerHTML = "";
+    impostorCurrentVoteChoice = -1;
+    impostorVoteBtn.textContent = "Open Ballot";
+    impostorVoteBtn.disabled = false;
+    return;
+  }
+
+  impostorVoteTitleEl.textContent = `${voterName}, who is the impostor?`;
+  impostorVoteBodyEl.textContent = "Tap a name to cast your vote. Your choice is private.";
+  impostorVoteBallotEl.innerHTML = "";
+  impostorPlayers.forEach((name, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "impostorVoteOption";
+    btn.textContent = name;
+    btn.addEventListener("click", () => {
+      impostorVoteBallotEl.querySelectorAll(".impostorVoteOption").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      impostorCurrentVoteChoice = idx;
+      impostorVoteBtn.disabled = false;
+    });
+    impostorVoteBallotEl.appendChild(btn);
+  });
+  impostorVoteBallotEl.classList.remove("hidden");
+  impostorVoteBtn.textContent = "Submit Vote";
+  impostorVoteBtn.disabled = true;
+}
+
+function advanceImpostorVote() {
+  if (impostorVotePhase === "prompt") {
+    impostorVotePhase = "vote";
+    showImpostorVoteStep();
+    return;
+  }
+  if (impostorCurrentVoteChoice < 0) return;
+  impostorVotes[impostorVoteIndex] = impostorCurrentVoteChoice;
+  impostorCurrentVoteChoice = -1;
+  if (impostorVoteIndex < impostorPlayers.length - 1) {
+    impostorVoteIndex += 1;
+    impostorVotePhase = "prompt";
+    showImpostorVoteStep();
+  } else {
+    closeImpostorVoteModal();
+    showImpostorResult();
+  }
+}
+
+function launchImpostorConfetti() {
+  const duration = 2200;
+  const end = Date.now() + duration;
+  const redColors = ["#c0392b", "#e74c3c", "#922b21", "#f39c12", "#641e16"];
+  confetti({ particleCount: 160, spread: 95, startVelocity: 48, ticks: 260, origin: { x: 0.5, y: 0.58 }, colors: redColors });
+  (function frame() {
+    confetti({ particleCount: 8, spread: 80, startVelocity: 42, origin: { x: 0.1, y: 0.65 }, angle: 58, colors: redColors });
+    confetti({ particleCount: 8, spread: 80, startVelocity: 42, origin: { x: 0.9, y: 0.65 }, angle: 122, colors: redColors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+function showImpostorResult() {
+  if (!impostorResultModalEl || !impostorResultTitleEl || !impostorResultBodyEl || !impostorResultSecretEl || !impostorResultBtn) return;
+
+  // Tally votes
+  const tally = {};
+  impostorPlayers.forEach((_, i) => { tally[i] = 0; });
+  Object.values(impostorVotes).forEach(v => { tally[v] = (tally[v] || 0) + 1; });
+
+  let maxVotes = 0;
+  let ejectedIndex = -1;
+  let isTie = false;
+  Object.entries(tally).forEach(([idx, count]) => {
+    if (count > maxVotes) { maxVotes = count; ejectedIndex = parseInt(idx); isTie = false; }
+    else if (count === maxVotes && maxVotes > 0) { isTie = true; }
+  });
+
+  const ejectedName = ejectedIndex >= 0 ? (impostorPlayers[ejectedIndex] || `Player ${ejectedIndex + 1}`) : "Nobody";
+  const impostorName = getImpostorName();
+  const characterName = answer ? answer.name : "Unknown";
+  const crewmatesWon = !isTie && ejectedIndex === impostorIndex;
+  const tallyStr = impostorPlayers.map((n, i) => `${n}: ${tally[i]}`).join("  •  ");
+
+  impostorResultModalEl.classList.remove("hidden");
+  impostorResultModalEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("impostorGateOpen");
+  updateBodyScrollLock();
+
+  if (impostorResultCardEl) {
+    impostorResultCardEl.classList.toggle("impostorCardWin", crewmatesWon);
+    impostorResultCardEl.classList.toggle("impostorCardLoss", !crewmatesWon);
+  }
+
+  if (crewmatesWon) {
+    if (impostorResultIconEl) impostorResultIconEl.textContent = "🎉";
+    impostorResultTitleEl.textContent = "The Crew Wins!";
+    impostorResultBodyEl.textContent = `${ejectedName} was voted out — they were the impostor! Votes: ${tallyStr}`;
+    impostorResultSecretEl.className = "impostorSecret crewmateRole";
+    setTimeout(() => { if (typeof confetti === "function") launchConfetti(); }, 300);
+  } else {
+    if (impostorResultIconEl) impostorResultIconEl.textContent = "🕵️";
+    impostorResultTitleEl.textContent = "The Impostor Wins!";
+    impostorResultBodyEl.textContent = isTie
+      ? `The vote was tied — the impostor slips away! Votes: ${tallyStr}`
+      : `${ejectedName} was voted out, but they weren't the impostor! Votes: ${tallyStr}`;
+    impostorResultSecretEl.className = "impostorSecret impostorRole";
+    setTimeout(() => { if (typeof confetti === "function") launchImpostorConfetti(); }, 300);
+  }
+
+  impostorResultSecretEl.textContent = `The impostor was ${impostorName}.\nThe character was: ${characterName}`;
+  impostorResultSecretEl.classList.remove("hidden");
+  impostorResultBtn.textContent = "New Game";
 }
 
 function updateImpostorPlayerInputs() {
@@ -561,11 +730,12 @@ function showImpostorRevealStep() {
   updateBodyScrollLock();
 
   if (impostorRevealPhase === "complete") {
+    const starterName = impostorStarterIndex >= 0 ? impostorPlayers[impostorStarterIndex] : impostorPlayers[0];
     impostorRevealTitleEl.textContent = "Roles Assigned";
-    impostorRevealBodyEl.textContent = "Pass the device back and start discussing. Use New Game when you want another round.";
+    impostorRevealBodyEl.textContent = `${starterName || "Player 1"} goes first — pass the device and start discussing!`;
     impostorSecretEl.className = "impostorSecret hidden";
     impostorSecretEl.textContent = "";
-    impostorRevealBtn.textContent = "Close";
+    impostorRevealBtn.textContent = "Let's Go";
     return;
   }
 
@@ -626,9 +796,14 @@ function beginImpostorRound() {
   });
   impostorPlayers = players;
   impostorIndex = Math.floor(Math.random() * players.length);
+  impostorStarterIndex = Math.floor(Math.random() * players.length);
   impostorRevealIndex = 0;
   impostorRevealPhase = "prompt";
   impostorIdentityRevealed = false;
+  impostorVotes = {};
+  impostorVoteIndex = 0;
+  impostorVotePhase = "prompt";
+  impostorCurrentVoteChoice = -1;
   impostorHint = getCharacterHint(answer, { forImpostor: true });
   closeImpostorSetupModal();
   updateImpostorIdentityButton();
@@ -1057,6 +1232,8 @@ function applyModePreset(modeKey, restart = true) {
   resetImpostorState();
   closeImpostorSetupModal();
   closeImpostorRevealModal();
+  closeImpostorVoteModal();
+  closeImpostorResultModal();
   if (isDuelMode) {
     duelAttempts = [0, 0];
     duelCurrentTurn = 0;
@@ -1154,9 +1331,7 @@ function updateStats() {
   if (progressPillEl) {
     if (isImpostorMode) {
       progressPillEl.textContent = impostorPlayers.length
-        ? (impostorIdentityRevealed
-          ? `Impostor revealed \u2022 ${getImpostorName()}`
-          : `Impostor ready \u2022 ${impostorPlayers.length} players`)
+        ? `Impostor ready \u2022 ${impostorPlayers.length} players`
         : "Set player names";
     } else if (isDuelMode) {
       const left = Math.max(DUEL_GUESS_LIMIT - duelAttempts[duelCurrentTurn], 0);
@@ -2688,7 +2863,22 @@ if (impostorRevealBtn) {
 
 if (impostorIdentityBtn) {
   impostorIdentityBtn.addEventListener("click", () => {
-    revealImpostorIdentity();
+    openImpostorVoting();
+  });
+}
+
+if (impostorVoteBtn) {
+  impostorVoteBtn.addEventListener("click", () => {
+    advanceImpostorVote();
+  });
+}
+
+if (impostorResultBtn) {
+  impostorResultBtn.addEventListener("click", () => {
+    closeImpostorResultModal();
+    pickRandomAnswer();
+    updateStats();
+    setStatus("New round started. Set up players to begin.", "info");
   });
 }
 
@@ -2699,6 +2889,14 @@ document.addEventListener("keydown", (e) => {
   }
 
   if (e.key === "Escape") {
+    if (impostorResultModalEl && !impostorResultModalEl.classList.contains("hidden")) {
+      closeImpostorResultModal();
+      return;
+    }
+    if (impostorVoteModalEl && !impostorVoteModalEl.classList.contains("hidden")) {
+      closeImpostorVoteModal();
+      return;
+    }
     if (impostorRevealModalEl && !impostorRevealModalEl.classList.contains("hidden")) {
       closeImpostorRevealModal();
       return;
@@ -2770,4 +2968,14 @@ if (impostorSetupModalEl) {
 if (impostorRevealModalEl) {
   impostorRevealModalEl.tabIndex = -1;
   impostorRevealModalEl.setAttribute("aria-hidden", "true");
+}
+
+if (impostorVoteModalEl) {
+  impostorVoteModalEl.tabIndex = -1;
+  impostorVoteModalEl.setAttribute("aria-hidden", "true");
+}
+
+if (impostorResultModalEl) {
+  impostorResultModalEl.tabIndex = -1;
+  impostorResultModalEl.setAttribute("aria-hidden", "true");
 }
