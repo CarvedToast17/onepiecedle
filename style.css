@@ -2689,6 +2689,39 @@ body.compactMode .tile .cellArrow {
   }
 }
 
+.seoBlurb {
+  width: min(680px, 100%);
+  margin: 32px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(235, 242, 250, 0.1);
+}
+
+.seoBlurbTitle {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 600;
+  color: var(--gold-pale);
+  letter-spacing: 0.02em;
+}
+
+.seoBlurbSubtitle {
+  margin: 16px 0 6px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(235, 242, 250, 0.5);
+}
+
+.seoBlurbBody {
+  margin: 0;
+  color: rgba(235, 242, 250, 0.65);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 1ms !important;
