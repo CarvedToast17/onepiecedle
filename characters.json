@@ -2008,5 +2008,405 @@
       "Defiant",
       "Impulsive"
     ]
+  },
+  {
+    "name": "Bellamy",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament"
+    ],
+    "origin": "North Blue",
+    "bounty": 195000000,
+    "firstArc": "Jaya",
+    "gender": "Male",
+    "image": "img/bellamytocobra/bellamy.jpg",
+    "aliases": [
+      "The Hyena",
+      "Bellamy the Hyena"
+    ],
+    "hints": [
+      "Captain",
+      "Fighter",
+      "North Blue"
+    ]
+  },
+  {
+    "name": "Hody Jones",
+    "affiliation": "New Fish-Man Pirates",
+    "devilFruit": "None",
+    "haki": [],
+    "origin": "Fish-Man Island",
+    "bounty": 0,
+    "firstArc": "Fish-Man Island",
+    "gender": "Male",
+    "image": "img/bellamytocobra/hody.jpg",
+    "aliases": [
+      "Hody"
+    ],
+    "hints": [
+      "Captain",
+      "Villain",
+      "Fighter"
+    ]
+  },
+  {
+    "name": "Donquixote Rosinante",
+    "affiliation": "Marines",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "North Blue",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/rosinante.jpg",
+    "aliases": [
+      "Corazon",
+      "Rosinante",
+      "Rosi"
+    ],
+    "hints": [
+      "Marine",
+      "Sacrifice",
+      "Deception"
+    ]
+  },
+  {
+    "name": "Vergo",
+    "affiliation": "Marines",
+    "devilFruit": "None",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Punk Hazard",
+    "gender": "Male",
+    "image": "img/bellamytocobra/vergo.jpg",
+    "aliases": [
+      "Vergo the Marine"
+    ],
+    "hints": [
+      "Marine",
+      "Commander",
+      "Deception"
+    ]
+  },
+  {
+    "name": "Monet",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Logia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Punk Hazard",
+    "gender": "Female",
+    "image": "img/bellamytocobra/monet.jpg",
+    "aliases": [],
+    "hints": [
+      "Villain",
+      "Sacrifice",
+      "Commander"
+    ]
+  },
+  {
+    "name": "Sugar",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Female",
+    "image": "img/bellamytocobra/sugar.jpg",
+    "aliases": [],
+    "hints": [
+      "Villain",
+      "Deception",
+      "Commander"
+    ]
+  },
+  {
+    "name": "Rebecca",
+    "affiliation": "Riku Royal Family",
+    "devilFruit": "None",
+    "haki": [
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Female",
+    "image": "img/bellamytocobra/rebecca.jpg",
+    "aliases": [
+      "Soldier-san daughter"
+    ],
+    "hints": [
+      "Fighter",
+      "Royalty",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Kyros",
+    "affiliation": "Riku Royal Army",
+    "devilFruit": "None",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/kyros.jpg",
+    "aliases": [
+      "Thunder Soldier",
+      "Toy Soldier"
+    ],
+    "hints": [
+      "Fighter",
+      "Loyalty",
+      "Sacrifice"
+    ]
+  },
+  {
+    "name": "Viola",
+    "affiliation": "Riku Royal Family",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Female",
+    "image": "img/bellamytocobra/viola.jpg",
+    "aliases": [
+      "Violet",
+      "Princess Viola"
+    ],
+    "hints": [
+      "Royalty",
+      "Deception",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Diamante",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 99000000,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/diamante.jpg",
+    "aliases": [
+      "Hero of the Colosseum"
+    ],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Fighter"
+    ]
+  },
+  {
+    "name": "Trebol",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "North Blue",
+    "bounty": 99000000,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/trebol.jpg",
+    "aliases": [],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Pica",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 99000000,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/pica.jpg",
+    "aliases": [],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Fighter"
+    ]
+  },
+  {
+    "name": "Charlotte Cracker",
+    "affiliation": "Big Mom Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 860000000,
+    "firstArc": "Whole Cake Island",
+    "gender": "Male",
+    "image": "img/bellamytocobra/cracker.jpg",
+    "aliases": [
+      "Cracker"
+    ],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Fighter"
+    ]
+  },
+  {
+    "name": "Charlotte Smoothie",
+    "affiliation": "Big Mom Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [
+      "Armament",
+      "Observation"
+    ],
+    "origin": "Grand Line",
+    "bounty": 932000000,
+    "firstArc": "Whole Cake Island",
+    "gender": "Female",
+    "image": "img/bellamytocobra/smoothie.jpg",
+    "aliases": [
+      "Smoothie"
+    ],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Royalty"
+    ]
+  },
+  {
+    "name": "Perospero",
+    "affiliation": "Big Mom Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 700000000,
+    "firstArc": "Whole Cake Island",
+    "gender": "Male",
+    "image": "img/bellamytocobra/perospero.jpg",
+    "aliases": [
+      "Pero"
+    ],
+    "hints": [
+      "Commander",
+      "Villain",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Baby 5",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Dressrosa",
+    "gender": "Female",
+    "image": "img/bellamytocobra/baby5.jpg",
+    "aliases": [],
+    "hints": [
+      "Fighter",
+      "Loyalty",
+      "Villain"
+    ]
+  },
+  {
+    "name": "Senor Pink",
+    "affiliation": "Donquixote Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 58000000,
+    "firstArc": "Dressrosa",
+    "gender": "Male",
+    "image": "img/bellamytocobra/senorpink.jpg",
+    "aliases": [
+      "Senior Pink"
+    ],
+    "hints": [
+      "Fighter",
+      "Villain",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Foxy",
+    "affiliation": "Foxy Pirates",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 24000000,
+    "firstArc": "Long Ring Long Land",
+    "gender": "Male",
+    "image": "img/bellamytocobra/foxy.jpg",
+    "aliases": [
+      "Silver Fox Foxy",
+      "Foxy the Silver Fox"
+    ],
+    "hints": [
+      "Captain",
+      "Trickster",
+      "Fighter"
+    ]
+  },
+  {
+    "name": "Daz Bonez",
+    "affiliation": "Cross Guild",
+    "devilFruit": "Paramecia",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 75000000,
+    "firstArc": "Arabasta",
+    "gender": "Male",
+    "image": "img/bellamytocobra/daz.jpg",
+    "aliases": [
+      "Mr. 1",
+      "Mr 1"
+    ],
+    "hints": [
+      "Fighter",
+      "Villain",
+      "Loyalty"
+    ]
+  },
+  {
+    "name": "Nefertari Cobra",
+    "affiliation": "Arabasta Kingdom",
+    "devilFruit": "None",
+    "haki": [],
+    "origin": "Grand Line",
+    "bounty": 0,
+    "firstArc": "Arabasta",
+    "gender": "Male",
+    "image": "img/bellamytocobra/cobra.jpg",
+    "aliases": [
+      "King Cobra",
+      "Cobra"
+    ],
+    "hints": [
+      "Royalty",
+      "Loyalty",
+      "Sacrifice"
+    ]
   }
 ]
